@@ -1,4 +1,6 @@
-package example
+package tmt.sequencer
+
+import tmt.services.LocationService
 
 import scala.concurrent.duration.DurationLong
 import scala.concurrent.{Await, Future}

@@ -1,19 +1,13 @@
-import akka.stream.scaladsl.Source
-import example.LocationService
-import example.Script
-import example.ScriptFactory
+import tmt.sequencer.Script
+import tmt.sequencer.Dsl
 
-class SimpleScript(ls: LocationService) extends Script {
-  def run() = {
+class SimpleScript extends Script {
+  val dsl: Dsl = Dsl.build()
+  import dsl._
+
+  def run(command: Int): Unit = {
     <script>
   }
 }
 
-class SimpleScriptFactory extends ScriptFactory {
-    def build(): Script = {
-        val ls = new LocationService
-        new SimpleScript(ls)
-    }
-}
-
-scala.reflect.classTag[SimpleScriptFactory].runtimeClass
+scala.reflect.classTag[SimpleScript].runtimeClass
