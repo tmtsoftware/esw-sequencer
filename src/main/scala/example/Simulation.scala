@@ -8,7 +8,7 @@ import example.Sequencer.Push
 object Simulation {
   val behaviour: Behavior[NotUsed] = Actor.deferred { ctx =>
     val actorRef = ctx.spawn(Sequencer.behaviour, "sequencer")
-    val simulator = new ScriptLike(actorRef, ctx)
+    val simulator = new ScriptRunner(actorRef, ctx)
     simulator.run()
 
     actorRef ! Push(1)

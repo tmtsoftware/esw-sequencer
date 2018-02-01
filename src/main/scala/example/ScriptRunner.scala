@@ -10,7 +10,7 @@ import example.Sequencer.{Command, Pull, Value}
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.DurationLong
 
-class ScriptLike(sequencer: ActorRef[Command], ctx: ActorContext[_]) {
+class ScriptRunner(sequencer: ActorRef[Command], ctx: ActorContext[_]) {
   implicit val timeout: Timeout = Timeout(1.hour)
   implicit val scheduler: Scheduler = ctx.system.scheduler
 
@@ -18,21 +18,25 @@ class ScriptLike(sequencer: ActorRef[Command], ctx: ActorContext[_]) {
 
   def run(): Unit = Future {
     while (true) {
-      run(pullNext().x)
-    }
-  }
-
-  def run(x: Int): Unit = {
-    if (x < 2) {
-      println((x, "double", CommandService.double(x)))
-    }
-    else if (x < 4) {
-      println((x, "square", CommandService.square(x)))
-    }
-    else {
-      println((x, "sum", CommandService.sum(CommandService.doubleAsync(x - 4), CommandService.squareAsync(4))))
+      new ScriptLike().run(pullNext().x)
     }
   }
 
   def pullNext(): Value = Await.result(sequencer ? Pull, timeout.duration)
+}
+
+class ScriptLike {
+  val dsl: Dsl = Dsl.build()
+  import dsl._
+  def run(x: Int): Unit = {
+    if (x < 2) {
+      println((x, "double", double(x)))
+    }
+    else if (x < 4) {
+      println((x, "square", square(x)))
+    }
+    else {
+      println((x, "sum", sum(doubleAsync(x - 4), squareAsync(4))))
+    }
+  }
 }
