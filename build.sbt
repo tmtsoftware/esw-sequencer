@@ -14,6 +14,9 @@ lazy val root = (project in file(".")).
       `akka-typed`,
       `akka-typed-testkit`,
       `scala-reflect`,
-      `scala-compiler`
+      `scala-compiler`,
+      `ammonite`,
+      `ammonite-sshd`
     )
-  )
+  ).enablePlugins(JavaAppPackaging)
+
