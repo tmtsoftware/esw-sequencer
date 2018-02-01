@@ -19,16 +19,16 @@ object Main extends App {
 
 object Simulation {
   lazy val behaviour: Behavior[NotUsed] = Actor.deferred { ctx =>
-    val actorRef = ctx.spawn(Engine.behaviour, "sequencer")
-    val simulator = new ScriptRunner(actorRef, ctx)
-    simulator.run()
+    val engine = ctx.spawn(Engine.behaviour, "sequencer")
+    val runner = new ScriptRunner(engine, ctx)
+    runner.run()
 
-    actorRef ! Push(1)
-    actorRef ! Push(2)
-    actorRef ! Push(3)
-    actorRef ! Push(4)
-    actorRef ! Push(5)
-    actorRef ! Push(6)
+    engine ! Push(1)
+    engine ! Push(2)
+    engine ! Push(3)
+    engine ! Push(4)
+    engine ! Push(5)
+    engine ! Push(6)
 
     //    Thread.sleep(5000)
     Actor.empty

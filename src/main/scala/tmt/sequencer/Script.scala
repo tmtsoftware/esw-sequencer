@@ -9,14 +9,14 @@ trait Script {
 }
 
 object Script {
-  def fromString(content: String): Script = {
+  def fromString(code: String): Script = {
     val tb = universe.runtimeMirror(getClass.getClassLoader).mkToolBox()
-    val testClass = tb.compile(tb.parse(content))().asInstanceOf[Class[_]]
+    val testClass = tb.compile(tb.parse(code))().asInstanceOf[Class[_]]
     testClass.getDeclaredConstructor().newInstance().asInstanceOf[Script]
   }
 
   def fromFile(name: String): Script = fromString {
-    val template = Source.fromResource("template.ss").mkString
+    val template = Source.fromResource("templates/main.ss").mkString
     val script = Source.fromResource(name).mkString
     template.replace("<script>", script)
   }
