@@ -1,10 +1,10 @@
 package tmt
 
 import tmt.sequencer.Engine.Push
-import tmt.sequencer.Wiring
+import tmt.sequencer.{Approach1Wiring, Wiring}
 
 object Main extends App {
-  val wiring = new Wiring("scripts/simple.ss")
+  val wiring = new Approach1Wiring("scripts/simple.ss")
   import wiring._
 
   scriptRunner.run()

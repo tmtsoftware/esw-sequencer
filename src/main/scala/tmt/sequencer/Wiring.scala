@@ -13,7 +13,7 @@ import tmt.services.LocationService
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationDouble
 
-class Wiring(scriptFilePath: String) {
+class Wiring {
   implicit val timeout: Timeout = Timeout(5.seconds)
   lazy val system: typed.ActorSystem[Nothing] = ActorSystem("test").toTyped
   lazy val engine: ActorRef[Engine.Command] = Await.result(system.systemActorOf(Engine.behaviour, "engine"), timeout.duration)
@@ -21,12 +21,12 @@ class Wiring(scriptFilePath: String) {
   lazy val locationService = new LocationService(system)
   lazy val dsl = new Dsl(locationService)
   lazy val sshdRepl: SshdRepl = RemoteRepl.server(engine, dsl)
+  lazy val engineAdapter = new EngineAdapter(engine, system)
+}
 
+class Approach1Wiring(scriptFilePath: String) extends Wiring {
   //approach-1
   lazy val scriptFactory: ScriptFactory = ScriptFactory.fromFile(new File(scriptFilePath))
   lazy val script: Script = scriptFactory.make(dsl)
-  lazy val engineAdapter = new EngineAdapter(engine, system)
   lazy val scriptRunner = new ScriptRunner(script, engineAdapter, system)
-
-  //approach-2
 }
