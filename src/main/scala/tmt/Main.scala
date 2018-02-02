@@ -1,14 +1,14 @@
 package tmt
 
 import tmt.sequencer.Engine.Push
-import tmt.sequencer.{RemoteRepl, ScriptRunner, Wiring}
+import tmt.sequencer.Wiring
 
 object Main extends App {
+  val wiring = new Wiring
+  import wiring._
 
-  val engine = Wiring.engine
-
-  new ScriptRunner(engine, Wiring.system).run()
-  RemoteRepl.server.start()
+  scriptRunner.run()
+  sshdRepl.start()
 
   engine ! Push(1)
   engine ! Push(2)

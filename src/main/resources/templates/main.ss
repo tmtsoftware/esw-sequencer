@@ -1,7 +1,7 @@
 import tmt.sequencer.Script
 import tmt.sequencer.Dsl
 
-class SimpleScript extends Script {
+class MainScript extends Script {
   val dsl: Dsl = Dsl.build()
   import dsl._
 
@@ -10,4 +10,4 @@ class SimpleScript extends Script {
   }
 }
 
-scala.reflect.classTag[SimpleScript].runtimeClass
+scala.reflect.classTag[MainScript].runtimeClass

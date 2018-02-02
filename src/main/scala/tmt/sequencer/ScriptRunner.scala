@@ -1,14 +1,13 @@
 package tmt.sequencer
 
 import akka.actor.Scheduler
-import akka.typed.{ActorRef, ActorSystem}
-import akka.typed.scaladsl.ActorContext
 import akka.typed.scaladsl.AskPattern._
+import akka.typed.{ActorRef, ActorSystem}
 import akka.util.Timeout
 import tmt.sequencer.Engine.{Command, Pull, Value}
 
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.DurationLong
+import scala.concurrent.{Await, Future}
 
 class ScriptRunner(engine: ActorRef[Command], system: ActorSystem[_]) {
   implicit val timeout: Timeout = Timeout(1.hour)
