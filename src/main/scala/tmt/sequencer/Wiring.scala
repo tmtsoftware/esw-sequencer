@@ -20,7 +20,7 @@ class Wiring {
   lazy val dsl = new Dsl(locationService)
   lazy val sshdRepl: SshdRepl = RemoteRepl.server(engine, dsl)
 
-  lazy val scriptFactory: ScriptFactory = ScriptFactory.fromFile("simple.ss")
+  lazy val scriptFactory: ScriptFactory = ScriptFactory.fromFileName("simple.ss")
   lazy val script: Script = scriptFactory.make(dsl)
   lazy val scriptRunner = new ScriptRunner(script, engine, system)
 }
