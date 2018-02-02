@@ -18,6 +18,7 @@ trait ScriptFactory {
 
 object ScriptFactory {
   def fromFileName(name: String): ScriptFactory = fromFile {
+    println(getClass.getClassLoader.getResource(name))
     new File(getClass.getClassLoader.getResource(name).toURI)
   }
 
