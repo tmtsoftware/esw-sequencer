@@ -4,7 +4,7 @@ import tmt.sequencer.Engine.Push
 import tmt.sequencer.Wiring
 
 object Main extends App {
-  val wiring = new Wiring("src/main/resources/simple.ss")
+  val wiring = new Wiring("scripts/simple.ss")
   import wiring._
 
   scriptRunner.run()
