@@ -1,8 +1,8 @@
 import tmt.sequencer.Script
+import tmt.sequencer.ScriptFactory
 import tmt.sequencer.Dsl
 
-class MainScript extends Script {
-  val dsl: Dsl = Dsl.build()
+class MainScript(dsl: Dsl) extends Script {
   import dsl._
 
   def run(command: Int): Unit = {
@@ -10,4 +10,8 @@ class MainScript extends Script {
   }
 }
 
-scala.reflect.classTag[MainScript].runtimeClass
+class MainScriptFactory extends ScriptFactory {
+  def make(dsl: Dsl): Script = new MainScript(dsl)
+}
+
+scala.reflect.classTag[MainScriptFactory].runtimeClass

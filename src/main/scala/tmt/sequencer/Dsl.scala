@@ -17,10 +17,3 @@ class Dsl(locationService: LocationService) {
 
   def dummy(): Unit = println(s"location service says ${locationService.m}")
 }
-
-object Dsl {
-  def build(): Dsl = {
-    val locationService = new LocationService
-    new Dsl(locationService)
-  }
-}

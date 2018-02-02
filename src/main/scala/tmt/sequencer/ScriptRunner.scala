@@ -9,14 +9,13 @@ import tmt.sequencer.Engine.{Command, Pull, Value}
 import scala.concurrent.duration.DurationLong
 import scala.concurrent.{Await, Future}
 
-class ScriptRunner(engine: ActorRef[Command], system: ActorSystem[_]) {
+class ScriptRunner(script: Script, engine: ActorRef[Command], system: ActorSystem[_]) {
   implicit val timeout: Timeout = Timeout(1.hour)
   implicit val scheduler: Scheduler = system.scheduler
 
   import system.executionContext
 
   def run(): Unit = Future {
-    val script = Script.fromFile("simple.ss")
     while (true) {
       script.run(pullNext().x)
     }
