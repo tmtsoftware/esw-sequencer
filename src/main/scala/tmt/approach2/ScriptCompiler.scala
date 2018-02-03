@@ -1,11 +1,9 @@
-package tmt.tools
+package tmt.approach2
 
 import java.io.File
-
-import tmt.sequencer.ScriptFactory
 
 object ScriptCompiler extends App {
   println(args.toList)
   println(System.getProperty("user.dir"))
-  ScriptFactory.fromFile(new File("scripts/simple.ss"))
+  ScriptFactory.fromFile(new File("scripts/ocs-sequencer.ss"))
 }

@@ -1,5 +1,5 @@
-import tmt.sequencer.Script
-import tmt.sequencer.ScriptFactory
+import tmt.approach2.Script
+import tmt.approach2.ScriptFactory
 import tmt.sequencer.Dsl
 
 class MainScript(dsl: Dsl) extends Script {

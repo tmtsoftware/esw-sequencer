@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
       scalaVersion := "2.12.4",
       version      := "0.1.0-SNAPSHOT"
     )),
-    name := "tmt.sequencer-spike",
+    name := "sequencer-spike",
     libraryDependencies ++= Seq(
       scalaTest % Test,
       `akka-stream`,

@@ -1,14 +1,13 @@
-package tmt.sequencer
+package tmt.approach2
 
 import java.io.File
+
+import tmt.sequencer.Dsl
 
 import scala.io.Source
 import scala.reflect.runtime.universe
 import scala.tools.reflect.ToolBox
 
-trait Script {
-  def run(command: Int): Unit
-}
 
 trait ScriptFactory {
   def make(dsl: Dsl): Script
