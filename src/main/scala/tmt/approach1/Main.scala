@@ -14,5 +14,5 @@ object Main extends App {
   engineActor ! Push(5)
   engineActor ! Push(6)
 
-  ammonite.Main.main(Array("scripts/ocs-sequencer.sc"))
+  ammonite.Main.main(Array("scripts/approach1/ocs-sequencer.sc"))
 }

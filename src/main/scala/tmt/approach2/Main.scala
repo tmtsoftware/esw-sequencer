@@ -3,7 +3,7 @@ package tmt.approach2
 import tmt.sequencer.EngineBehaviour.Push
 
 object Main extends App {
-  val wiring = new Approach2Wiring("scripts/ocs-sequencer.ss")
+  val wiring = new Approach2Wiring("scripts/approach2/ocs-sequencer.ss")
   import wiring._
 
   scriptRunner.run()
