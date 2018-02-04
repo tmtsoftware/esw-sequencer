@@ -1,12 +1,12 @@
 package tmt.approach2
 
+import java.io.File
+
 import tmt.sequencer.EngineBehaviour.Push
 
-object Main extends App {
-  val wiring = new Approach2Wiring("scripts/approach2/ocs-sequencer.ss")
-  import wiring._
+object SequencerApp extends App {
+  import tmt.sequencer.ScriptImports.wiring._
 
-  scriptRunner.run()
   sshdRepl.start()
 
   engineActor ! Push(1)
@@ -15,4 +15,6 @@ object Main extends App {
   engineActor ! Push(4)
   engineActor ! Push(5)
   engineActor ! Push(6)
+
+  Script.fromFile(new File("scripts/ocs-sequencer.sc")).run()
 }

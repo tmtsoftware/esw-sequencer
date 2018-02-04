@@ -12,7 +12,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.DurationDouble
 
 class Wiring {
-  implicit val timeout: Timeout = Timeout(5.seconds)
+  implicit lazy val timeout: Timeout = Timeout(5.seconds)
   lazy val system: typed.ActorSystem[Nothing] = ActorSystem("test").toTyped
 
   lazy val engineActor: ActorRef[EngineBehaviour.Command] = Await.result(system.systemActorOf(EngineBehaviour.behaviour, "engine"), timeout.duration)

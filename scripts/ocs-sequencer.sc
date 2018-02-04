@@ -1,4 +1,4 @@
-import tmt.approach1.ScriptImports._
+import tmt.sequencer.ScriptImports._
 
 while (true) {
   val command = E.pullNext()
