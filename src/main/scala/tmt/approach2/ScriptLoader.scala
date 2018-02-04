@@ -6,9 +6,9 @@ import scala.io.Source
 import scala.reflect.runtime.universe
 import scala.tools.reflect.ToolBox
 
-object Script {
+object ScriptLoader {
   def fromFile(file: File): Runnable = fromString {
-    val template = Source.fromResource("templates/main.sc").mkString
+    val template = Source.fromResource("approach2/main.sc").mkString
     val script = Source.fromFile(file).mkString
     template.replace("<script/>", script)
   }

@@ -16,5 +16,5 @@ object SequencerApp extends App {
   engineActor ! Push(5)
   engineActor ! Push(6)
 
-  Script.fromFile(new File("scripts/ocs-sequencer.sc")).run()
+  ScriptLoader.fromFile(new File("scripts/ocs-sequencer.sc")).run()
 }
