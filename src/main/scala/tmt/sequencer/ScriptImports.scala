@@ -11,4 +11,16 @@ object ScriptImports {
   lazy val E: Engine = wiring.engine
 
   implicit def toFuture[T](x: => T): Future[T] = Future(x)
+
+  def loop(block: => Unit): Unit = {
+    while (true) {
+      block
+    }
+  }
+
+  def forEach(f: Int => Unit): Unit = {
+    while (true) {
+      f(E.pullNext())
+    }
+  }
 }

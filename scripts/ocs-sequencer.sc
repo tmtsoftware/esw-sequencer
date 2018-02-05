@@ -1,8 +1,6 @@
 import tmt.sequencer.ScriptImports._
 
-while (true) {
-  val command = E.pullNext()
-
+forEach { command =>
   if (command < 2) {
     println((command, "double", D.double(command)))
   }
