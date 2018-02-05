@@ -10,10 +10,7 @@ while (true) {
     println((command, "square", D.square(command)))
   }
   else {
-    val results = D.par(
-      () => D.double(command - 4),
-      () => D.square(4)
-    )
+    val results = D.par(D.double(command - 4), D.square(4))
     println((command, "sum", results.sum))
   }
 }

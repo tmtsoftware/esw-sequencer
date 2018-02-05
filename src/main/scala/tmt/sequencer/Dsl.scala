@@ -10,9 +10,7 @@ class Dsl(locationService: LocationService) {
   def square(x: Int): Int = x * x
   def double(x: Int): Int = x + x
 
-  def dummy(): Unit = println(s"location service says ${locationService.m}")
+  def par[T](fs: Future[T]*): Seq[T] = Future.sequence(fs.toList).await
 
-  def par[T](fs: (() => T)*): Seq[T] = {
-    Future.traverse(fs)(f => Future(f())).await
-  }
+  def dummy(): Unit = println(s"location service says ${locationService.m}")
 }
