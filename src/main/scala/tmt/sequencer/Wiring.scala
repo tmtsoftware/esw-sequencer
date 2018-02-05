@@ -15,11 +15,11 @@ class Wiring {
   implicit lazy val timeout: Timeout = Timeout(5.seconds)
   lazy val system: typed.ActorSystem[Nothing] = ActorSystem("test").toTyped
 
-  lazy val engineActor: ActorRef[EngineBehaviour.Command] = Await.result(system.systemActorOf(EngineBehaviour.behaviour, "engine"), timeout.duration)
+  lazy val engineActor: ActorRef[EngineBehaviour.EngineAction] = Await.result(system.systemActorOf(EngineBehaviour.behaviour, "engine"), timeout.duration)
   lazy val engine = new Engine(engineActor, system)
 
   lazy val locationService = new LocationService(system)
-  lazy val commandService = new CommandService(locationService)
+  lazy val commandService = new CommandService(locationService)(system.executionContext)
 
   lazy val sshdRepl: SshdRepl = RemoteRepl.server(engine, commandService)
 }

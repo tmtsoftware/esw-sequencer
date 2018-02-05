@@ -2,19 +2,18 @@ package tmt.approach2
 
 import java.io.File
 
-import tmt.sequencer.EngineBehaviour.Push
+import tmt.services.Command
 
 object SequencerApp extends App {
-  import tmt.sequencer.Dsl.wiring._
+  import tmt.sequencer.Dsl._
+  import wiring._
 
   sshdRepl.start()
 
-  engineActor ! Push(1)
-  engineActor ! Push(2)
-  engineActor ! Push(3)
-  engineActor ! Push(4)
-  engineActor ! Push(5)
-  engineActor ! Push(6)
+  E.push(Command("setup-assembly1", List(1, 2, 3)))
+  E.push(Command("setup-assembly2", List(10, 20, 30)))
+  E.push(Command("setup-assemblies-sequential", List(1, 2, 3, 10, 20, 30)))
+  E.push(Command("setup-assemblies-parallel", List(1, 2, 3, 10, 20, 30)))
 
   ScriptLoader.fromFile(new File("scripts/ocs-sequencer.sc")).run()
 }

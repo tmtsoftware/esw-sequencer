@@ -3,25 +3,26 @@ package tmt.sequencer
 import akka.typed.scaladsl.Actor
 import akka.typed.{ActorRef, Behavior}
 import akka.typed.scaladsl.Actor.MutableBehavior
-import tmt.sequencer.EngineBehaviour.{Command, Pull, Push, Value}
+import tmt.sequencer.EngineBehaviour.{EngineAction, Pull, Push}
+import tmt.services.Command
 
 import scala.collection.immutable.Queue
 
-class EngineBehaviour extends MutableBehavior[Command] {
+class EngineBehaviour extends MutableBehavior[EngineAction] {
 
-  var queue: Queue[Int] = Queue.empty
-  var ref: Option[ActorRef[Value]] = None
+  var queue: Queue[Command] = Queue.empty
+  var ref: Option[ActorRef[Command]] = None
 
-  override def onMessage(msg: Command): Behavior[Command] = {
+  override def onMessage(msg: EngineAction): Behavior[EngineAction] = {
     msg match {
       case Push(x) if ref.isEmpty      =>
         queue = queue.enqueue(x)
       case Push(x) =>
-        ref.foreach(_ ! Value(x))
+        ref.foreach(_ ! x)
         ref = None
       case Pull(replyTo) if queue.nonEmpty =>
         val (elm, q) = queue.dequeue
-        replyTo ! Value(elm)
+        replyTo ! elm
         queue = q
       case Pull(replyTo) =>
         ref = Some(replyTo)
@@ -31,11 +32,9 @@ class EngineBehaviour extends MutableBehavior[Command] {
 }
 
 object EngineBehaviour {
-  sealed trait Command
-  case class Push(x: Int) extends Command
-  case class Pull(replyTo: ActorRef[Value]) extends Command
+  sealed trait EngineAction
+  case class Push(command: Command) extends EngineAction
+  case class Pull(replyTo: ActorRef[Command]) extends EngineAction
 
-  case class Value(x: Int)
-
-  def behaviour: Behavior[Command] = Actor.mutable(ctx => new EngineBehaviour)
+  def behaviour: Behavior[EngineAction] = Actor.mutable(ctx => new EngineBehaviour)
 }

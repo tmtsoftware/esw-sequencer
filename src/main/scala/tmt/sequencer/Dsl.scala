@@ -1,6 +1,7 @@
 package tmt.sequencer
 
 import tmt.sequencer.FutureExt.RichFuture
+import tmt.services.Command
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -20,10 +21,8 @@ object Dsl {
     }
   }
 
-  def forEach(f: Int => Unit): Unit = {
-    while (true) {
-      f(E.pullNext())
-    }
+  def forEach(f: Command => Unit): Unit = {
+    loop(f(E.pullNext()))
   }
 
   def par[T](fs: Future[T]*): Seq[T] = Future.sequence(fs.toList).await

@@ -2,6 +2,7 @@ package tmt.sequencer
 
 import org.scalatest.Matchers
 import Dsl._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CommandServiceTest extends org.scalatest.FunSuite with Matchers {
 

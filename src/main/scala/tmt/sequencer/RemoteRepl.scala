@@ -13,6 +13,7 @@ object RemoteRepl {
     predef =
       """
         |repl.frontEnd() = ammonite.repl.FrontEnd.JLineUnix
+        |import tmt.services.Command
       """.stripMargin,
     replArgs = Seq(
       "E" -> engine,
