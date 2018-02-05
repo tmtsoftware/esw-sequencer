@@ -4,7 +4,7 @@ import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
 
 object RemoteRepl {
-  def server(engine: Engine, dsl: Dsl) = new SshdRepl(
+  def server(engine: Engine, commandService: CommandService) = new SshdRepl(
     SshServerConfig(
       address = "localhost", // or "0.0.0.0" for public-facing shells
       port = 22222, // Any available port
@@ -16,7 +16,7 @@ object RemoteRepl {
       """.stripMargin,
     replArgs = Seq(
       "E" -> engine,
-      "D" -> dsl
+      "CS" -> commandService
     )
   )
 }

@@ -19,7 +19,7 @@ class Wiring {
   lazy val engine = new Engine(engineActor, system)
 
   lazy val locationService = new LocationService(system)
-  lazy val dsl = new Dsl(locationService)
+  lazy val commandService = new CommandService(locationService)
 
-  lazy val sshdRepl: SshdRepl = RemoteRepl.server(engine, dsl)
+  lazy val sshdRepl: SshdRepl = RemoteRepl.server(engine, commandService)
 }

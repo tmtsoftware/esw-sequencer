@@ -1,14 +1,14 @@
-import tmt.sequencer.ScriptImports._
+import tmt.sequencer.Dsl._
 
 forEach { command =>
   if (command < 2) {
-    println((command, "double", D.double(command)))
+    println((command, "double", CS.double(command)))
   }
   else if (command < 4) {
-    println((command, "square", D.square(command)))
+    println((command, "square", CS.square(command)))
   }
   else {
-    val results = D.par(D.double(command - 4), D.square(4))
+    val results = par(CS.double(command - 4), CS.square(4))
     println((command, "sum", results.sum))
   }
 }

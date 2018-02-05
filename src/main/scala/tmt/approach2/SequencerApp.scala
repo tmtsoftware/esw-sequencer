@@ -5,7 +5,7 @@ import java.io.File
 import tmt.sequencer.EngineBehaviour.Push
 
 object SequencerApp extends App {
-  import tmt.sequencer.ScriptImports.wiring._
+  import tmt.sequencer.Dsl.wiring._
 
   sshdRepl.start()
 
