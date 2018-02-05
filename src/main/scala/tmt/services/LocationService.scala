@@ -9,7 +9,7 @@ class LocationService(actorSystem: ActorSystem[_]) {
 }
 
 case class ComponentRef(name: String) {
-  def submit(command: Command)(implicit ec: ExecutionContext): Future[CommandResponse] = Future {
+  def setup(command: Command)(implicit ec: ExecutionContext): Future[CommandResponse] = Future {
     println(s"received $command by component=$name")
     CommandResponse(s"result of $command from component=$name")
   }

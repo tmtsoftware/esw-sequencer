@@ -1,24 +1,25 @@
 import tmt.sequencer.Dsl._
+import tmt.services.Command
 
 forEach { command =>
   if (command.name == "setup-assembly1") {
-    println((command, CS.setup("assembly1", command.params)))
+    println(cs.setup("assembly1", command))
   }
   else if (command.name == "setup-assembly2") {
-    println((command, CS.setup("assembly2", command.params)))
+    println(cs.setup("assembly2", command))
   }
   else if (command.name == "setup-assemblies-sequential") {
-    val (params1, params2) = CS.split(command.params)
-    println((params1, CS.setup("assembly1", params1)))
-    println((params2, CS.setup("assembly2", params2)))
+    val (params1, params2) = cs.split(command.params)
+    println(cs.setup("assembly1", Command("setup-assembly1", params1)))
+    println(cs.setup("assembly2", Command("setup-assembly2", params2)))
   }
   else if (command.name == "setup-assemblies-parallel") {
-    val (params1, params2) = CS.split(command.params)
+    val (params1, params2) = cs.split(command.params)
     val responses = par(
-      CS.setup("assembly1", params1),
-      CS.setup("assembly2", params2)
+      cs.setup("assembly1", Command("setup-assembly1", params1)),
+      cs.setup("assembly2", Command("setup-assembly2", params2))
     )
-    println((command, responses))
+    println(responses)
   }
   else {
     println(s"unknown command=$command")

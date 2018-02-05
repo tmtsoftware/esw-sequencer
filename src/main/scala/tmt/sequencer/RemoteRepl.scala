@@ -16,8 +16,8 @@ object RemoteRepl {
         |import tmt.services.Command
       """.stripMargin,
     replArgs = Seq(
-      "E" -> engine,
-      "CS" -> commandService
+      "cs" -> commandService,
+      "engine" -> engine,
     )
   )
 }
