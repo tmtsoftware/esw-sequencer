@@ -18,7 +18,7 @@ object Dsl {
     loop(f(wiring.engine.pullNext()))
   }
 
-  def loop(block: => Unit): Unit = {
+  def loop(block: => Unit): Unit = Future {
     while (true) {
       block
     }
