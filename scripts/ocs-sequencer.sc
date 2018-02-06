@@ -1,5 +1,4 @@
 import tmt.sequencer.Dsl._
-import tmt.services.Command
 
 forEach { command =>
   if (command.name == "setup-assembly1") {

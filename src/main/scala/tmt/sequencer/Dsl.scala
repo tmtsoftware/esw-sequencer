@@ -1,7 +1,6 @@
 package tmt.sequencer
 
 import tmt.sequencer.FutureExt.RichFuture
-import tmt.services.Command
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -26,4 +25,7 @@ object Dsl {
   }
 
   def par[T](fs: Future[T]*): Seq[T] = Future.sequence(fs.toList).await
+
+  val Command = tmt.services.Command
+  type Command = tmt.services.Command
 }

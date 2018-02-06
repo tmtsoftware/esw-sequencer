@@ -14,6 +14,7 @@ object RemoteRepl {
       """
         |repl.frontEnd() = ammonite.repl.FrontEnd.JLineUnix
         |import tmt.services.Command
+        |import tmt.sequencer.Dsl._
       """.stripMargin,
     replArgs = Seq(
       "cs" -> commandService,
