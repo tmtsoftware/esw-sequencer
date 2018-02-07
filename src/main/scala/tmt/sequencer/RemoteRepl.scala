@@ -11,10 +11,10 @@ object RemoteRepl {
   )
 
   private def initialCommands: String =
-    """import tmt.services.Command
-       import tmt.sequencer.Dsl._
-       repl.compiler.settings.Ydelambdafy.value = "inline"
-      """.stripMargin
+    """
+      |import tmt.services.Command
+      |import tmt.sequencer.Dsl._
+    """.stripMargin
 
   def server = new SshdRepl(sshServerConfig, initialCommands)
 }
