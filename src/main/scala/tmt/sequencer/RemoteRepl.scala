@@ -12,9 +12,9 @@ object RemoteRepl {
     ),
     predef =
       """
-        |repl.frontEnd() = ammonite.repl.FrontEnd.JLineUnix
         |import tmt.services.Command
         |import tmt.sequencer.Dsl._
+        |repl.compiler.settings.Ydelambdafy.value = "inline"
       """.stripMargin,
     replArgs = Seq(
       "cs" -> commandService,
