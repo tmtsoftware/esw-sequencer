@@ -5,7 +5,6 @@ import akka.typed
 import akka.typed.ActorRef
 import akka.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.util.Timeout
-import ammonite.sshd.SshdRepl
 import tmt.services.LocationService
 
 import scala.concurrent.Await
@@ -20,6 +19,4 @@ class Wiring {
 
   lazy val locationService = new LocationService(system)
   lazy val commandService = new CommandService(locationService)(system.executionContext)
-
-  lazy val sshdRepl: SshdRepl = RemoteRepl.server(engine, commandService)
 }
