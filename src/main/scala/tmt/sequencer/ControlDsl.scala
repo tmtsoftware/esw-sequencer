@@ -22,5 +22,9 @@ trait ControlDsl {
     }
   }
 
-  def par[T](fs: Future[T]*): Seq[T] = Future.sequence(fs.toList).await
+  def par(fs: Future[CommandResponse]*): Seq[CommandResponse] = Future.sequence(fs.toList).await
+
+  implicit class RichCommandResponse(commandResponse: => CommandResponse) {
+    def async: Future[CommandResponse] = Future(commandResponse)
+  }
 }

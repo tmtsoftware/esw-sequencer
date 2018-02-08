@@ -32,6 +32,8 @@ class EngineBehaviour(ctx: ActorContext[EngineAction]) extends MutableBehavior[E
         paused = false
         ref.foreach(x => ctx.self ! Pull(x))
         ref = None
+      case Reset =>
+        queue = Queue.empty
     }
     this
   }
@@ -46,6 +48,7 @@ object EngineBehaviour {
   case class HasNext(replyTo: ActorRef[Boolean]) extends EngineAction
   case object Pause                              extends EngineAction
   case object Resume                             extends EngineAction
+  case object Reset                              extends EngineAction
 
   def behaviour: Behavior[EngineAction] = Actor.mutable(ctx => new EngineBehaviour(ctx))
 }

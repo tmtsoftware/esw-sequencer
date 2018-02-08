@@ -20,4 +20,5 @@ class Engine(engine: ActorRef[EngineAction], system: ActorSystem[_]) {
   def hasNext: Boolean                       = (engine ? HasNext).await
   def pause(): Unit                          = engine ! Pause
   def resume(): Unit                         = engine ! Resume
+  def reset(): Unit                         = engine ! Reset
 }
