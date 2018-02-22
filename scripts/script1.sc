@@ -1,5 +1,13 @@
 import tmt.sequencer.Dsl._
 
+val resource = 1
+
+def tearDownResource(): Unit = {
+  println("Hi I am in script1")
+  println("Dealing with resource")
+  println(resource)
+}
+
 forEach { command =>
   if (command.name == "setup-assembly1") {
     println(cs.setup("assembly1", command))
