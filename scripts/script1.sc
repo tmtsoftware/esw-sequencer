@@ -2,12 +2,6 @@ import tmt.sequencer.Dsl._
 
 val resource = 1
 
-def tearDownResource(): Unit = {
-  println("Hi I am in script1")
-  println("Dealing with resource")
-  println(resource)
-}
-
 forEach { command =>
   if (command.name == "setup-assembly1") {
     println(cs.setup("assembly1", command))
@@ -31,4 +25,16 @@ forEach { command =>
   else {
     println(s"unknown command=$command")
   }
+}
+
+object Reactor extends HookReactor {
+  override def tearDownResource(): Unit = {
+    println("Hi I am in script1")
+    println("Dealing with resource")
+    println(resource)
+  }
+
+  override def goOffline(): Unit = ???
+
+  override def goOnline(): Unit = ???
 }

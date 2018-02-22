@@ -14,4 +14,13 @@ object Dsl extends ControlDsl {
 
   val Command = tmt.services.Command
   type Command = tmt.services.Command
+
+  type HookReactor = tmt.sequencer.HookReactor
+}
+
+
+trait HookReactor {
+  def tearDownResource() : Unit
+  def goOffline(): Unit
+  def goOnline(): Unit
 }
