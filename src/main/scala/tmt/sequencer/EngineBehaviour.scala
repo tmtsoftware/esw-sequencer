@@ -10,52 +10,49 @@ import scala.collection.immutable.Queue
 
 class EngineBehavior(ctx: ActorContext[EngineAction]) extends MutableBehavior[EngineAction] {
 
-  var queue: Queue[Command]          = Queue.empty
-  var afterPause: Queue[Command]     = Queue.empty
-  var beforePause: Queue[Command]    = queue
-  var ref: Option[ActorRef[Command]] = None
-  var paused: Boolean                = false
+  var executingQueue: Queue[Command]   = Queue.empty
+  var queueAfterPause: Queue[Command]  = Queue.empty
+  var queueBeforePause: Queue[Command] = executingQueue
+  var ref: Option[ActorRef[Command]]   = None
+  var paused: Boolean                  = false
 
   override def onMessage(msg: EngineAction): Behavior[EngineAction] = {
     msg match {
-      case Push(x) if ref.isEmpty && !paused =>
-        queue = queue.enqueue(x)
-      case Push(x) if ref.isEmpty && paused =>
-        queue = afterPause
-        queue = queue.enqueue(x)
-      case Push(x) if !paused =>
+      case Push(x) if paused =>
+        queueAfterPause = queueAfterPause.enqueue(x)
+      case Push(x) if ref.isEmpty =>
+        executingQueue = executingQueue.enqueue(x)
+      case Push(x) =>
         ref.foreach(_ ! x)
         ref = None
       case Pull(replyTo) if hasNext =>
-        val (elm, q) = queue.dequeue
+        val (elm, q) = executingQueue.dequeue
         replyTo ! elm
-        queue = q
-      case Pull(replyTo) if paused && !hasNext =>
-        ref = Some(replyTo)
-      case Pull(replyTo) if !hasNext =>
+        executingQueue = q
+      case Pull(replyTo) =>
         ref = Some(replyTo)
       case HasNext(replyTo) => replyTo ! hasNext
       case PauseAfter(step) =>
         paused = true
-        afterPause = queue.drop(step)
-        beforePause = queue.take(step)
-        queue = beforePause
+        queueAfterPause = executingQueue.drop(step)
+        queueBeforePause = executingQueue.take(step)
+        executingQueue = queueBeforePause
       case Resume =>
         paused = false
-        queue = afterPause
-        afterPause = Queue.empty
-        beforePause = Queue.empty
+        executingQueue = executingQueue ++ queueAfterPause
+        queueAfterPause = Queue.empty
+        queueBeforePause = Queue.empty
         ref.foreach(x => ctx.self ! Pull(x))
         ref = None
       case Reset =>
-        queue = Queue.empty
-        beforePause = Queue.empty
-        afterPause = Queue.empty
+        executingQueue = Queue.empty
+        queueBeforePause = Queue.empty
+        queueAfterPause = Queue.empty
     }
     this
   }
 
-  def hasNext: Boolean = queue.nonEmpty
+  def hasNext: Boolean = executingQueue.nonEmpty
 }
 
 object EngineBehavior {
