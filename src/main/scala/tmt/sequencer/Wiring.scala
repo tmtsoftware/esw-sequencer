@@ -6,17 +6,19 @@ import akka.typed.ActorRef
 import akka.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.util.Timeout
 import tmt.services.LocationService
+import tmt.shared.engine.EngineBehavior
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationDouble
 
 class Wiring {
-  implicit lazy val timeout: Timeout = Timeout(5.seconds)
+  implicit lazy val timeout: Timeout          = Timeout(5.seconds)
   lazy val system: typed.ActorSystem[Nothing] = ActorSystem("test").toTyped
 
-  lazy val engineActor: ActorRef[EngineBehaviour.EngineAction] = Await.result(system.systemActorOf(EngineBehaviour.behaviour, "engine"), timeout.duration)
+  lazy val engineActor: ActorRef[EngineBehavior.EngineAction] =
+    Await.result(system.systemActorOf(EngineBehavior.behavior, "engine"), timeout.duration)
   lazy val engine = new Engine(engineActor, system)
 
   lazy val locationService = new LocationService(system)
-  lazy val commandService = new CommandService(locationService)(system.executionContext)
+  lazy val commandService  = new CommandService(locationService)(system.executionContext)
 }
