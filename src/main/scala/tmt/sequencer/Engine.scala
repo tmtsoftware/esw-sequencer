@@ -1,12 +1,12 @@
 package tmt.sequencer
 
 import akka.actor.Scheduler
-import akka.typed.scaladsl.AskPattern._
-import akka.typed.{ActorRef, ActorSystem}
+import akka.actor.typed.scaladsl.AskPattern._
+import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.util.Timeout
 import tmt.sequencer.FutureExt.RichFuture
 import tmt.services.Command
-import tmt.shared.engine.EngineBehavior._
+import tmt.sequencer.EngineBehaviour._
 
 import scala.concurrent.duration.DurationLong
 

@@ -1,14 +1,14 @@
-package tmt.shared.engine
+package tmt.sequencer
 
-import akka.typed.scaladsl.Actor.MutableBehavior
-import akka.typed.scaladsl.{Actor, ActorContext}
-import akka.typed.{ActorRef, Behavior}
+import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import akka.actor.typed.{ActorRef, Behavior}
+import tmt.sequencer.EngineBehaviour._
 import tmt.services.Command
-import tmt.shared.engine.EngineBehavior._
 
 import scala.collection.immutable.Queue
 
-class EngineBehavior(ctx: ActorContext[EngineAction]) extends MutableBehavior[EngineAction] {
+class EngineBehaviour(ctx: ActorContext[EngineAction]) extends MutableBehavior[EngineAction] {
 
   var executingQueue: Queue[Command]   = Queue.empty
   var queueAfterPause: Queue[Command]  = Queue.empty
@@ -55,7 +55,7 @@ class EngineBehavior(ctx: ActorContext[EngineAction]) extends MutableBehavior[En
   def hasNext: Boolean = executingQueue.nonEmpty
 }
 
-object EngineBehavior {
+object EngineBehaviour {
   sealed trait EngineAction
   case class Push(command: Command)              extends EngineAction
   case class Pull(replyTo: ActorRef[Command])    extends EngineAction
@@ -64,5 +64,5 @@ object EngineBehavior {
   case object Resume                             extends EngineAction
   case object Reset                              extends EngineAction
 
-  def behavior: Behavior[EngineAction] = Actor.mutable(ctx => new EngineBehavior(ctx))
+  def behavior: Behavior[EngineAction] = Behaviors.mutable(ctx => new EngineBehaviour(ctx))
 }
