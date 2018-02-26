@@ -1,6 +1,10 @@
 import tmt.AA
+import language.reflectiveCalls
 
-def square(x: Int) = x * x
+def square(x: Int) = {
+  println("Square function from DD script")
+  x * x
+}
 
 println(AA.x)
 
