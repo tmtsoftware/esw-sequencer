@@ -33,7 +33,6 @@ object Reactor extends HookReactor {
     println("Dealing with resource")
     println(resource)
   }
-
   override def goOffline(): Unit = ???
 
   override def goOnline(): Unit = ???
