@@ -4,6 +4,7 @@ import akka.actor.Scheduler
 import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.util.Timeout
+import tmt.sequencer.EngineBehaviour._
 import tmt.sequencer.FutureExt.RichFuture
 import tmt.services.Command
 import tmt.sequencer.EngineBehaviour._
@@ -18,7 +19,7 @@ class Engine(engine: ActorRef[EngineAction], system: ActorSystem[_]) {
   def push(command: Command): Unit           = engine ! Push(command)
   def pushAll(commands: List[Command]): Unit = commands.foreach(push)
   def hasNext: Boolean                       = (engine ? HasNext).await
-  def pauseAfter(step: Int): Unit            = engine ! PauseAfter(step)
+  def pause(): Unit                          = engine ! Pause
   def resume(): Unit                         = engine ! Resume
   def reset(): Unit                          = engine ! Reset
 }
