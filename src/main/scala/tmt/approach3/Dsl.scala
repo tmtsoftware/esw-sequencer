@@ -1,4 +1,4 @@
-package tmt.approach3.sequencer
+package tmt.approach3
 
 import tmt.sequencer.FutureExt.RichFuture
 import tmt.services.CommandResponse
@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
-trait HelperDsl {
+trait Dsl {
 
   implicit def toFuture(x: => CommandResponse): Future[CommandResponse] = Future(x)
 

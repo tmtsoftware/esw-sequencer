@@ -19,6 +19,6 @@ class Wiring {
   lazy val engine = new Engine(engineActor, system)
 
   lazy val locationService = new LocationService(system)
-  lazy val commandService  = new CommandService(locationService)(system.executionContext)
+  lazy val commandService  = new CommandService(locationService, engine)(system.executionContext)
   lazy val Command = tmt.services.Command
 }

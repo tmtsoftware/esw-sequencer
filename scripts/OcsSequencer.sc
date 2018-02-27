@@ -1,8 +1,8 @@
-import tmt.approach3.Script._
+import tmt.approach3.ScriptImports._
 
 init[OcsSequencer]
 
-class OcsSequencer(cs: CommandService, engine: Engine) extends Script(cs, engine) {
+class OcsSequencer(cs: CommandService) extends Script(cs) {
 
   override def onCommand(command: Command): Unit = {
     if (command.name == "setup-assembly1") {

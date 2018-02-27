@@ -14,7 +14,7 @@ class CommandServiceTest extends org.scalatest.FunSuite with Matchers {
   }
 
   test("dd") {
-    val dsl = new CommandService(null)
+    val dsl = new CommandService(null, null)
     println(par(x, x))
   }
 

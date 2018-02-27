@@ -1,10 +1,10 @@
-package tmt.approach3.sequencer
+package tmt.approach3
 
 import tmt.sequencer.Engine
 import tmt.services.Command
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 trait ControlDsl {
   def engine: Engine
@@ -18,5 +18,4 @@ trait ControlDsl {
       block
     }
   }
-
 }
