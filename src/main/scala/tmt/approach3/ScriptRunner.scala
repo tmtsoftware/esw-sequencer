@@ -1,13 +1,16 @@
 package tmt.approach3
 
-import tmt.sequencer.Engine
-import scala.util.control.Breaks
+import ammonite.ops.Path
+import tmt.sequencer.{CommandService, Engine}
 
+import scala.util.control.Breaks
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ScriptRunner(engine: Engine) {
-  def run(script: Script): Future[Unit] = {
+class ScriptRunner(engine: Engine, commandService: CommandService) {
+  def run(path: Path): Future[Unit] = {
+    val script = ScriptImports.load(path, commandService)
+
     val breaks = new Breaks
 
     Future {
@@ -21,7 +24,6 @@ class ScriptRunner(engine: Engine) {
             case x                             => println("unknown command")
           }
         }
-
       }
     }
   }

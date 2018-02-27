@@ -21,5 +21,6 @@ class Wiring {
 
   lazy val locationService = new LocationService(system)
   lazy val commandService  = new CommandService(locationService, engine)(system.executionContext)
-  lazy val scriptRunner    = new ScriptRunner(engine)
+
+  lazy val scriptRunner = new ScriptRunner(engine, commandService)
 }
