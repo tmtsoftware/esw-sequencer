@@ -20,4 +20,5 @@ class Wiring {
 
   lazy val locationService = new LocationService(system)
   lazy val commandService  = new CommandService(locationService)(system.executionContext)
+  lazy val Command = tmt.services.Command
 }
