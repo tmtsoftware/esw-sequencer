@@ -10,11 +10,10 @@ object SequencerApp1 extends App {
 
   RemoteRepl.server.start()
 
-  engine.push(Command("setup-assemblies-parallel", List(1, 2, 3, 10, 20, 30)))
+  engine.pushAll(List(Command("setup-assemblies-parallel", List(1, 2, 3, 10, 20, 30))))
 
   val params = if (args.isEmpty) Array("scripts/script1.sc") else args
   ammonite.Main.main0(params.toList, System.in, System.out, System.err)
-
 
   println("sequencer script loaded and running")
 

@@ -9,10 +9,9 @@ object Approach3 extends App {
   val wiring = new Wiring
   val engine = wiring.engine
 
-  RemoteRepl.server(wiring).start()
+//  RemoteRepl.server(wiring).start()
 
-  engine.push(Command("setup-assembly1", List(1,2)))
-
+//  engine.pushAll(List(Command("setup-assembly1", List(1, 2))))
   val script = ScriptImports.load(path, wiring.commandService)
 
   script.onShutdown()

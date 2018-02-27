@@ -1,17 +1,18 @@
 package tmt.approach3
 
 import ammonite.ops.Path
+import ammonite.util.Res.Exception
 import tmt.approach3
 
-import scala.reflect.{ClassTag, classTag}
+import scala.reflect.{classTag, ClassTag}
 
 object ScriptImports {
   @volatile
   private var tag: ClassTag[_] = _
 
-  type Script = approach3.Script
+  type Script         = approach3.Script
   type CommandService = tmt.sequencer.CommandService
-  type Command = tmt.services.Command
+  type Command        = tmt.services.Command
   val Command = tmt.services.Command
 
   private[tmt] def load(path: Path, cs: CommandService): Script = synchronized {
@@ -20,7 +21,7 @@ object ScriptImports {
     constructor.newInstance(cs).asInstanceOf[Script]
   }
 
-  def init[T <: Script : ClassTag]: Unit = {
+  def init[T <: Script: ClassTag]: Unit = {
     tag = classTag[T]
   }
 }

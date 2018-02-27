@@ -16,8 +16,7 @@ class Engine(engine: ActorRef[EngineAction], system: ActorSystem[_]) {
   private implicit val scheduler: Scheduler = system.scheduler
 
   def pullNext(): Command                    = (engine ? Pull).await
-  def push(command: Command): Unit           = engine ! Push(command)
-  def pushAll(commands: List[Command]): Unit = commands.foreach(push)
+  def pushAll(commands: List[Command]): Unit = engine ! Push(commands)
   def hasNext: Boolean                       = (engine ? HasNext).await
   def pause(): Unit                          = engine ! Pause
   def resume(): Unit                         = engine ! Resume

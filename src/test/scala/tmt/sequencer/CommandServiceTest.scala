@@ -49,7 +49,7 @@ class CommandServiceTest extends org.scalatest.FunSuite with Matchers {
 
     engine.pause()
 
-    engine.push(Command("setup-assembly1", List(1, 2, 3)))
+    engine.pushAll(List(Command("setup-assembly1", List(1, 2, 3))))
 
     engine.hasNext
     engine.pullNext()
