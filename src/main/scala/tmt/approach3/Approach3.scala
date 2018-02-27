@@ -1,9 +1,7 @@
 package tmt.approach3
 
-import java.nio.file.{Path, Paths}
-
 import ammonite.ops
-import ammonite.ops.RelPath
+import ammonite.ops.{Path, RelPath}
 import tmt.sequencer.Wiring
 import tmt.services.Command
 
@@ -12,12 +10,8 @@ object Approach3 extends App {
   val wiring = new Wiring
   import wiring._
 
-  val relativePath: Path = args match {
-    case Array(p) => Paths.get(p)
-    case _        => Paths.get("scripts/OcsSequencer.sc")
-  }
-
-  val path = ops.pwd / RelPath(relativePath)
+  val scriptFile = args.headOption.getOrElse("scripts/OcsSequencer.sc")
+  val path: Path = ops.pwd / RelPath(scriptFile)
 
   scriptRunner.run(path)
 
