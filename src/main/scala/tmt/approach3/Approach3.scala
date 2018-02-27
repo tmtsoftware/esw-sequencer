@@ -1,10 +1,19 @@
 package tmt.approach3
 
+import java.nio.file.{Path, Paths}
+
+import ammonite.ops.RelPath
 import tmt.sequencer.Wiring
 import tmt.services.Command
 
 object Approach3 extends App {
-  private val path = ammonite.ops.pwd / "scripts" / "OcsSequencer.sc"
+
+  val dd: Path = args match {
+    case Array(p) => Paths.get(p)
+    case _        => Paths.get("scripts/OcsSequencer.sc")
+  }
+
+  private val path = ammonite.ops.pwd / RelPath(dd)
 
   val wiring = new Wiring
   val engine = wiring.engine
