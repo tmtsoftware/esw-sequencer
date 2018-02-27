@@ -5,6 +5,7 @@ import akka.actor.typed
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.util.Timeout
+import tmt.approach3.ScriptRunner
 import tmt.services.LocationService
 
 import scala.concurrent.Await
@@ -20,5 +21,5 @@ class Wiring {
 
   lazy val locationService = new LocationService(system)
   lazy val commandService  = new CommandService(locationService, engine)(system.executionContext)
-  lazy val Command = tmt.services.Command
+  lazy val scriptRunner    = new ScriptRunner(engine)
 }

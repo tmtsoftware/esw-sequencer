@@ -1,7 +1,6 @@
 package tmt.approach3
 
 import ammonite.ops.Path
-import ammonite.util.Res.Exception
 import tmt.approach3
 
 import scala.reflect.{classTag, ClassTag}
@@ -16,13 +15,8 @@ object ScriptImports {
   val Command = tmt.services.Command
 
   private[tmt] def load(path: Path, cs: CommandService): Script = synchronized {
-    println(path)
     ammonite.Main().runScript(path, Seq.empty) match {
-      case (Exception(t, msg), _) =>
-        println(s"script loading failed due to: $msg")
-        t.printStackTrace()
-      case (x, _) =>
-        println(s"script loading status: $x")
+      case (x, _) => println(s"script loading status: $x")
     }
     val constructor = tag.runtimeClass.getConstructors.toList.head
     constructor.newInstance(cs).asInstanceOf[Script]

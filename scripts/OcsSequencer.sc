@@ -4,7 +4,7 @@ init[OcsSequencer]
 
 class OcsSequencer(cs: CommandService) extends Script(cs) {
 
-  override def onCommand(command: Command): Unit = {
+  override def onSetup(command: Command): Unit = {
     if (command.name == "setup-assembly1") {
       println(cs.setup("assembly1", command))
     }
@@ -27,6 +27,11 @@ class OcsSequencer(cs: CommandService) extends Script(cs) {
     else {
       println(s"unknown command=$command")
     }
+  }
+
+
+  override def onObserve(x: Command): Unit = {
+    println("observe")
   }
 
   override def onShutdown(): Unit = {

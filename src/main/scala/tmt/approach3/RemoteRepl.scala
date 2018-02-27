@@ -11,14 +11,12 @@ object RemoteRepl {
       port = 22222, // Any available port
       passwordAuthenticator = Some(AcceptAllPasswordAuthenticator.INSTANCE) // or publicKeyAuthenticator
     ),
-    predef =
-      """
+    predef = """
          |def setFlags() = repl.compiler.settings.Ydelambdafy.value = "inline"
       """.stripMargin,
     replArgs = Seq(
-      "cs" -> wiring.commandService,
+      "cs"     -> wiring.commandService,
       "engine" -> wiring.engine,
-      "Command" -> wiring.Command
     )
   )
 }

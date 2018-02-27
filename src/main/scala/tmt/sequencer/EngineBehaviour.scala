@@ -17,14 +17,14 @@ class EngineBehaviour(ctx: ActorContext[EngineAction]) extends MutableBehavior[E
   override def onMessage(msg: EngineAction): Behavior[EngineAction] = {
     msg match {
       case Push(xs) if ref.isEmpty || paused =>
-        xs.foreach(x => queue = queue.enqueue(x))
+        queue = queue.enqueue(xs)
       case Push(xs) =>
         xs match {
           case head :: tail =>
             ref.foreach(_ ! head)
             ref = None
-            tail.foreach(x => queue = queue.enqueue(x))
-          case _ => //No-Op
+            queue = queue.enqueue(tail)
+          case Nil => //No-Op
         }
       case Pull(replyTo) if hasNext =>
         val (elm, q) = queue.dequeue
@@ -48,7 +48,7 @@ class EngineBehaviour(ctx: ActorContext[EngineAction]) extends MutableBehavior[E
 
 object EngineBehaviour {
   sealed trait EngineAction
-  case class Push(commands: Seq[Command])        extends EngineAction
+  case class Push(commands: List[Command])       extends EngineAction
   case class Pull(replyTo: ActorRef[Command])    extends EngineAction
   case class HasNext(replyTo: ActorRef[Boolean]) extends EngineAction
   case object Pause                              extends EngineAction
