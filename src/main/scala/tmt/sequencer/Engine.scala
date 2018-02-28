@@ -7,7 +7,6 @@ import akka.util.Timeout
 import tmt.sequencer.EngineBehaviour._
 import tmt.sequencer.FutureExt.RichFuture
 import tmt.services.Command
-import tmt.sequencer.EngineBehaviour._
 
 import scala.concurrent.duration.DurationLong
 

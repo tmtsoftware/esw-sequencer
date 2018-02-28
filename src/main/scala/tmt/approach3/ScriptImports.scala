@@ -12,6 +12,7 @@ object ScriptImports {
   type Script         = approach3.Script
   type CommandService = tmt.sequencer.CommandService
   type Command        = tmt.services.Command
+
   val Command = tmt.services.Command
 
   private[tmt] def load(path: Path, cs: CommandService): Script = synchronized {

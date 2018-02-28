@@ -15,8 +15,9 @@ object RemoteRepl {
          |def setFlags() = repl.compiler.settings.Ydelambdafy.value = "inline"
       """.stripMargin,
     replArgs = Seq(
-      "cs"     -> wiring.commandService,
-      "engine" -> wiring.engine,
+      "cs"      -> wiring.commandService,
+      "engine"  -> wiring.engine,
+      "Command" -> tmt.services.Command,
     )
   )
 }

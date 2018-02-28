@@ -17,5 +17,5 @@ object Approach3 extends App {
 
   engine.pushAll(List(Command("setup-assembly1", List(1, 2))))
 
-  //  RemoteRepl.server(wiring).start()
+  RemoteRepl.server(wiring).start()
 }
