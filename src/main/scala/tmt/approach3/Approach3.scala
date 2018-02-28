@@ -7,15 +7,15 @@ import tmt.services.Command
 
 object Approach3 extends App {
 
-  val wiring = new Wiring
-  import wiring._
-
   val scriptFile = args.headOption.getOrElse("scripts/OcsSequencer.sc")
   val path: Path = ops.pwd / RelPath(scriptFile)
 
-  scriptRunnerRef(path)
+  val wiring = new Wiring
+  import wiring._
+
+  supervisorRef(path)
 
   engine.pushAll(List(Command("setup-assembly1", List(1, 2))))
 
-  RemoteRepl.server(wiring).start()
+  remoteRepl.server().start()
 }

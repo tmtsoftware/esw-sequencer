@@ -1,10 +1,10 @@
-package tmt.sequencer
+package tmt.approach3
 
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.approach3.ScriptRunnerBehavior.SequencerCommand
-import tmt.sequencer.EngineBehaviour._
+import tmt.approach3.EngineMsg._
+import tmt.approach3.ScriptRunnerMsg.SequencerCommand
 import tmt.services.Command
 
 import scala.collection.immutable.Queue
@@ -48,13 +48,5 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
 }
 
 object EngineBehaviour {
-  sealed trait EngineMsg
-  case class Push(commands: List[Command])             extends EngineMsg
-  case class Pull(replyTo: ActorRef[SequencerCommand]) extends EngineMsg
-  case class HasNext(replyTo: ActorRef[Boolean])       extends EngineMsg
-  case object Pause                                    extends EngineMsg
-  case object Resume                                   extends EngineMsg
-  case object Reset                                    extends EngineMsg
-
   def behavior: Behavior[EngineMsg] = Behaviors.mutable(ctx => new EngineBehaviour(ctx))
 }

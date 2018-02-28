@@ -12,6 +12,7 @@ object ScriptImports {
   type Script         = approach3.Script
   type CommandService = tmt.sequencer.CommandService
   type Command        = tmt.services.Command
+  type SequencerEvent = tmt.approach3.ScriptRunnerMsg.SequencerEvent
 
   val Command = tmt.services.Command
 

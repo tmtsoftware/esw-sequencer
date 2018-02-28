@@ -3,11 +3,8 @@ package tmt.approach3
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import ammonite.ops.Path
-import tmt.approach3.ScriptRunnerBehavior.{ControlCommand, ScriptRunnerMsg, SequencerCommand, SequencerEvent}
-import tmt.sequencer.CommandService
-import tmt.sequencer.EngineBehaviour.{EngineMsg, Pull}
-import tmt.services.Command
+import tmt.approach3.EngineMsg.Pull
+import tmt.approach3.ScriptRunnerMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -48,15 +45,7 @@ class ScriptRunnerBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: 
 }
 
 object ScriptRunnerBehavior {
-  sealed trait ScriptRunnerMsg
-  case class SequencerCommand(command: Command) extends ScriptRunnerMsg
-  case class ControlCommand(name: String)       extends ScriptRunnerMsg
-  case class SequencerEvent(value: String)      extends ScriptRunnerMsg
-}
-
-class ScriptRunnerBehaviorFactory(commandService: CommandService, engineRef: ActorRef[EngineMsg]) {
-  def behavior(path: Path): Behavior[ScriptRunnerMsg] = {
-    val script = ScriptImports.load(path, commandService)
+  def behavior(script: Script, engineRef: ActorRef[EngineMsg]): Behavior[ScriptRunnerMsg] = {
     Behaviors.mutable(ctx => new ScriptRunnerBehavior(script, engineRef, ctx))
   }
 }

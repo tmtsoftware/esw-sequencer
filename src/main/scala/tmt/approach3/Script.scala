@@ -1,6 +1,6 @@
 package tmt.approach3
 
-import tmt.approach3.ScriptRunnerBehavior.SequencerEvent
+import tmt.approach3.ScriptRunnerMsg.SequencerEvent
 import tmt.sequencer.CommandService
 import tmt.services.Command
 

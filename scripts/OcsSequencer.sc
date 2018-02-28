@@ -1,5 +1,4 @@
 import tmt.approach3.ScriptImports._
-import tmt.approach3.ScriptRunnerBehavior
 
 init[OcsSequencer]
 
@@ -39,7 +38,7 @@ class OcsSequencer(cs: CommandService) extends Script(cs) {
     println("shutdown")
   }
 
-  override def onEvent(event: ScriptRunnerBehavior.SequencerEvent): Unit = {
+  override def onEvent(event: SequencerEvent): Unit = {
     println(event)
   }
 }

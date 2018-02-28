@@ -2,10 +2,11 @@ package tmt.approach3
 
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
-import tmt.sequencer.Wiring
+import tmt.sequencer.{CommandService, Engine}
 
-object RemoteRepl {
-  def server(wiring: Wiring) = new SshdRepl(
+class RemoteRepl(commandService: CommandService, engine: Engine) {
+
+  def server() = new SshdRepl(
     SshServerConfig(
       address = "localhost", // or "0.0.0.0" for public-facing shells
       port = 22222, // Any available port
@@ -15,8 +16,8 @@ object RemoteRepl {
          |def setFlags() = repl.compiler.settings.Ydelambdafy.value = "inline"
       """.stripMargin,
     replArgs = Seq(
-      "cs"      -> wiring.commandService,
-      "engine"  -> wiring.engine,
+      "cs"      -> commandService,
+      "engine"  -> engine,
       "Command" -> tmt.services.Command,
     )
   )
