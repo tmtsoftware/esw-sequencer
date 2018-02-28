@@ -1,10 +1,10 @@
-package tmt.approach3
+package tmt.sequencer
 
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.approach3.EngineMsg.Pull
-import tmt.approach3.ScriptRunnerMsg.{ControlCommand, SequencerCommand, SequencerEvent}
+import tmt.sequencer.EngineMsg.Pull
+import tmt.sequencer.ScriptRunnerMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}

@@ -1,4 +1,4 @@
-package tmt.services
+package tmt.sequencer
 
 import akka.actor.typed.ActorSystem
 

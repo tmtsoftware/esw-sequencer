@@ -1,4 +1,5 @@
-import tmt.approach3.ScriptImports._
+import tmt.sequencer.ScriptImports._
+import $file.helpers
 
 init[OcsSequencer]
 
@@ -32,6 +33,7 @@ class OcsSequencer(cs: CommandService) extends Script(cs) {
 
   override def onObserve(x: Command): Unit = {
     println("observe")
+    println(helpers.square(99))
   }
 
   override def onShutdown(): Unit = {

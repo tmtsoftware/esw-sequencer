@@ -1,7 +1,6 @@
 package tmt.sequencer
 
 import tmt.sequencer.FutureExt.RichFuture
-import tmt.services.{Command, CommandResponse, LocationService}
 
 import scala.concurrent.ExecutionContext
 

@@ -1,10 +1,10 @@
-package tmt.approach3
+package tmt.sequencer
 
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.approach3.EngineMsg.Push
-import tmt.approach3.ScriptRunnerMsg.ControlCommand
+import tmt.sequencer.EngineMsg.Push
+import tmt.sequencer.ScriptRunnerMsg.ControlCommand
 
 class SupervisorBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: ActorContext[SupervisorMsg])
     extends MutableBehavior[SupervisorMsg] {

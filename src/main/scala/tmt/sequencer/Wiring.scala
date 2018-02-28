@@ -5,8 +5,6 @@ import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.util.Timeout
 import ammonite.ops.Path
-import tmt.approach3._
-import tmt.services.LocationService
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationDouble

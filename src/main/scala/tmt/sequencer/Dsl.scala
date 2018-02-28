@@ -1,26 +1,18 @@
 package tmt.sequencer
 
+import tmt.sequencer.FutureExt.RichFuture
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.language.implicitConversions
 
-object Dsl extends ControlDsl {
-  private[tmt] val wiring = new Wiring
-  private[tmt] def init(): Unit = {
-    //touch system so that main does not exit
-    wiring.system
+trait Dsl {
+
+  implicit def toFuture(x: => CommandResponse): Future[CommandResponse] = Future(x)
+
+  def par(fs: Future[CommandResponse]*): Seq[CommandResponse] = Future.sequence(fs.toList).await
+
+  implicit class RichCommandResponse(commandResponse: => CommandResponse) {
+    def async: Future[CommandResponse] = Future(commandResponse)
   }
-
-  lazy val cs: CommandService = wiring.commandService
-  lazy val engine: Engine = wiring.engine
-
-  val Command = tmt.services.Command
-  type Command = tmt.services.Command
-
-  type HookReactor = tmt.sequencer.HookReactor
-}
-
-
-trait HookReactor {
-  def tearDownResource() : Unit
-  def goOffline(): Unit
-  def goOnline(): Unit
 }

@@ -1,8 +1,6 @@
-package tmt.approach3
+package tmt.sequencer
 
-import tmt.approach3.ScriptRunnerMsg.SequencerEvent
-import tmt.sequencer.CommandService
-import tmt.services.Command
+import tmt.sequencer.ScriptRunnerMsg.SequencerEvent
 
 abstract class Script(cs: CommandService) extends Dsl {
   def onSetup(x: Command): Unit

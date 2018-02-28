@@ -1,8 +1,7 @@
-package tmt.approach3
+package tmt.sequencer
 
 import akka.actor.typed.ActorRef
-import tmt.approach3.ScriptRunnerMsg.SequencerCommand
-import tmt.services.Command
+import tmt.sequencer.ScriptRunnerMsg.SequencerCommand
 
 sealed trait SupervisorMsg
 

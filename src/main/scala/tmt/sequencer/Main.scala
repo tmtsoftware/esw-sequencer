@@ -1,12 +1,9 @@
-package tmt.approach3
+package tmt.sequencer
 
 import ammonite.ops
 import ammonite.ops.{Path, RelPath}
-import tmt.sequencer.Wiring
-import tmt.services.Command
 
-object Approach3 extends App {
-
+object Main extends App {
   val scriptFile = args.headOption.getOrElse("scripts/OcsSequencer.sc")
   val path: Path = ops.pwd / RelPath(scriptFile)
 
