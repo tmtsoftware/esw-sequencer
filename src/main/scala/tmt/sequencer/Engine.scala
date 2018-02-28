@@ -11,11 +11,11 @@ import tmt.sequencer.EngineBehaviour._
 
 import scala.concurrent.duration.DurationLong
 
-class Engine(engine: ActorRef[EngineAction], system: ActorSystem[_]) {
+class Engine(engine: ActorRef[EngineMsg], system: ActorSystem[_]) {
   private implicit val timeout: Timeout     = Timeout(10.hour)
   private implicit val scheduler: Scheduler = system.scheduler
 
-  def pullNext(): Command                    = (engine ? Pull).await
+  def pullNext(): Command                    = (engine ? Pull).await.command
   def pushAll(commands: List[Command]): Unit = engine ! Push(commands)
   def hasNext: Boolean                       = (engine ? HasNext).await
   def pause(): Unit                          = engine ! Pause

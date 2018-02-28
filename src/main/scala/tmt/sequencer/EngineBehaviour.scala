@@ -3,32 +3,33 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
+import tmt.approach3.ScriptRunnerBehavior.SequencerCommand
 import tmt.sequencer.EngineBehaviour._
 import tmt.services.Command
 
 import scala.collection.immutable.Queue
 
-class EngineBehaviour(ctx: ActorContext[EngineAction]) extends MutableBehavior[EngineAction] {
+class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[EngineMsg] {
 
-  var queue: Queue[Command]          = Queue.empty
-  var ref: Option[ActorRef[Command]] = None
-  var paused: Boolean                = false
+  var queue: Queue[Command]                   = Queue.empty
+  var ref: Option[ActorRef[SequencerCommand]] = None
+  var paused: Boolean                         = false
 
-  override def onMessage(msg: EngineAction): Behavior[EngineAction] = {
+  override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
       case Push(xs) if ref.isEmpty || paused =>
         queue = queue.enqueue(xs)
       case Push(xs) =>
         xs match {
           case head :: tail =>
-            ref.foreach(_ ! head)
+            ref.foreach(_ ! SequencerCommand(head))
             ref = None
             queue = queue.enqueue(tail)
           case Nil => //No-Op
         }
       case Pull(replyTo) if hasNext =>
         val (elm, q) = queue.dequeue
-        replyTo ! elm
+        replyTo ! SequencerCommand(elm)
         queue = q
       case Pull(replyTo)    => ref = Some(replyTo)
       case HasNext(replyTo) => replyTo ! hasNext
@@ -47,13 +48,13 @@ class EngineBehaviour(ctx: ActorContext[EngineAction]) extends MutableBehavior[E
 }
 
 object EngineBehaviour {
-  sealed trait EngineAction
-  case class Push(commands: List[Command])       extends EngineAction
-  case class Pull(replyTo: ActorRef[Command])    extends EngineAction
-  case class HasNext(replyTo: ActorRef[Boolean]) extends EngineAction
-  case object Pause                              extends EngineAction
-  case object Resume                             extends EngineAction
-  case object Reset                              extends EngineAction
+  sealed trait EngineMsg
+  case class Push(commands: List[Command])             extends EngineMsg
+  case class Pull(replyTo: ActorRef[SequencerCommand]) extends EngineMsg
+  case class HasNext(replyTo: ActorRef[Boolean])       extends EngineMsg
+  case object Pause                                    extends EngineMsg
+  case object Resume                                   extends EngineMsg
+  case object Reset                                    extends EngineMsg
 
-  def behavior: Behavior[EngineAction] = Behaviors.mutable(ctx => new EngineBehaviour(ctx))
+  def behavior: Behavior[EngineMsg] = Behaviors.mutable(ctx => new EngineBehaviour(ctx))
 }

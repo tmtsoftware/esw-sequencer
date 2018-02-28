@@ -12,6 +12,6 @@ class CommandService(locationService: LocationService, engine: Engine)(implicit 
 
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
 
-  def hasNext: Boolean = engine.hasNext
+  def hasNext: Boolean    = engine.hasNext
   def pullNext(): Command = engine.pullNext()
 }
