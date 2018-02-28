@@ -14,11 +14,15 @@ object ScriptRunnerMsg {
 }
 
 sealed trait EngineMsg
+
 object EngineMsg {
-  case class Push(commands: List[Command])             extends EngineMsg with SupervisorMsg
   case class Pull(replyTo: ActorRef[SequencerCommand]) extends EngineMsg
   case class HasNext(replyTo: ActorRef[Boolean])       extends EngineMsg
-  case object Pause                                    extends EngineMsg
-  case object Resume                                   extends EngineMsg
-  case object Reset                                    extends EngineMsg
+
+  sealed trait ExternalEngineMsg extends EngineMsg with SupervisorMsg
+
+  case class Push(commands: List[Command]) extends ExternalEngineMsg
+  case object Pause                        extends ExternalEngineMsg
+  case object Resume                       extends ExternalEngineMsg
+  case object Reset                        extends ExternalEngineMsg
 }

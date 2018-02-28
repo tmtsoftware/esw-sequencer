@@ -3,7 +3,7 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.EngineMsg.Push
+import tmt.sequencer.EngineMsg.ExternalEngineMsg
 import tmt.sequencer.ScriptRunnerMsg.ControlCommand
 
 class SupervisorBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: ActorContext[SupervisorMsg])
@@ -14,9 +14,9 @@ class SupervisorBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: Ac
 
   override def onMessage(msg: SupervisorMsg): Behavior[SupervisorMsg] = {
     msg match {
-      case msg: ControlCommand => scriptRunnerRef ! msg
-      case msg: Push           => engineRef ! msg
-      case _                   =>
+      case msg: ControlCommand    => scriptRunnerRef ! msg
+      case msg: ExternalEngineMsg => engineRef ! msg
+      case _                      =>
     }
     this
   }
