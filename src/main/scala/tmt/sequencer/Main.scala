@@ -7,10 +7,10 @@ object Main extends App {
   val scriptFile = args.headOption.getOrElse("scripts/OcsSequencer.sc")
   val path: Path = ops.pwd / RelPath(scriptFile)
 
-  val wiring = new Wiring
+  val wiring = new Wiring(path)
   import wiring._
 
-  supervisorRef(path)
+  supervisorRef
 
   engine.pushAll(List(Command("setup-assembly1", List(1, 2))))
 

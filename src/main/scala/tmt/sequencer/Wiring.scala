@@ -9,7 +9,7 @@ import ammonite.ops.Path
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationDouble
 
-class Wiring {
+class Wiring(path: Path) {
   implicit lazy val timeout: Timeout          = Timeout(5.seconds)
   lazy val system: typed.ActorSystem[Nothing] = ActorSystem("test").toTyped
 
@@ -21,11 +21,10 @@ class Wiring {
   lazy val locationService = new LocationService(system)
   lazy val commandService  = new CommandService(locationService, engine)(system.executionContext)
 
-  def supervisorRef(path: Path): ActorRef[SupervisorMsg] = {
-    val script           = ScriptImports.load(path, commandService)
-    val supervisorFuture = system.systemActorOf(SupervisorBehavior.behavior(script, engineRef), "supervisor")
-    Await.result(supervisorFuture, timeout.duration)
-  }
+  lazy val script: Script = ScriptImports.load(path, commandService)
+
+  lazy val supervisorRef: ActorRef[SupervisorMsg] =
+    Await.result(system.systemActorOf(SupervisorBehavior.behavior(script, engineRef), "supervisor"), timeout.duration)
 
   lazy val remoteRepl = new RemoteRepl(commandService, engine)
 }
