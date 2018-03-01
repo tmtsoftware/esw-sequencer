@@ -3,7 +3,7 @@ package tmt.sequencer
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
 
-class RemoteRepl(commandService: CommandService, engine: Engine) {
+class RemoteRepl(commandService: CswServices, engine: Engine) {
 
   def server() = new SshdRepl(
     SshServerConfig(

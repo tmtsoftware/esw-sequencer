@@ -4,7 +4,7 @@ import tmt.sequencer.FutureExt.RichFuture
 
 import scala.concurrent.ExecutionContext
 
-class CommandService(locationService: LocationService, engine: Engine)(implicit ec: ExecutionContext) {
+class CswServices(locationService: LocationService, engine: Engine)(implicit ec: ExecutionContext) {
   def setup(componentName: String, command: Command): CommandResponse = {
     locationService.resolve(componentName).setup(command)
   }.await

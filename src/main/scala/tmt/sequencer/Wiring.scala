@@ -19,7 +19,7 @@ class Wiring(path: Path) {
   lazy val engine = new Engine(engineRef, system)
 
   lazy val locationService = new LocationService(system)
-  lazy val commandService  = new CommandService(locationService, engine)(system.executionContext)
+  lazy val commandService  = new CswServices(locationService, engine)(system.executionContext)
 
   lazy val script: Script = ScriptImports.load(path, commandService)
 

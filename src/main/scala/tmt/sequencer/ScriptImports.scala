@@ -10,7 +10,7 @@ object ScriptImports {
   private var tag: ClassTag[_] = _
 
   type Script         = tmt.sequencer.Script
-  type CommandService = tmt.sequencer.CommandService
+  type CommandService = tmt.sequencer.CswServices
   type Command        = tmt.sequencer.Command
   type SequencerEvent = ScriptRunnerMsg.SequencerEvent
 
