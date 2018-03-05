@@ -1,6 +1,7 @@
 package tmt.sequencer
 
 import akka.actor.typed.ActorSystem
+import tmt.sequencer.engine.CommandStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,5 +16,5 @@ case class ComponentRef(name: String) {
   }
 }
 
-case class Command(name: String, params: List[Int])
+case class Command(name: String, params: List[Int], status: CommandStatus = CommandStatus.Remaining)
 case class CommandResponse(value: String)
