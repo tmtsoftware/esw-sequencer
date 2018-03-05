@@ -17,4 +17,10 @@ case class EngineState(queue: Queue[Command]) {
 
 case class StatusResponse(processed: immutable.List[Command],
                           inProgress: immutable.List[Command],
-                          remaining: immutable.List[Command])
+                          remaining: immutable.List[Command]) {
+  override def toString: String = {
+    "Processed commands - " + processed + "\n" +
+    "In-progress commands - " + inProgress + "\n" +
+    "Remaining commands - " + remaining + "\n"
+  }
+}
