@@ -3,50 +3,43 @@ package tmt.sequencer.engine
 import org.scalatest.FunSuite
 import tmt.sequencer.Command
 
-import scala.collection.immutable.Queue
-
 class EngineStateTest extends FunSuite {
 
-  test("should return status response if queue is empty") {
-    val emptyQueue       = Queue.empty
-    val emptyList        = List.empty
-    val engineState      = EngineState(emptyQueue)
-    val expectedResponse = StatusResponse(emptyList, emptyList, emptyList)
+  test("should return all the processed commands") {
 
-    val actualResponse = engineState.statusQuery()
+    val processedCommand = Command("processed-setup", List(1, 2)), CommandStatus.Processed, Position(1))
+    val commands = List(
+      processedCommand,
+      Command("remaining-setup", List(1, 2)), CommandStatus.Remaining, Position(2))
+    )
+    val engineState      = EngineState.from(commands)
+    val expectedResponse = List(processedCommand)
 
-    assert(expectedResponse === actualResponse)
-  }
-
-  test("should return status response if queue has processed, inprogress, remaining commands") {
-    val processedCommand  = Command("processed-setup", List(1, 2), CommandStatus.Processed)
-    val inProgressCommand = Command("inprogressd-setup", List(1, 2), CommandStatus.InProgress)
-    val remainingCommand  = Command("remaining-setup", List(1, 2))
-    val commands          = List(processedCommand, inProgressCommand, remainingCommand)
-    val queue             = Queue.empty
-    val engineState       = EngineState(queue.enqueue(commands))
-
-    val expectedResponse = StatusResponse(List(processedCommand),
-                                          List(inProgressCommand),
-                                          List(Command("remaining-setup", List(1, 2), CommandStatus.Remaining)))
-
-    val actualResponse = engineState.statusQuery()
+    val actualResponse = engineState.processed
 
     assert(expectedResponse === actualResponse)
   }
 
-  test("should return status response if queue has only remaining commands") {
-    val remainingCommand1 = Command("remaining-setup1", List(1, 2))
-    val remainingCommand2 = Command("remaining-setup2", List(1, 2))
-    val commands          = List(remainingCommand1, remainingCommand2)
-    val queue             = Queue.empty
-    val engineState       = EngineState(queue.enqueue(commands))
+  test("should insert command at position 4") {
 
-    val expectedResponse =
-      StatusResponse(List.empty, List.empty, commands)
+    val processedCommand  = Command("processed-setup", List(1, 2))
+    val inProgressCommand = Command("inprogress-setup", List(1, 2))
+    val remainingCommand1 = Command("remaining-setup", List(1, 2))
+    val remainingCommand2 = Command("remaining-setup", List(1, 2))
 
-    val actualResponse = engineState.statusQuery()
+    val commands = List(
+      processedCommand,
+      inProgressCommand,
+      remainingCommand1,
+      remainingCommand2
+    )
 
-    assert(expectedResponse === actualResponse)
+    val positionToUpsert  = Position(4)
+    val commandToUpsert   = EngineCommand(Command("upcoming-command", List(1, 2)), CommandStatus.Remaining, positionToUpsert)
+    val actualEngineState = EngineState.from(commands).upsert(commandToUpsert)
+    val expectedEngineState =
+      EngineState.from(List(processedCommand, inProgressCommand, remainingCommand1, Command("upcoming-command", List(1, 2))))
+
+    assert(actualEngineState === expectedEngineState)
   }
 }
