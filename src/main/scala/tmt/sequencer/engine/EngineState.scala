@@ -3,6 +3,8 @@ package tmt.sequencer.engine
 import tmt.sequencer.Command
 
 case class EngineState(data: Map[Position, EngineCommand], breakPoints: Set[Position], isPaused: Boolean) {
+  require(breakPoints subsetOf data.keys.toSet, "breakpoints and data are out of sync")
+
   //query
   def commands: List[EngineCommand] = {
     data.toList
@@ -10,48 +12,39 @@ case class EngineState(data: Map[Position, EngineCommand], breakPoints: Set[Posi
       .map { case (_, engineCommand) => engineCommand }
   }
 
-  def processed: List[EngineCommand]  = commands.filter(_.status == CommandStatus.Processed)
-  def inProgress: List[EngineCommand] = commands.filter(_.status == CommandStatus.InProgress)
+  def processed: List[EngineCommand]  = commands.filter(_.status == CommandStatus.Finished)
+  def inProgress: List[EngineCommand] = commands.filter(_.status == CommandStatus.InFlight)
   def remaining: List[EngineCommand]  = commands.filter(_.status == CommandStatus.Remaining)
 
   def hasNext: Boolean = remaining.nonEmpty && !isPaused
 
-  def currentPosition: Option[Position] = {
-    inProgress.lastOption.orElse(processed.lastOption).orElse(remaining.headOption).map(_.position)
-  }
-
   //update
-  private def update(command: EngineCommand): EngineState = copy(data + (command.position -> command))
-
-  private def isValid(position: Position) = currentPosition match {
-    case Some(minValidPos) if position.value > minValidPos.value =>
-      true
-    case _ => false //No-Op TODO could be exception
-  }
-
   def upsert(command: EngineCommand): EngineState = {
-    if (isValid(command.position)) {
-      update(command)
-    } else this
+    if (isValidToOperateOn(command.position)) copy(data + (command.position -> command)) else this
   }
 
   def deleteAt(position: Position): EngineState = {
-    if (isValid(position)) {
-      copy(data - position).removeBreakpoint(position)
-    } else this
+    if (isValidToOperateOn(position)) copy(data - position).removeBreakpoint(position) else this
   }
 
   def addBreakpoint(position: Position): EngineState = {
-    if (isValid(position)) {
-      copy(breakPoints = breakPoints + position)
-    } else this
+    if (isValidToOperateOn(position)) copy(breakPoints = breakPoints + position) else this
   }
 
-  def removeBreakpoint(position: Position): EngineState =
-    copy(breakPoints = breakPoints - position)
+  def removeBreakpoint(position: Position): EngineState = copy(breakPoints = breakPoints - position)
 
-  def pause(): EngineState  = copy(isPaused = true)
+  def pause(): EngineState = copy(isPaused = true)
+
   def resume(): EngineState = copy(isPaused = false)
+
+  private def isValidToOperateOn(position: Position) = nextAvailablePosition match {
+    case Some(minValidPos) if position.value >= minValidPos.value => true
+    case _                                                        => false //No-Op TODO could be exception
+  }
+
+  private def nextAvailablePosition: Option[Position] = {
+    remaining.headOption.map(_.position)
+  }
 }
 
 object EngineState {

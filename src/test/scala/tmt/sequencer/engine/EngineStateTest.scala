@@ -7,12 +7,12 @@ class EngineStateTest extends FunSuite {
 
   test("should return all the processed commands") {
 
-    val processedCommand = Command("processed-setup", List(1, 2)), CommandStatus.Processed, Position(1))
+    val processedCommand = EngineCommand(Command("processed-setup", List(1, 2)), CommandStatus.Finished, Position(1))
     val commands = List(
       processedCommand,
-      Command("remaining-setup", List(1, 2)), CommandStatus.Remaining, Position(2))
+      EngineCommand(Command("remaining-setup", List(1, 2)), CommandStatus.Remaining, Position(3))
     )
-    val engineState      = EngineState.from(commands)
+    val engineState      = EngineState(commands.map(x => x.position -> x).toMap, Set.empty, isPaused = false)
     val expectedResponse = List(processedCommand)
 
     val actualResponse = engineState.processed

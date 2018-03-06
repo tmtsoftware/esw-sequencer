@@ -4,9 +4,9 @@ sealed trait CommandStatus
 
 object CommandStatus {
 
-  case object Processed extends CommandStatus
+  case object Finished extends CommandStatus
 
-  case object InProgress extends CommandStatus
+  case object InFlight extends CommandStatus
 
   case object Remaining extends CommandStatus
 
