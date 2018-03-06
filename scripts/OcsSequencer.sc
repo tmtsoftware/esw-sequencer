@@ -6,18 +6,18 @@ init[OcsSequencer]
 class OcsSequencer(cs: CommandService) extends Script(cs) {
 
   override def onSetup(command: Command): Unit = {
-    if (command.name == "setup-assembly1") {
+    if (command.id == "setup-assembly1") {
       println(cs.setup("assembly1", command))
     }
-    else if (command.name == "setup-assembly2") {
+    else if (command.id == "setup-assembly2") {
       println(cs.setup("assembly2", command))
     }
-    else if (command.name == "setup-assemblies-sequential") {
+    else if (command.id == "setup-assemblies-sequential") {
       val (params1, params2) = cs.split(command.params)
       println(cs.setup("assembly1", Command("setup-assembly1", params1)))
       println(cs.setup("assembly2", Command("setup-assembly2", params2)))
     }
-    else if (command.name == "setup-assemblies-parallel") {
+    else if (command.id == "setup-assemblies-parallel") {
       val (params1, params2) = cs.split(command.params)
       val responses = par(
         cs.setup("assembly1", Command("setup-assembly1", params1)),

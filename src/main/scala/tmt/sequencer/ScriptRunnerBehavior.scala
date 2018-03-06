@@ -19,10 +19,10 @@ class ScriptRunnerBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: 
   override def onMessage(msg: ScriptRunnerMsg): Behavior[ScriptRunnerMsg] = {
     msg match {
       case SequencerCommand(command) =>
-        def run(): Unit = command.name match {
-          case x if x.startsWith("setup-")   => script.onSetup(command)
-          case x if x.startsWith("observe-") => script.onObserve(command)
-          case x                             => println("unknown command")
+        def run(): Unit = command.id match {
+          case x if x.value.startsWith("setup-")   => script.onSetup(command)
+          case x if x.value.startsWith("observe-") => script.onObserve(command)
+          case x                                   => println("unknown command")
         }
         Future(concurrent.blocking(run())).onComplete {
           case Success(value) => engineRef ! Pull(ctx.self)

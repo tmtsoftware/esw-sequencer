@@ -1,56 +1,37 @@
 package tmt.sequencer.engine
 
-import tmt.sequencer.Command
+import tmt.sequencer.{Command, Id}
 
-case class EngineState(data: Map[Position, EngineCommand], breakPoints: Set[Position], isPaused: Boolean) {
-  require(breakPoints subsetOf data.keys.toSet, "breakpoints and data are out of sync")
+case class EngineState(commands: List[EngineCommand], breakPoints: Set[Id], isPaused: Boolean) {
+  require(breakPoints subsetOf commands.map(_.command.id).toSet, "breakpoints and data are out of sync")
 
-  //query
-  def commands: List[EngineCommand] = {
-    data.toList
-      .sortBy { case (position, _) => position.value }
-      .map { case (_, engineCommand) => engineCommand }
-  }
-
-  def processed: List[EngineCommand]  = commands.filter(_.status == CommandStatus.Finished)
-  def inProgress: List[EngineCommand] = commands.filter(_.status == CommandStatus.InFlight)
-  def remaining: List[EngineCommand]  = commands.filter(_.status == CommandStatus.Remaining)
-
-  def hasNext: Boolean = remaining.nonEmpty && !isPaused
+  def hasNext: Boolean = commands.exists(_.status == CommandStatus.Remaining) && !isPaused
 
   //update
-  def upsert(command: EngineCommand): EngineState = {
-    if (isValidToOperateOn(command.position)) copy(data + (command.position -> command)) else this
+  def insertAfter(id: Id, command: Command): EngineState = insertAfter(_.command.id != id, command)
+  def prepend(command: Command): EngineState             = insertAfter(_.status != CommandStatus.Remaining, command)
+  def append(command: Command): EngineState              = copy(commands = commands :+ EngineCommand.from(command))
+  def delete(id: Id): EngineState = {
+    val (pre, post) = commands.span(_.command.id != id)
+    copy(commands = pre ::: post.tail).removeBreakpoint(id)
+  }
+  def replace(id: Id, command: Command): EngineState = insertAfter(id, command).delete(id)
+
+  private def insertAfter(predicate: EngineCommand => Boolean, command: Command): EngineState = {
+    val (pre, post) = commands.span(predicate)
+    val newCommands = pre ::: post.headOption.toList ::: (EngineCommand.from(command) :: post.tail)
+    copy(commands = newCommands)
   }
 
-  def deleteAt(position: Position): EngineState = {
-    if (isValidToOperateOn(position)) copy(data - position).removeBreakpoint(position) else this
+  def addBreakpoint(id: Id): EngineState = {
+    val validCommandToOperateOn =
+      commands.exists(engineCommand => (engineCommand.command.id == id) && (engineCommand.status == CommandStatus.Remaining))
+    if (validCommandToOperateOn) copy(breakPoints = breakPoints + id) else this
   }
 
-  def addBreakpoint(position: Position): EngineState = {
-    if (isValidToOperateOn(position)) copy(breakPoints = breakPoints + position) else this
-  }
-
-  def removeBreakpoint(position: Position): EngineState = copy(breakPoints = breakPoints - position)
+  def removeBreakpoint(id: Id): EngineState = copy(breakPoints = breakPoints - id)
 
   def pause(): EngineState = copy(isPaused = true)
 
   def resume(): EngineState = copy(isPaused = false)
-
-  private def isValidToOperateOn(position: Position) = nextAvailablePosition match {
-    case Some(minValidPos) if position.value >= minValidPos.value => true
-    case _                                                        => false //No-Op TODO could be exception
-  }
-
-  private def nextAvailablePosition: Option[Position] = {
-    remaining.headOption.map(_.position)
-  }
 }
-
-object EngineState {
-  def from(commands: List[Command]): EngineState = {
-    EngineState(EngineCommand.from(commands).map(x => x.position -> x).toMap, Set.empty, isPaused = false)
-  }
-}
-
-case class Position(value: Int)
