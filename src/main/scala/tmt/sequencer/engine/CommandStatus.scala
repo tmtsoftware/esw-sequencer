@@ -8,6 +8,6 @@ object CommandStatus {
 
   case object InFlight extends CommandStatus
 
-  case object Remaining extends CommandStatus
+  case object Pending extends CommandStatus
 
 }
