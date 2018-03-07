@@ -1,8 +1,8 @@
 package tmt.sequencer
 
-import akka.actor.{typed, ActorSystem}
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
+import akka.actor.{typed, ActorSystem}
 import akka.util.Timeout
 import ammonite.ops.Path
 import tmt.sequencer.models.{EngineMsg, SupervisorMsg}

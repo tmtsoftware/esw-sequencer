@@ -48,4 +48,5 @@ case class StepStore(steps: List[Step]) { outer =>
 
 object StepStore {
   def from(commands: List[Command]): StepStore = StepStore(commands.map(Step.from))
+  def empty                                    = StepStore(List.empty)
 }

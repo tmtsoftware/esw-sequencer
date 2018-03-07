@@ -1,7 +1,7 @@
 package tmt.sequencer
 
 import tmt.sequencer.FutureExt.RichFuture
-import tmt.sequencer.models.{Command, CommandResult}
+import tmt.sequencer.models.{Command, CommandResult, Step}
 
 import scala.concurrent.ExecutionContext
 
@@ -12,6 +12,6 @@ class CswServices(locationService: LocationService, engine: Engine)(implicit ec:
 
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
 
-  def hasNext: Boolean    = engine.hasNext
-  def pullNext(): Command = engine.pullNext()
+  def hasNext: Boolean = engine.hasNext
+  def pullNext(): Step = engine.pullNext()
 }

@@ -3,48 +3,38 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.{Command, EngineMsg}
 import tmt.sequencer.models.EngineMsg._
 import tmt.sequencer.models.ScriptRunnerMsg.SequencerCommand
-
-import scala.collection.immutable.Queue
+import tmt.sequencer.models.{EngineMsg, StepStore}
 
 class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[EngineMsg] {
 
-  var queue: Queue[Command]                   = Queue.empty
   var ref: Option[ActorRef[SequencerCommand]] = None
-  var paused: Boolean                         = false
+  var stepStore: StepStore                    = StepStore.empty
 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
-      case Push(xs) if ref.isEmpty || paused =>
-        queue = queue.enqueue(xs)
       case Push(xs) =>
-        xs match {
-          case head :: tail =>
-            ref.foreach(_ ! SequencerCommand(head))
-            ref = None
-            queue = queue.enqueue(tail)
-          case Nil => //No-Op
+        xs.foreach(command => stepStore = stepStore.append(command))
+        if (stepStore.hasNext) {
+          ref.foreach(x => stepStore.next.foreach(y => x ! SequencerCommand(y)))
+          ref = None
         }
-      case Pull(replyTo) if hasNext =>
-        val (elm, q) = queue.dequeue
-        replyTo ! SequencerCommand(elm)
-        queue = q
-      case Pull(replyTo)    => ref = Some(replyTo)
-      case HasNext(replyTo) => replyTo ! hasNext
-      case Pause            => paused = true
+      case Pull(replyTo) if stepStore.hasNext => replyTo ! SequencerCommand(stepStore.next.get)
+      case Pull(replyTo)                      => ref = Some(replyTo)
+      case HasNext(replyTo)                   => replyTo ! stepStore.hasNext
+      case Pause                              => stepStore = stepStore.pause()
       case Resume =>
-        paused = false
+        stepStore = stepStore.resume()
         ref.foreach(x => ctx.self ! Pull(x))
         ref = None
-      case Reset =>
-        queue = Queue.empty
+      case Reset => //TODO
+      case updateStepStatusAndPullNext(stepId, stepStatus, replyTo) =>
+        stepStore = stepStore.updateStatus(stepId, stepStatus)
+        ctx.self ! Pull(replyTo)
     }
     this
   }
-
-  def hasNext: Boolean = queue.nonEmpty && !paused
 }
 
 object EngineBehaviour {

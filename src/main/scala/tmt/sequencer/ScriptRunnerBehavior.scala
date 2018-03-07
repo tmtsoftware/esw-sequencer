@@ -3,8 +3,8 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.EngineMsg.Pull
-import tmt.sequencer.models.{CommandResult, EngineMsg, ScriptRunnerMsg}
+import tmt.sequencer.models.EngineMsg.{updateStepStatusAndPullNext, Pull}
+import tmt.sequencer.models._
 import tmt.sequencer.models.ScriptRunnerMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 
 import scala.concurrent.Future
@@ -19,14 +19,14 @@ class ScriptRunnerBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: 
 
   override def onMessage(msg: ScriptRunnerMsg): Behavior[ScriptRunnerMsg] = {
     msg match {
-      case SequencerCommand(command) =>
-        def run(): CommandResult = command.id match {
-          case x if x.value.startsWith("setup-")   => script.onSetup(command)
-          case x if x.value.startsWith("observe-") => script.onObserve(command)
+      case SequencerCommand(step: Step) =>
+        def run(): CommandResult = step.id match {
+          case x if x.value.startsWith("setup-")   => script.onSetup(step.command)
+          case x if x.value.startsWith("observe-") => script.onObserve(step.command)
           case x                                   => CommandResult.Failed("unknown command")
         }
         Future(concurrent.blocking(run())).onComplete {
-          case Success(value) => engineRef ! Pull(ctx.self)
+          case Success(value) => engineRef ! updateStepStatusAndPullNext(step.id, StepStatus.Finished(value), ctx.self)
           case Failure(ex)    =>
         }
       case ControlCommand("shutdown") =>
