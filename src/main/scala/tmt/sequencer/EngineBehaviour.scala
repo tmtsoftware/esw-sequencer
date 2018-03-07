@@ -15,7 +15,7 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
       case Push(xs) =>
-        xs.foreach(command => stepStore = stepStore.append(command))
+        stepStore = stepStore.append(xs)
         if (stepStore.hasNext) {
           ref.foreach(x => stepStore.next.foreach(y => x ! SequencerCommand(y)))
           ref = None
