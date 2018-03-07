@@ -14,13 +14,13 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
-      case Push(commands)                   => stepStore = stepStore.append(commands)
-      case Pull(replyTo)                    => if (stepStore.hasNext) replyTo ! SequencerCommand(stepStore.next.get) else refOpt = Some(replyTo)
       case HasNext(replyTo)                 => replyTo ! stepStore.hasNext
+      case Pull(replyTo)                    => sendNext(replyTo)
+      case UpdateStatus(stepId, stepStatus) => stepStore = stepStore.updateStatus(stepId, stepStatus)
+      case Push(commands)                   => stepStore = stepStore.append(commands)
       case Pause                            => stepStore = stepStore.pause
       case Resume                           => stepStore = stepStore.resume
       case Reset                            => stepStore = stepStore.reset
-      case UpdateStatus(stepId, stepStatus) => stepStore = stepStore.updateStatus(stepId, stepStatus)
       case Replace(stepId, commands)        => stepStore = stepStore.replace(stepId, commands)
       case Prepend(commands)                => stepStore = stepStore.prepend(commands)
       case Delete(ids)                      => stepStore = stepStore.delete(ids.toSet)
@@ -32,15 +32,24 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
     this
   }
 
-  def trySend(): Unit =
+  def sendNext(replyTo: ActorRef[SequencerCommand]): Unit = {
+    if (stepStore.hasNext) {
+      replyTo ! SequencerCommand(stepStore.next.get)
+    } else {
+      refOpt = Some(replyTo)
+    }
+  }
+
+  def trySend(): Unit = {
     for {
       ref <- refOpt
-      if !stepStore.isPaused
+      if !stepStore.hasNext
       step <- stepStore.next
     } {
       ref ! SequencerCommand(step)
       refOpt = None
     }
+  }
 }
 
 object EngineBehaviour {

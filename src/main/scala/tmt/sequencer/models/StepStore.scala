@@ -26,7 +26,7 @@ case class StepStore(steps: List[Step]) { outer =>
     copy(pre ::: post.headOption.toList ::: newSteps ::: post.tail)
   }
 
-  def reset: StepStore = copy(steps.takeWhile(_.isPending))
+  def reset: StepStore = copy(steps.filterNot(_.isPending))
 
   def addBreakpoints(ids: List[Id]): StepStore                = transformAll(ids, _.addBreakpoint())
   def removeBreakpoints(ids: List[Id]): StepStore             = transformAll(ids, _.removeBreakpoint())
