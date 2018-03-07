@@ -2,7 +2,7 @@ package tmt.sequencer
 
 import ammonite.ops
 import ammonite.ops.{Path, RelPath}
-import tmt.sequencer.engine.CommandStatus
+import tmt.sequencer.engine.StepStatus
 
 object Main extends App {
   val scriptFile = args.headOption.getOrElse("scripts/OcsSequencer.sc")
