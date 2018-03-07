@@ -2,7 +2,7 @@ package tmt.sequencer.engine
 
 import tmt.sequencer.{Command, Id}
 
-case class StepStore(steps: List[Step]) {
+case class StepStore(steps: List[Step]) { outer =>
 
   //query
 
@@ -24,7 +24,7 @@ case class StepStore(steps: List[Step]) {
   }
 
   def insertAfter(id: Id, command: Command): StepStore      = insertAfter(id, Step.from(command))
-  private def insertAfter(id: Id, command: Step): StepStore = insert(_.hasId(id), command)
+  private def insertAfter(id: Id, command: Step): StepStore = insert(_.id == id, command)
 
   private def insert(after: Step => Boolean, engineCommand: Step): StepStore = {
     val (pre, post) = steps.span(x => !after(x))
@@ -36,18 +36,14 @@ case class StepStore(steps: List[Step]) {
   def removeBreakpoint(id: Id): StepStore                     = transform(id, _.removeBreakpoint())
   def updateStatus(id: Id, stepStatus: StepStatus): StepStore = transform(id, _.withStatus(stepStatus))
 
+  def pause(): StepStore  = next.map(step => transform(step.id, _.addBreakpoint())).flat
+  def resume(): StepStore = next.map(step => transform(step.id, _.removeBreakpoint())).flat
+
   private def transform(id: Id, f: Step => Step): StepStore = {
-    steps.find(x => x.hasId(id) && x.isPending) match {
-      case Some(engineCommand) => replace(id, f(engineCommand))
-      case None                => this
-    }
+    steps.find(step => step.id == id && step.isPending).map(step => replace(id, f(step))).flat
   }
 
-  def pause(): StepStore  = updateStep(addBreakpoint)
-  def resume(): StepStore = updateStep(removeBreakpoint)
-
-  private def updateStep(f: Id => StepStore): StepStore = next match {
-    case Some(engineCommand) => f(engineCommand.command.id)
-    case None                => this
+  private implicit class StepOps(optStep: Option[StepStore]) {
+    def flat: StepStore = optStep.getOrElse(outer)
   }
 }
