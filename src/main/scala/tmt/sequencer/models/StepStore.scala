@@ -21,7 +21,7 @@ case class StepStore(steps: List[Step]) { outer =>
     pre ::: post.tail
   }
 
-  def deleteAll(ids: List[Id]): StepStore = {
+  def delete(ids: List[Id]): StepStore = {
     copy(steps = ids.flatMap(delete))
   }
 
@@ -34,8 +34,8 @@ case class StepStore(steps: List[Step]) { outer =>
     copy(steps = newCommands)
   }
 
-  def addBreakpoint(ids: List[Id]): StepStore                 = copy(steps = ids.flatMap(id => transform(id, _.addBreakpoint())))
-  def removeBreakpoint(ids: List[Id]): StepStore              = copy(steps = ids.flatMap(id => transform(id, _.removeBreakpoint())))
+  def addBreakpoints(ids: List[Id]): StepStore                = copy(steps = ids.flatMap(id => transform(id, _.addBreakpoint())))
+  def removeBreakpoints(ids: List[Id]): StepStore             = copy(steps = ids.flatMap(id => transform(id, _.removeBreakpoint())))
   def updateStatus(id: Id, stepStatus: StepStatus): StepStore = copy(steps = transform(id, _.withStatus(stepStatus)))
 
   def pause(): StepStore  = next.map(step => copy(steps = transform(step.id, _.addBreakpoint()))).flat

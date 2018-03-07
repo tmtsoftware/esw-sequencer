@@ -14,8 +14,8 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
-      case Push(xs) =>
-        stepStore = stepStore.append(xs)
+      case Push(commands) =>
+        stepStore = stepStore.append(commands)
         if (stepStore.hasNext) {
           ref.foreach(x => stepStore.next.foreach(y => x ! SequencerCommand(y)))
           ref = None
@@ -29,9 +29,16 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
         ref.foreach(x => ctx.self ! Pull(x))
         ref = None
       case Reset => //TODO
-      case updateStepStatusAndPullNext(stepId, stepStatus, replyTo) =>
+      case UpdateStepStatusAndPullNext(stepId, stepStatus, replyTo) =>
         stepStore = stepStore.updateStatus(stepId, stepStatus)
         ctx.self ! Pull(replyTo)
+      case Replace(stepId, commands) => stepStore = stepStore.replace(stepId, commands)
+      case Prepend(commands)         => stepStore = stepStore.prepend(commands)
+      case Append(commands)          => stepStore = stepStore.append(commands)
+      case Delete(ids)               => stepStore = stepStore.delete(ids)
+      case InsertAfter(id, commands) => stepStore = stepStore.insertAfter(id, commands)
+      case AddBreakpoints(ids)       => stepStore = stepStore.addBreakpoints(ids)
+      case RemoveBreakpoints(ids)    => stepStore = stepStore.removeBreakpoints(ids)
     }
     this
   }
