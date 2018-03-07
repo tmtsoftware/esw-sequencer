@@ -28,7 +28,7 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
         stepStore = stepStore.resume()
         ref.foreach(x => ctx.self ! Pull(x))
         ref = None
-      case Reset => //TODO
+      case Reset => stepStore = stepStore.reset
       case UpdateStepStatusAndPullNext(stepId, stepStatus, replyTo) =>
         stepStore = stepStore.updateStatus(stepId, stepStatus)
         ctx.self ! Pull(replyTo)

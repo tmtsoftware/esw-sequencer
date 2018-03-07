@@ -34,6 +34,11 @@ case class StepStore(steps: List[Step]) { outer =>
     copy(steps = newCommands)
   }
 
+  def reset: StepStore = {
+    val (pre, _) = steps.span(x => x.isPending)
+    copy(steps = pre) //Validate - As post steps are ignored from steps no need to take care of breakpoints
+  }
+
   def addBreakpoints(ids: List[Id]): StepStore                = copy(steps = ids.flatMap(id => transform(id, _.addBreakpoint())))
   def removeBreakpoints(ids: List[Id]): StepStore             = copy(steps = ids.flatMap(id => transform(id, _.removeBreakpoint())))
   def updateStatus(id: Id, stepStatus: StepStatus): StepStore = copy(steps = transform(id, _.withStatus(stepStatus)))
