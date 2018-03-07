@@ -1,12 +1,12 @@
 package tmt.sequencer
 
 import tmt.sequencer.FutureExt.RichFuture
-import tmt.sequencer.models.{Command, CommandResponse}
+import tmt.sequencer.models.{Command, CommandResult}
 
 import scala.concurrent.ExecutionContext
 
 class CswServices(locationService: LocationService, engine: Engine)(implicit ec: ExecutionContext) {
-  def setup(componentName: String, command: Command): CommandResponse = {
+  def setup(componentName: String, command: Command): CommandResult = {
     locationService.resolve(componentName).setup(command)
   }.await
 

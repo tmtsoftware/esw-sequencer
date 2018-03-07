@@ -45,3 +45,7 @@ case class StepStore(steps: List[Step]) { outer =>
     def flat: StepStore = optStep.getOrElse(outer)
   }
 }
+
+object StepStore {
+  def from(commands: List[Command]): StepStore = StepStore(commands.map(Step.from))
+}

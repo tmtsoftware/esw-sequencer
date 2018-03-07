@@ -15,11 +15,11 @@ object Step {
 sealed trait StepStatus
 
 object StepStatus {
-  case object Pending                          extends StepStatus
-  case object InFlight                         extends StepStatus
-  case class Finished(result: CommandResponse) extends StepStatus
+  case object Pending                        extends StepStatus
+  case object InFlight                       extends StepStatus
+  case class Finished(result: CommandResult) extends StepStatus
 }
 
 case class Id(value: String)
 case class Command(id: Id, params: List[Int])
-case class CommandResponse(value: String)
+case class CommandResult(value: String)
