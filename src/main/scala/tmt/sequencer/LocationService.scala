@@ -12,6 +12,6 @@ class LocationService(actorSystem: ActorSystem[_]) {
 case class ComponentRef(name: String) {
   def setup(command: Command)(implicit ec: ExecutionContext): Future[CommandResult] = Future {
     println(s"received $command by component=$name")
-    CommandResult(s"result of $command from component=$name")
+    CommandResult.Single(s"result of $command from component=$name")
   }
 }

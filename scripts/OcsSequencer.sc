@@ -1,39 +1,44 @@
 import tmt.sequencer.ScriptImports._
 import $file.helpers
 
+import scala.collection.mutable
+
 init[OcsSequencer]
 
 class OcsSequencer(cs: CommandService) extends Script(cs) {
 
-  override def onSetup(command: Command): Unit = {
-    if (command.id == "setup-assembly1") {
-      println(cs.setup("assembly1", command))
+  var results: mutable.Buffer[CommandResult] = mutable.Buffer.empty
+
+  override def onSetup(command: Command): CommandResult = {
+    if (command.id.value == "setup-assembly1") {
+      val result = cs.setup("assembly1", command)
+      results += result
+      println(result)
+      result
     }
-    else if (command.id == "setup-assembly2") {
-      println(cs.setup("assembly2", command))
-    }
-    else if (command.id == "setup-assemblies-sequential") {
+    else if (command.id.value == "setup-assemblies-parallel") {
       val (params1, params2) = cs.split(command.params)
-      println(cs.setup("assembly1", Command("setup-assembly1", params1)))
-      println(cs.setup("assembly2", Command("setup-assembly2", params2)))
-    }
-    else if (command.id == "setup-assemblies-parallel") {
-      val (params1, params2) = cs.split(command.params)
-      val responses = par(
-        cs.setup("assembly1", Command("setup-assembly1", params1)),
-        cs.setup("assembly2", Command("setup-assembly2", params2))
+      val _results = par(
+        cs.setup("assembly1", Command(Id("setup-assembly1"), params1)),
+        cs.setup("assembly2", Command(Id("setup-assembly2"), params2))
       )
-      println(responses)
+      val result = CommandResult.Multiple(_results)
+      println(result)
+      results += result
+      result
     }
     else {
       println(s"unknown command=$command")
+      CommandResult.Empty
     }
   }
 
 
-  override def onObserve(x: Command): Unit = {
+  override def onObserve(x: Command): CommandResult = {
     println("observe")
-    println(helpers.square(99))
+    val x = helpers.square(99)
+    println(x)
+    CommandResult.Single(x.toString)
   }
 
   override def onShutdown(): Unit = {

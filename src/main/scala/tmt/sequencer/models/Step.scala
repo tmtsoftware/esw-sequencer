@@ -22,4 +22,12 @@ object StepStatus {
 
 case class Id(value: String)
 case class Command(id: Id, params: List[Int])
-case class CommandResult(value: String)
+
+sealed trait CommandResult
+
+object CommandResult {
+  case class Single(value: String)                extends CommandResult
+  case class Failed(value: String)                extends CommandResult
+  case class Multiple(values: Seq[CommandResult]) extends CommandResult
+  case object Empty                               extends CommandResult
+}

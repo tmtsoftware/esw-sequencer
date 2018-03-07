@@ -12,10 +12,16 @@ object ScriptImports {
 
   type Script         = tmt.sequencer.Script
   type CommandService = tmt.sequencer.CswServices
-  type Command        = tmt.sequencer.models.Command
   type SequencerEvent = ScriptRunnerMsg.SequencerEvent
 
+  type Command = tmt.sequencer.models.Command
   val Command = tmt.sequencer.models.Command
+
+  type CommandResult = tmt.sequencer.models.CommandResult
+  val CommandResult = tmt.sequencer.models.CommandResult
+
+  type Id = tmt.sequencer.models.Id
+  val Id = tmt.sequencer.models.Id
 
   private[tmt] def load(path: Path, cs: CommandService): Script = synchronized {
     ammonite.Main().runScript(path, Seq.empty) match {
