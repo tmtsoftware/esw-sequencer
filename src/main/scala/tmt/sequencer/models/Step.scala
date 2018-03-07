@@ -1,6 +1,4 @@
-package tmt.sequencer.engine
-
-import tmt.sequencer.{Command, Id}
+package tmt.sequencer.models
 
 case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
   def id: Id                                  = command.id
@@ -13,3 +11,15 @@ case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
 object Step {
   def from(command: Command) = Step(command, StepStatus.Pending, hasBreakpoint = false)
 }
+
+sealed trait StepStatus
+
+object StepStatus {
+  case object Pending                          extends StepStatus
+  case object InFlight                         extends StepStatus
+  case class Finished(result: CommandResponse) extends StepStatus
+}
+
+case class Id(value: String)
+case class Command(id: Id, params: List[Int])
+case class CommandResponse(value: String)

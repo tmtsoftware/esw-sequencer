@@ -4,8 +4,9 @@ import akka.actor.Scheduler
 import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.util.Timeout
-import tmt.sequencer.EngineMsg._
+import tmt.sequencer.models.EngineMsg._
 import tmt.sequencer.FutureExt.RichFuture
+import tmt.sequencer.models.{Command, EngineMsg}
 
 import scala.concurrent.duration.DurationLong
 

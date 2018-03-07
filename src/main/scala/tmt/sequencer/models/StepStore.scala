@@ -1,6 +1,4 @@
-package tmt.sequencer.engine
-
-import tmt.sequencer.{Command, Id}
+package tmt.sequencer.models
 
 case class StepStore(steps: List[Step]) { outer =>
 
@@ -26,9 +24,9 @@ case class StepStore(steps: List[Step]) { outer =>
   def insertAfter(id: Id, command: Command): StepStore      = insertAfter(id, Step.from(command))
   private def insertAfter(id: Id, command: Step): StepStore = insert(_.id == id, command)
 
-  private def insert(after: Step => Boolean, engineCommand: Step): StepStore = {
+  private def insert(after: Step => Boolean, step: Step): StepStore = {
     val (pre, post) = steps.span(x => !after(x))
-    val newCommands = pre ::: post.headOption.toList ::: (engineCommand :: post.tail)
+    val newCommands = pre ::: post.headOption.toList ::: (step :: post.tail)
     copy(steps = newCommands)
   }
 

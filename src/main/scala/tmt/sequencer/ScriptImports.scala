@@ -2,6 +2,7 @@ package tmt.sequencer
 
 import ammonite.ops.Path
 import tmt.sequencer
+import tmt.sequencer.models.ScriptRunnerMsg
 
 import scala.reflect.{classTag, ClassTag}
 
@@ -11,10 +12,10 @@ object ScriptImports {
 
   type Script         = tmt.sequencer.Script
   type CommandService = tmt.sequencer.CswServices
-  type Command        = tmt.sequencer.Command
+  type Command        = tmt.sequencer.models.Command
   type SequencerEvent = ScriptRunnerMsg.SequencerEvent
 
-  val Command = tmt.sequencer.Command
+  val Command = tmt.sequencer.models.Command
 
   private[tmt] def load(path: Path, cs: CommandService): Script = synchronized {
     ammonite.Main().runScript(path, Seq.empty) match {

@@ -5,6 +5,7 @@ import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.util.Timeout
 import ammonite.ops.Path
+import tmt.sequencer.models.{EngineMsg, SupervisorMsg}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationDouble

@@ -1,6 +1,7 @@
 package tmt.sequencer
 
 import tmt.sequencer.FutureExt.RichFuture
+import tmt.sequencer.models.{Command, CommandResponse}
 
 import scala.concurrent.ExecutionContext
 

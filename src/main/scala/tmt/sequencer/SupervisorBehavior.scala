@@ -3,8 +3,9 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.EngineMsg.ExternalEngineMsg
-import tmt.sequencer.ScriptRunnerMsg.ControlCommand
+import tmt.sequencer.models.EngineMsg.ExternalEngineMsg
+import tmt.sequencer.models.ScriptRunnerMsg.ControlCommand
+import tmt.sequencer.models.{EngineMsg, ScriptRunnerMsg, SupervisorMsg}
 
 class SupervisorBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: ActorContext[SupervisorMsg])
     extends MutableBehavior[SupervisorMsg] {

@@ -3,8 +3,9 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.EngineMsg._
-import tmt.sequencer.ScriptRunnerMsg.SequencerCommand
+import tmt.sequencer.models.{Command, EngineMsg}
+import tmt.sequencer.models.EngineMsg._
+import tmt.sequencer.models.ScriptRunnerMsg.SequencerCommand
 
 import scala.collection.immutable.Queue
 

@@ -1,6 +1,7 @@
 package tmt.sequencer
 
 import akka.actor.typed.ActorSystem
+import tmt.sequencer.models.{Command, CommandResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -14,7 +15,3 @@ case class ComponentRef(name: String) {
     CommandResponse(s"result of $command from component=$name")
   }
 }
-
-case class Id(value: String)
-case class Command(id: Id, params: List[Int])
-case class CommandResponse(value: String)

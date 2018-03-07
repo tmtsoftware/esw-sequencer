@@ -2,6 +2,7 @@ package tmt.sequencer
 
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
+import tmt.sequencer.models.Command
 
 class RemoteRepl(commandService: CswServices, engine: Engine) {
 

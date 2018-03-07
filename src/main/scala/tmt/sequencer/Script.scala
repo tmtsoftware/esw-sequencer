@@ -1,6 +1,7 @@
 package tmt.sequencer
 
-import tmt.sequencer.ScriptRunnerMsg.SequencerEvent
+import tmt.sequencer.models.Command
+import tmt.sequencer.models.ScriptRunnerMsg.SequencerEvent
 
 abstract class Script(cs: CswServices) extends ControlDsl {
   def onSetup(x: Command): Unit
