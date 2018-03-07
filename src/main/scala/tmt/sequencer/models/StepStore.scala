@@ -4,54 +4,44 @@ case class StepStore(steps: List[Step]) { outer =>
 
   //query
 
-  def hasNext: Boolean   = steps.exists(_.isPending) && !isPaused
+  def hasNext: Boolean   = next.isDefined && !isPaused
   def isPaused: Boolean  = next.exists(_.hasBreakpoint)
   def next: Option[Step] = steps.find(_.isPending)
 
   //update
 
-  def replace(id: Id, commands: List[Command]): StepStore           = copy(steps = replaceStep(id, Step.from(commands)))
-  private def replaceStep(id: Id, commands: List[Step]): List[Step] = insertAfterStep(id, commands).delete(id)
+  def replace(id: Id, commands: List[Command]): StepStore        = replaceSteps(id, Step.from(commands))
+  private def replaceSteps(id: Id, steps: List[Step]): StepStore = insertStepsAfter(id, steps).delete(Set(id))
 
   def prepend(commands: List[Command]): StepStore = insert(_.isPending, Step.from(commands))
-  def append(commands: List[Command]): StepStore  = copy(steps = steps ::: Step.from(commands))
+  def append(commands: List[Command]): StepStore  = copy(steps ::: Step.from(commands))
 
-  private def delete(id: Id): List[Step] = {
-    val (pre, post) = steps.span(_.command.id != id)
-    pre ::: post.tail
-  }
+  def delete(ids: Set[Id]): StepStore = copy(steps.filterNot(step => ids.contains(step.id) && step.isPending))
 
-  def delete(ids: List[Id]): StepStore = {
-    copy(steps = ids.flatMap(delete))
-  }
+  def insertAfter(id: Id, commands: List[Command]): StepStore        = insertStepsAfter(id, Step.from(commands))
+  private def insertStepsAfter(id: Id, steps: List[Step]): StepStore = insert(_.id == id, steps)
 
-  def insertAfter(id: Id, commands: List[Command]): StepStore = insertAfterStep(id, Step.from(commands))
-  private def insertAfterStep(id: Id, commands: List[Step])   = insert(_.id == id, commands)
-
-  private def insert(after: Step => Boolean, newSteps: List[Step]) = {
+  private def insert(after: Step => Boolean, newSteps: List[Step]): StepStore = {
     val (pre, post) = steps.span(x => !after(x))
-    val newCommands = pre ::: post.headOption.toList ::: newSteps ::: post.tail
-    copy(steps = newCommands)
+    copy(pre ::: post.headOption.toList ::: newSteps ::: post.tail)
   }
 
-  def reset: StepStore = {
-    val (pre, _) = steps.span(x => x.isPending)
-    copy(steps = pre) //Validate - As post steps are ignored from steps no need to take care of breakpoints
+  def reset: StepStore = copy(steps.takeWhile(_.isPending))
+
+  def addBreakpoints(ids: List[Id]): StepStore                = transformAll(ids, _.addBreakpoint())
+  def removeBreakpoints(ids: List[Id]): StepStore             = transformAll(ids, _.removeBreakpoint())
+  def updateStatus(id: Id, stepStatus: StepStatus): StepStore = transform(id, _.withStatus(stepStatus))
+
+  def pause: StepStore  = next.map(step => transform(step.id, _.addBreakpoint())).flat
+  def resume: StepStore = next.map(step => transform(step.id, _.removeBreakpoint())).flat
+
+  private def transformAll(ids: List[Id], f: Step => Step): StepStore = ids.foldLeft(this) { (store, id) =>
+    store.transform(id, f)
   }
 
-  def addBreakpoints(ids: List[Id]): StepStore                = copy(steps = ids.flatMap(id => transform(id, _.addBreakpoint())))
-  def removeBreakpoints(ids: List[Id]): StepStore             = copy(steps = ids.flatMap(id => transform(id, _.removeBreakpoint())))
-  def updateStatus(id: Id, stepStatus: StepStatus): StepStore = copy(steps = transform(id, _.withStatus(stepStatus)))
-
-  def pause(): StepStore  = next.map(step => copy(steps = transform(step.id, _.addBreakpoint()))).flat
-  def resume(): StepStore = next.map(step => copy(transform(step.id, _.removeBreakpoint()))).flat
-
-  private def transform(id: Id, f: Step => Step): List[Step] = {
-    steps.find(step => step.id == id && step.isPending) match {
-      case Some(step) => replaceStep(id, List(f(step)))
-      case None       => steps
-    }
-
+  private def transform(id: Id, f: Step => Step): StepStore = {
+    val maybeStep = steps.find(step => step.id == id && step.isPending)
+    maybeStep.map(step => replaceSteps(id, List(f(step)))).flat
   }
 
   private implicit class StepOps(optStep: Option[StepStore]) {

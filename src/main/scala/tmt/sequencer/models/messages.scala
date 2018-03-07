@@ -16,10 +16,9 @@ object ScriptRunnerMsg {
 sealed trait EngineMsg
 
 object EngineMsg {
-  case class Pull(replyTo: ActorRef[SequencerCommand]) extends EngineMsg
-  case class UpdateStepStatusAndPullNext(stepId: Id, stepStatus: StepStatus, replyTo: ActorRef[SequencerCommand])
-      extends EngineMsg
-  case class HasNext(replyTo: ActorRef[Boolean]) extends EngineMsg
+  case class Pull(replyTo: ActorRef[SequencerCommand])        extends EngineMsg
+  case class UpdateStatus(stepId: Id, stepStatus: StepStatus) extends EngineMsg
+  case class HasNext(replyTo: ActorRef[Boolean])              extends EngineMsg
 
   sealed trait ExternalEngineMsg extends EngineMsg with SupervisorMsg
 
@@ -29,7 +28,6 @@ object EngineMsg {
   case object Reset                                       extends ExternalEngineMsg
   case class Replace(id: Id, commands: List[Command])     extends ExternalEngineMsg
   case class Prepend(commands: List[Command])             extends ExternalEngineMsg
-  case class Append(commands: List[Command])              extends ExternalEngineMsg
   case class Delete(ids: List[Id])                        extends ExternalEngineMsg
   case class InsertAfter(id: Id, commands: List[Command]) extends ExternalEngineMsg
   case class AddBreakpoints(ids: List[Id])                extends ExternalEngineMsg

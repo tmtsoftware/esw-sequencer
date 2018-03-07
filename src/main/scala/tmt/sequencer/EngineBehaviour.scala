@@ -9,39 +9,38 @@ import tmt.sequencer.models.{EngineMsg, StepStore}
 
 class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[EngineMsg] {
 
-  var ref: Option[ActorRef[SequencerCommand]] = None
-  var stepStore: StepStore                    = StepStore.empty
+  var refOpt: Option[ActorRef[SequencerCommand]] = None
+  var stepStore: StepStore                       = StepStore.empty
 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
-      case Push(commands) =>
-        stepStore = stepStore.append(commands)
-        if (stepStore.hasNext) {
-          ref.foreach(x => stepStore.next.foreach(y => x ! SequencerCommand(y)))
-          ref = None
-        }
-      case Pull(replyTo) if stepStore.hasNext => replyTo ! SequencerCommand(stepStore.next.get)
-      case Pull(replyTo)                      => ref = Some(replyTo)
-      case HasNext(replyTo)                   => replyTo ! stepStore.hasNext
-      case Pause                              => stepStore = stepStore.pause()
-      case Resume =>
-        stepStore = stepStore.resume()
-        ref.foreach(x => ctx.self ! Pull(x))
-        ref = None
-      case Reset => stepStore = stepStore.reset
-      case UpdateStepStatusAndPullNext(stepId, stepStatus, replyTo) =>
-        stepStore = stepStore.updateStatus(stepId, stepStatus)
-        ctx.self ! Pull(replyTo)
-      case Replace(stepId, commands) => stepStore = stepStore.replace(stepId, commands)
-      case Prepend(commands)         => stepStore = stepStore.prepend(commands)
-      case Append(commands)          => stepStore = stepStore.append(commands)
-      case Delete(ids)               => stepStore = stepStore.delete(ids)
-      case InsertAfter(id, commands) => stepStore = stepStore.insertAfter(id, commands)
-      case AddBreakpoints(ids)       => stepStore = stepStore.addBreakpoints(ids)
-      case RemoveBreakpoints(ids)    => stepStore = stepStore.removeBreakpoints(ids)
+      case Push(commands)                   => stepStore = stepStore.append(commands)
+      case Pull(replyTo)                    => if (stepStore.hasNext) replyTo ! SequencerCommand(stepStore.next.get) else refOpt = Some(replyTo)
+      case HasNext(replyTo)                 => replyTo ! stepStore.hasNext
+      case Pause                            => stepStore = stepStore.pause
+      case Resume                           => stepStore = stepStore.resume
+      case Reset                            => stepStore = stepStore.reset
+      case UpdateStatus(stepId, stepStatus) => stepStore = stepStore.updateStatus(stepId, stepStatus)
+      case Replace(stepId, commands)        => stepStore = stepStore.replace(stepId, commands)
+      case Prepend(commands)                => stepStore = stepStore.prepend(commands)
+      case Delete(ids)                      => stepStore = stepStore.delete(ids.toSet)
+      case InsertAfter(id, commands)        => stepStore = stepStore.insertAfter(id, commands)
+      case AddBreakpoints(ids)              => stepStore = stepStore.addBreakpoints(ids)
+      case RemoveBreakpoints(ids)           => stepStore = stepStore.removeBreakpoints(ids)
     }
+    trySend()
     this
   }
+
+  def trySend(): Unit =
+    for {
+      ref <- refOpt
+      if !stepStore.isPaused
+      step <- stepStore.next
+    } {
+      ref ! SequencerCommand(step)
+      refOpt = None
+    }
 }
 
 object EngineBehaviour {

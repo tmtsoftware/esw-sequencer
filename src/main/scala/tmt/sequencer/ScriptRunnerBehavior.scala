@@ -3,7 +3,7 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.EngineMsg.{Pull, UpdateStepStatusAndPullNext}
+import tmt.sequencer.models.EngineMsg.{Pull, UpdateStatus}
 import tmt.sequencer.models._
 import tmt.sequencer.models.ScriptRunnerMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 
@@ -26,8 +26,10 @@ class ScriptRunnerBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: 
           case x                                   => CommandResult.Failed("unknown command")
         }
         Future(concurrent.blocking(run())).onComplete {
-          case Success(value) => engineRef ! UpdateStepStatusAndPullNext(step.id, StepStatus.Finished(value), ctx.self)
-          case Failure(ex)    =>
+          case Success(value) =>
+            engineRef ! UpdateStatus(step.id, StepStatus.Finished(value))
+            engineRef ! Pull(ctx.self)
+          case Failure(ex) =>
         }
       case ControlCommand("shutdown") =>
         Future(concurrent.blocking(script.onShutdown())).onComplete {

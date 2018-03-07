@@ -9,8 +9,8 @@ case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
 }
 
 object Step {
-  def from(command: Command)        = Step(command, StepStatus.Pending, hasBreakpoint = false)
-  def from(commands: List[Command]) = commands.map(command => Step(command, StepStatus.Pending, hasBreakpoint = false))
+  def from(command: Command)                    = Step(command, StepStatus.Pending, hasBreakpoint = false)
+  def from(commands: List[Command]): List[Step] = commands.map(from)
 }
 
 sealed trait StepStatus
