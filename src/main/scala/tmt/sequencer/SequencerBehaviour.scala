@@ -44,7 +44,7 @@ class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavio
   def trySend(): Unit = {
     for {
       ref <- refOpt
-      if !sequence.hasNext
+      if sequence.hasNext
       step <- sequence.next
     } {
       ref ! SequencerCommand(step)

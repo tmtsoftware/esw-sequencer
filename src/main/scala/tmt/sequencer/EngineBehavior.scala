@@ -20,10 +20,10 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
       case SequencerCommand(step: Step) =>
-        def run(): CommandResult = step.id match {
-          case x if x.value.startsWith("setup-")   => script.onSetup(step.command)
-          case x if x.value.startsWith("observe-") => script.onObserve(step.command)
-          case x                                   => CommandResult.Failed("unknown command")
+        def run(): CommandResult = step.command.name match {
+          case x if x.startsWith("setup-")   => script.onSetup(step.command)
+          case x if x.startsWith("observe-") => script.onObserve(step.command)
+          case x                             => CommandResult.Failed("unknown command")
         }
         Future(concurrent.blocking(run())).onComplete {
           case Success(value) =>

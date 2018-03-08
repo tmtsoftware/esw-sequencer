@@ -2,7 +2,7 @@ package tmt.sequencer
 
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
-import tmt.sequencer.models.Command
+import tmt.sequencer.models.{Command, Id}
 
 class RemoteRepl(commandService: CswServices, sequencer: Sequencer) {
 
@@ -19,6 +19,7 @@ class RemoteRepl(commandService: CswServices, sequencer: Sequencer) {
       "cs"        -> commandService,
       "sequencer" -> sequencer,
       "Command"   -> Command,
+      "Id"        -> Id
     )
   )
 }
