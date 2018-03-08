@@ -5,36 +5,37 @@ import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 import tmt.sequencer.models.EngineMsg._
 import tmt.sequencer.models.ScriptRunnerMsg.SequencerCommand
-import tmt.sequencer.models.{EngineMsg, StepStore}
+import tmt.sequencer.models.{EngineMsg, Sequence}
 
 class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[EngineMsg] {
 
   var refOpt: Option[ActorRef[SequencerCommand]] = None
-  var stepStore: StepStore                       = StepStore.empty
+  var sequence: Sequence                         = Sequence.empty
 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
-      case HasNext(replyTo)                 => replyTo ! stepStore.hasNext
+      case GetSequence                      => sequence
+      case HasNext(replyTo)                 => replyTo ! sequence.hasNext
       case Pull(replyTo)                    => sendNext(replyTo)
-      case UpdateStatus(stepId, stepStatus) => stepStore = stepStore.updateStatus(stepId, stepStatus)
-      case Push(commands)                   => stepStore = stepStore.append(commands)
-      case Pause                            => stepStore = stepStore.pause
-      case Resume                           => stepStore = stepStore.resume
-      case Reset                            => stepStore = stepStore.reset
-      case Replace(stepId, commands)        => stepStore = stepStore.replace(stepId, commands)
-      case Prepend(commands)                => stepStore = stepStore.prepend(commands)
-      case Delete(ids)                      => stepStore = stepStore.delete(ids.toSet)
-      case InsertAfter(id, commands)        => stepStore = stepStore.insertAfter(id, commands)
-      case AddBreakpoints(ids)              => stepStore = stepStore.addBreakpoints(ids)
-      case RemoveBreakpoints(ids)           => stepStore = stepStore.removeBreakpoints(ids)
+      case UpdateStatus(stepId, stepStatus) => sequence = sequence.updateStatus(stepId, stepStatus)
+      case Push(commands)                   => sequence = sequence.append(commands)
+      case Pause                            => sequence = sequence.pause
+      case Resume                           => sequence = sequence.resume
+      case Reset                            => sequence = sequence.reset
+      case Replace(stepId, commands)        => sequence = sequence.replace(stepId, commands)
+      case Prepend(commands)                => sequence = sequence.prepend(commands)
+      case Delete(ids)                      => sequence = sequence.delete(ids.toSet)
+      case InsertAfter(id, commands)        => sequence = sequence.insertAfter(id, commands)
+      case AddBreakpoints(ids)              => sequence = sequence.addBreakpoints(ids)
+      case RemoveBreakpoints(ids)           => sequence = sequence.removeBreakpoints(ids)
     }
     trySend()
     this
   }
 
   def sendNext(replyTo: ActorRef[SequencerCommand]): Unit = {
-    if (stepStore.hasNext) {
-      replyTo ! SequencerCommand(stepStore.next.get)
+    if (sequence.hasNext) {
+      replyTo ! SequencerCommand(sequence.next.get)
     } else {
       refOpt = Some(replyTo)
     }
@@ -43,8 +44,8 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
   def trySend(): Unit = {
     for {
       ref <- refOpt
-      if !stepStore.hasNext
-      step <- stepStore.next
+      if !sequence.hasNext
+      step <- sequence.next
     } {
       ref ! SequencerCommand(step)
       refOpt = None

@@ -22,6 +22,7 @@ object EngineMsg {
 
   sealed trait ExternalEngineMsg extends EngineMsg with SupervisorMsg
 
+  case object GetSequence                                 extends ExternalEngineMsg
   case class Push(commands: List[Command])                extends ExternalEngineMsg
   case object Pause                                       extends ExternalEngineMsg
   case object Resume                                      extends ExternalEngineMsg
