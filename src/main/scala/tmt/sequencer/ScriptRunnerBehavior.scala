@@ -3,19 +3,19 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.EngineMsg.{Pull, UpdateStatus}
+import tmt.sequencer.models.SequencerMsg.{Pull, UpdateStatus}
 import tmt.sequencer.models._
 import tmt.sequencer.models.ScriptRunnerMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class ScriptRunnerBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: ActorContext[ScriptRunnerMsg])
+class ScriptRunnerBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: ActorContext[ScriptRunnerMsg])
     extends MutableBehavior[ScriptRunnerMsg] {
 
   import ctx.executionContext
 
-  engineRef ! Pull(ctx.self)
+  sequencerRef ! Pull(ctx.self)
 
   override def onMessage(msg: ScriptRunnerMsg): Behavior[ScriptRunnerMsg] = {
     msg match {
@@ -27,8 +27,8 @@ class ScriptRunnerBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: 
         }
         Future(concurrent.blocking(run())).onComplete {
           case Success(value) =>
-            engineRef ! UpdateStatus(step.id, StepStatus.Finished(value))
-            engineRef ! Pull(ctx.self)
+            sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(value))
+            sequencerRef ! Pull(ctx.self)
           case Failure(ex) =>
         }
       case ControlCommand("shutdown") =>
@@ -48,7 +48,7 @@ class ScriptRunnerBehavior(script: Script, engineRef: ActorRef[EngineMsg], ctx: 
 }
 
 object ScriptRunnerBehavior {
-  def behavior(script: Script, engineRef: ActorRef[EngineMsg]): Behavior[ScriptRunnerMsg] = {
-    Behaviors.mutable(ctx => new ScriptRunnerBehavior(script, engineRef, ctx))
+  def behavior(script: Script, sequencerRef: ActorRef[SequencerMsg]): Behavior[ScriptRunnerMsg] = {
+    Behaviors.mutable(ctx => new ScriptRunnerBehavior(script, sequencerRef, ctx))
   }
 }

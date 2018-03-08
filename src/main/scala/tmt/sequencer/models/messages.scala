@@ -13,24 +13,24 @@ object ScriptRunnerMsg {
   case class SequencerEvent(value: String) extends ScriptRunnerMsg
 }
 
-sealed trait EngineMsg
+sealed trait SequencerMsg
 
-object EngineMsg {
-  case class Pull(replyTo: ActorRef[SequencerCommand])        extends EngineMsg
-  case class UpdateStatus(stepId: Id, stepStatus: StepStatus) extends EngineMsg
-  case class HasNext(replyTo: ActorRef[Boolean])              extends EngineMsg
+object SequencerMsg {
+  case class Pull(replyTo: ActorRef[SequencerCommand])        extends SequencerMsg
+  case class UpdateStatus(stepId: Id, stepStatus: StepStatus) extends SequencerMsg
+  case class HasNext(replyTo: ActorRef[Boolean])              extends SequencerMsg
 
-  sealed trait ExternalEngineMsg extends EngineMsg with SupervisorMsg
+  sealed trait ExternalSequencerMsg extends SequencerMsg with SupervisorMsg
 
-  case object GetSequence                                 extends ExternalEngineMsg
-  case class Push(commands: List[Command])                extends ExternalEngineMsg
-  case object Pause                                       extends ExternalEngineMsg
-  case object Resume                                      extends ExternalEngineMsg
-  case object Reset                                       extends ExternalEngineMsg
-  case class Replace(id: Id, commands: List[Command])     extends ExternalEngineMsg
-  case class Prepend(commands: List[Command])             extends ExternalEngineMsg
-  case class Delete(ids: List[Id])                        extends ExternalEngineMsg
-  case class InsertAfter(id: Id, commands: List[Command]) extends ExternalEngineMsg
-  case class AddBreakpoints(ids: List[Id])                extends ExternalEngineMsg
-  case class RemoveBreakpoints(ids: List[Id])             extends ExternalEngineMsg
+  case object GetSequence                                 extends ExternalSequencerMsg
+  case class Push(commands: List[Command])                extends ExternalSequencerMsg
+  case object Pause                                       extends ExternalSequencerMsg
+  case object Resume                                      extends ExternalSequencerMsg
+  case object Reset                                       extends ExternalSequencerMsg
+  case class Replace(id: Id, commands: List[Command])     extends ExternalSequencerMsg
+  case class Prepend(commands: List[Command])             extends ExternalSequencerMsg
+  case class Delete(ids: List[Id])                        extends ExternalSequencerMsg
+  case class InsertAfter(id: Id, commands: List[Command]) extends ExternalSequencerMsg
+  case class AddBreakpoints(ids: List[Id])                extends ExternalSequencerMsg
+  case class RemoveBreakpoints(ids: List[Id])             extends ExternalSequencerMsg
 }

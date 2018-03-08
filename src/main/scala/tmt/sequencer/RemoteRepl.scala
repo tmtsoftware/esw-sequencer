@@ -4,7 +4,7 @@ import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
 import tmt.sequencer.models.Command
 
-class RemoteRepl(commandService: CswServices, engine: Engine) {
+class RemoteRepl(commandService: CswServices, sequencer: Sequencer) {
 
   def server() = new SshdRepl(
     SshServerConfig(
@@ -16,9 +16,9 @@ class RemoteRepl(commandService: CswServices, engine: Engine) {
          |def setFlags() = repl.compiler.settings.Ydelambdafy.value = "inline"
       """.stripMargin,
     replArgs = Seq(
-      "cs"      -> commandService,
-      "engine"  -> engine,
-      "Command" -> Command,
+      "cs"        -> commandService,
+      "sequencer" -> sequencer,
+      "Command"   -> Command,
     )
   )
 }

@@ -3,16 +3,16 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.EngineMsg._
+import tmt.sequencer.models.SequencerMsg._
 import tmt.sequencer.models.ScriptRunnerMsg.SequencerCommand
-import tmt.sequencer.models.{EngineMsg, Sequence}
+import tmt.sequencer.models.{Sequence, SequencerMsg}
 
-class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[EngineMsg] {
+class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavior[SequencerMsg] {
 
   var refOpt: Option[ActorRef[SequencerCommand]] = None
   var sequence: Sequence                         = Sequence.empty
 
-  override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
+  override def onMessage(msg: SequencerMsg): Behavior[SequencerMsg] = {
     msg match {
       case GetSequence                      => sequence
       case HasNext(replyTo)                 => replyTo ! sequence.hasNext
@@ -53,6 +53,6 @@ class EngineBehaviour(ctx: ActorContext[EngineMsg]) extends MutableBehavior[Engi
   }
 }
 
-object EngineBehaviour {
-  def behavior: Behavior[EngineMsg] = Behaviors.mutable(ctx => new EngineBehaviour(ctx))
+object SequencerBehaviour {
+  def behavior: Behavior[SequencerMsg] = Behaviors.mutable(ctx => new SequencerBehaviour(ctx))
 }

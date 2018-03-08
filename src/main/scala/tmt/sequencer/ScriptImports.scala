@@ -1,7 +1,6 @@
 package tmt.sequencer
 
 import ammonite.ops.Path
-import tmt.sequencer
 import tmt.sequencer.models.ScriptRunnerMsg
 
 import scala.reflect.{classTag, ClassTag}
