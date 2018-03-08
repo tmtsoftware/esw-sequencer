@@ -22,7 +22,7 @@ object StepStatus {
 }
 
 case class Id(value: String)
-case class Command(id: Id, params: List[Int])
+case class Command(id: Id, name: String, params: List[Int])
 
 sealed trait CommandResult
 
