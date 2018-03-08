@@ -1,7 +1,7 @@
 package tmt.sequencer
 
 import ammonite.ops.Path
-import tmt.sequencer.models.ScriptRunnerMsg
+import tmt.sequencer.models.EngineMsg
 
 import scala.reflect.{classTag, ClassTag}
 
@@ -11,7 +11,7 @@ object ScriptImports {
 
   type Script         = tmt.sequencer.Script
   type CommandService = tmt.sequencer.CswServices
-  type SequencerEvent = ScriptRunnerMsg.SequencerEvent
+  type SequencerEvent = EngineMsg.SequencerEvent
 
   type Command = tmt.sequencer.models.Command
   val Command = tmt.sequencer.models.Command

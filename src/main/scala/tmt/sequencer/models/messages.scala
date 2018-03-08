@@ -1,16 +1,16 @@
 package tmt.sequencer.models
 
 import akka.actor.typed.ActorRef
-import tmt.sequencer.models.ScriptRunnerMsg.SequencerCommand
+import tmt.sequencer.models.EngineMsg.SequencerCommand
 
 sealed trait SupervisorMsg
 
-sealed trait ScriptRunnerMsg
+sealed trait EngineMsg
 
-object ScriptRunnerMsg {
-  case class SequencerCommand(step: Step)  extends ScriptRunnerMsg
-  case class ControlCommand(name: String)  extends ScriptRunnerMsg with SupervisorMsg
-  case class SequencerEvent(value: String) extends ScriptRunnerMsg
+object EngineMsg {
+  case class SequencerCommand(step: Step)  extends EngineMsg
+  case class ControlCommand(name: String)  extends EngineMsg with SupervisorMsg
+  case class SequencerEvent(value: String) extends EngineMsg
 }
 
 sealed trait SequencerMsg

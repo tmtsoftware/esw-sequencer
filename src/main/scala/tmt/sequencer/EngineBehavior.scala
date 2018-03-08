@@ -5,19 +5,19 @@ import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 import tmt.sequencer.models.SequencerMsg.{Pull, UpdateStatus}
 import tmt.sequencer.models._
-import tmt.sequencer.models.ScriptRunnerMsg.{ControlCommand, SequencerCommand, SequencerEvent}
+import tmt.sequencer.models.EngineMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class ScriptRunnerBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: ActorContext[ScriptRunnerMsg])
-    extends MutableBehavior[ScriptRunnerMsg] {
+class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: ActorContext[EngineMsg])
+    extends MutableBehavior[EngineMsg] {
 
   import ctx.executionContext
 
   sequencerRef ! Pull(ctx.self)
 
-  override def onMessage(msg: ScriptRunnerMsg): Behavior[ScriptRunnerMsg] = {
+  override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
       case SequencerCommand(step: Step) =>
         def run(): CommandResult = step.id match {
@@ -47,8 +47,8 @@ class ScriptRunnerBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg],
   }
 }
 
-object ScriptRunnerBehavior {
-  def behavior(script: Script, sequencerRef: ActorRef[SequencerMsg]): Behavior[ScriptRunnerMsg] = {
-    Behaviors.mutable(ctx => new ScriptRunnerBehavior(script, sequencerRef, ctx))
+object EngineBehavior {
+  def behavior(script: Script, sequencerRef: ActorRef[SequencerMsg]): Behavior[EngineMsg] = {
+    Behaviors.mutable(ctx => new EngineBehavior(script, sequencerRef, ctx))
   }
 }
