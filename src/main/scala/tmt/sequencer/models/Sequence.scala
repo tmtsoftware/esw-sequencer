@@ -15,16 +15,18 @@ case class Sequence(steps: List[Step]) { outer =>
   def replace(id: Id, commands: List[Command]): Sequence        = replaceSteps(id, Step.from(commands))
   private def replaceSteps(id: Id, steps: List[Step]): Sequence = insertStepsAfter(id, steps).delete(Set(id))
 
-  def prepend(commands: List[Command]): Sequence = insert(_.isPending, Step.from(commands))
-  def append(commands: List[Command]): Sequence  = copy(steps ::: Step.from(commands))
+  def prepend(commands: List[Command]): Sequence = {
+    val (pre, post) = steps.span(!_.isPending)
+    copy(pre ::: Step.from(commands) ::: post)
+  }
+  def append(commands: List[Command]): Sequence = copy(steps ::: Step.from(commands))
 
   def delete(ids: Set[Id]): Sequence = copy(steps.filterNot(step => ids.contains(step.id) && step.isPending))
 
-  def insertAfter(id: Id, commands: List[Command]): Sequence        = insertStepsAfter(id, Step.from(commands))
-  private def insertStepsAfter(id: Id, steps: List[Step]): Sequence = insert(_.id == id, steps)
+  def insertAfter(id: Id, commands: List[Command]): Sequence = insertStepsAfter(id, Step.from(commands))
 
-  private def insert(after: Step => Boolean, newSteps: List[Step]): Sequence = {
-    val (pre, post) = steps.span(x => !after(x))
+  private def insertStepsAfter(id: Id, newSteps: List[Step]): Sequence = {
+    val (pre, post) = steps.span(_.id != id)
     copy(pre ::: post.headOption.toList ::: newSteps ::: post.tail)
   }
 

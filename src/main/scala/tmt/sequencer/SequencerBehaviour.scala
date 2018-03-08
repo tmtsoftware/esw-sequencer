@@ -49,6 +49,7 @@ class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavio
       if sequence.hasNext
       step <- sequence.next
     } {
+      sequence = sequence.updateStatus(step.id, StepStatus.InFlight)
       ref ! SequencerCommand(step)
       refOpt = None
     }

@@ -9,10 +9,12 @@ case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
   def addBreakpoint(): Step    = if (isPending) copy(hasBreakpoint = true) else this
   def removeBreakpoint(): Step = copy(hasBreakpoint = false)
 
-  def withStatus(newStatus: StepStatus): Step = (status, newStatus) match {
-    case (Pending, InFlight)     => copy(status = newStatus)
-    case (InFlight, Finished(x)) => copy(status = newStatus)
-    case _                       => this
+  def withStatus(newStatus: StepStatus): Step = {
+    (status, newStatus) match {
+      case (Pending, InFlight)     => copy(status = newStatus)
+      case (InFlight, Finished(x)) => copy(status = newStatus)
+      case _                       => this
+    }
   }
 }
 
