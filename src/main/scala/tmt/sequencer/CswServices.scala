@@ -13,5 +13,5 @@ class CswServices(locationService: LocationService, sequencer: Sequencer)(implic
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
 
   def hasNext: Boolean = sequencer.hasNext
-  def pullNext(): Step = sequencer.pullNext()
+  def getNext(): Step  = sequencer.getNext()
 }

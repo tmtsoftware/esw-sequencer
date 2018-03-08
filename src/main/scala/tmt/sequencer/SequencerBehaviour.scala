@@ -14,11 +14,11 @@ class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavio
 
   override def onMessage(msg: SequencerMsg): Behavior[SequencerMsg] = {
     msg match {
-      case GetSequence                      => sequence
+      case GetSequence(replyTo)             => replyTo ! sequence
       case HasNext(replyTo)                 => replyTo ! sequence.hasNext
-      case Pull(replyTo)                    => sendNext(replyTo)
+      case GetNext(replyTo)                 => sendNext(replyTo)
       case UpdateStatus(stepId, stepStatus) => sequence = sequence.updateStatus(stepId, stepStatus)
-      case Push(commands)                   => sequence = sequence.append(commands)
+      case Add(commands)                    => sequence = sequence.append(commands)
       case Pause                            => sequence = sequence.pause
       case Resume                           => sequence = sequence.resume
       case Reset                            => sequence = sequence.reset

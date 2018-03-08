@@ -3,7 +3,7 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.SequencerMsg.{Pull, UpdateStatus}
+import tmt.sequencer.models.SequencerMsg.{GetNext, UpdateStatus}
 import tmt.sequencer.models._
 import tmt.sequencer.models.EngineMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 
@@ -15,7 +15,7 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
 
   import ctx.executionContext
 
-  sequencerRef ! Pull(ctx.self)
+  sequencerRef ! GetNext(ctx.self)
 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
@@ -28,7 +28,7 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
         Future(concurrent.blocking(run())).onComplete {
           case Success(value) =>
             sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(value))
-            sequencerRef ! Pull(ctx.self)
+            sequencerRef ! GetNext(ctx.self)
           case Failure(ex) =>
         }
       case ControlCommand("shutdown") =>
