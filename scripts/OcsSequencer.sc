@@ -13,6 +13,7 @@ class OcsSequencer(cs: CommandService) extends Script(cs) {
     if (command.name == "setup-assembly1") {
       val result = cs.setup("assembly1", command)
       results += result
+      Thread.sleep(5000)
       println(result)
       result
     }

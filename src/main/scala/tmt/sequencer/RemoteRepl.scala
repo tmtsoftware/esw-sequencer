@@ -1,10 +1,13 @@
 package tmt.sequencer
 
+import akka.actor.typed.ActorRef
+import akka.stream.StreamRefMessages
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
-import tmt.sequencer.models.{Command, Id}
+import tmt.sequencer.models.EngineMsg.ControlCommand
+import tmt.sequencer.models.{Command, Id, SupervisorMsg}
 
-class RemoteRepl(commandService: CswServices, sequencer: Sequencer) {
+class RemoteRepl(commandService: CswServices, sequencer: Sequencer, supervisor: ActorRef[SupervisorMsg]) {
 
   def server() = new SshdRepl(
     SshServerConfig(
@@ -16,10 +19,12 @@ class RemoteRepl(commandService: CswServices, sequencer: Sequencer) {
          |def setFlags() = repl.compiler.settings.Ydelambdafy.value = "inline"
       """.stripMargin,
     replArgs = Seq(
-      "cs"        -> commandService,
-      "sequencer" -> sequencer,
-      "Command"   -> Command,
-      "Id"        -> Id
+      "cs"             -> commandService,
+      "sequencer"      -> sequencer,
+      "Command"        -> Command,
+      "Id"             -> Id,
+      "supervisor"     -> supervisor,
+      "controlCommand" -> ControlCommand
     )
   )
 }

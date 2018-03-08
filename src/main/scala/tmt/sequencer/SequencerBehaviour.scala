@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 import tmt.sequencer.models.SequencerMsg._
 import tmt.sequencer.models.EngineMsg.SequencerCommand
-import tmt.sequencer.models.{Sequence, SequencerMsg}
+import tmt.sequencer.models.{Sequence, SequencerMsg, Step, StepStatus}
 
 class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavior[SequencerMsg] {
 
@@ -35,7 +35,9 @@ class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavio
 
   def sendNext(replyTo: ActorRef[SequencerCommand]): Unit = {
     if (sequence.hasNext) {
-      replyTo ! SequencerCommand(sequence.next.get)
+      val nextStep = sequence.next.get
+      sequence = sequence.updateStatus(nextStep.id, StepStatus.InFlight)
+      replyTo ! SequencerCommand(nextStep)
     } else {
       refOpt = Some(replyTo)
     }

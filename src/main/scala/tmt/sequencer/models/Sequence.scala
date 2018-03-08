@@ -2,6 +2,8 @@ package tmt.sequencer.models
 
 case class Sequence(steps: List[Step]) { outer =>
 
+  require(steps.map(_.id).toSet.size == steps.size, "steps can not have duplicate ids")
+
   //query
 
   def hasNext: Boolean   = next.isDefined && !isPaused
@@ -28,20 +30,20 @@ case class Sequence(steps: List[Step]) { outer =>
 
   def reset: Sequence = copy(steps.filterNot(_.isPending))
 
-  def addBreakpoints(ids: List[Id]): Sequence                = transformAll(ids, _.addBreakpoint())
-  def removeBreakpoints(ids: List[Id]): Sequence             = transformAll(ids, _.removeBreakpoint())
-  def updateStatus(id: Id, stepStatus: StepStatus): Sequence = transform(id, _.withStatus(stepStatus))
+  def addBreakpoints(ids: List[Id]): Sequence                = updateAll(ids.toSet, _.addBreakpoint())
+  def removeBreakpoints(ids: List[Id]): Sequence             = updateAll(ids.toSet, _.removeBreakpoint())
+  def updateStatus(id: Id, stepStatus: StepStatus): Sequence = update(id, _.withStatus(stepStatus))
 
-  def pause: Sequence  = next.map(step => transform(step.id, _.addBreakpoint())).flat
-  def resume: Sequence = next.map(step => transform(step.id, _.removeBreakpoint())).flat
+  def pause: Sequence  = next.map(step => update(step.id, _.addBreakpoint())).flat
+  def resume: Sequence = next.map(step => update(step.id, _.removeBreakpoint())).flat
 
-  private def transformAll(ids: List[Id], f: Step => Step): Sequence = ids.foldLeft(this) { (store, id) =>
-    store.transform(id, f)
-  }
+  def update(id: Id, f: Step => Step): Sequence = updateAll(Set(id), f)
 
-  private def transform(id: Id, f: Step => Step): Sequence = {
-    val maybeStep = steps.find(step => step.id == id && step.isPending)
-    maybeStep.map(step => replaceSteps(id, List(f(step)))).flat
+  def updateAll(ids: Set[Id], f: Step => Step): Sequence = copy {
+    steps.map {
+      case step if ids.contains(step.id) => f(step)
+      case step                          => step
+    }
   }
 
   private implicit class StepOps(optStep: Option[Sequence]) {

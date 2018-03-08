@@ -1,11 +1,19 @@
 package tmt.sequencer.models
 
+import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
+
 case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
-  def id: Id                                  = command.id
-  def isPending: Boolean                      = status == StepStatus.Pending
-  def addBreakpoint(): Step                   = copy(hasBreakpoint = true)
-  def removeBreakpoint(): Step                = copy(hasBreakpoint = false)
-  def withStatus(newStatus: StepStatus): Step = copy(status = newStatus)
+  def id: Id             = command.id
+  def isPending: Boolean = status == StepStatus.Pending
+
+  def addBreakpoint(): Step    = if (isPending) copy(hasBreakpoint = true) else this
+  def removeBreakpoint(): Step = copy(hasBreakpoint = false)
+
+  def withStatus(newStatus: StepStatus): Step = (status, newStatus) match {
+    case (Pending, InFlight)     => copy(status = newStatus)
+    case (InFlight, Finished(x)) => copy(status = newStatus)
+    case _                       => this
+  }
 }
 
 object Step {

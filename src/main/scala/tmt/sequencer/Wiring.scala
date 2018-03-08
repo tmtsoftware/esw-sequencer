@@ -27,5 +27,5 @@ class Wiring(path: Path) {
   lazy val supervisorRef: ActorRef[SupervisorMsg] =
     Await.result(system.systemActorOf(SupervisorBehavior.behavior(script, sequencerRef), "supervisor"), timeout.duration)
 
-  lazy val remoteRepl = new RemoteRepl(commandService, sequencer)
+  lazy val remoteRepl = new RemoteRepl(commandService, sequencer, supervisorRef)
 }
