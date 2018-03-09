@@ -6,11 +6,15 @@ import akka.actor.typed.{ActorRef, Behavior}
 import tmt.sequencer.models.SequencerMsg.{GetNext, UpdateStatus}
 import tmt.sequencer.models._
 import tmt.sequencer.models.EngineMsg.{ControlCommand, SequencerCommand, SequencerEvent}
+import tmt.sequencer.models.SupervisorMsg.{CommandResponse, InterruptResponse}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: ActorContext[EngineMsg])
+class EngineBehavior(script: Script,
+                     sequencerRef: ActorRef[SequencerMsg],
+                     ctx: ActorContext[EngineMsg],
+                     parentRef: ActorRef[SupervisorMsg])
     extends MutableBehavior[EngineMsg] {
 
   import ctx.executionContext
@@ -28,13 +32,14 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
         Future(concurrent.blocking(run())).onComplete {
           case Success(value) =>
             sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(value))
+            parentRef ! CommandResponse(value)
             sequencerRef ! GetNext(ctx.self)
-          case Failure(ex) =>
+          case Failure(ex) => parentRef ! CommandResponse(CommandResult.Failed(ex.getMessage))
         }
       case ControlCommand("shutdown") =>
         Future(concurrent.blocking(script.onShutdown())).onComplete {
-          case Success(value) =>
-          case Failure(ex)    =>
+          case Success(value) => parentRef ! InterruptResponse("shutdown")
+          case Failure(ex)    => parentRef ! InterruptResponse(s"shutdown - ex: ${ex.getMessage}")
         }
       case msg: SequencerEvent =>
         Future(concurrent.blocking(script.onEvent(msg))).onComplete {
@@ -48,7 +53,7 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
 }
 
 object EngineBehavior {
-  def behavior(script: Script, sequencerRef: ActorRef[SequencerMsg]): Behavior[EngineMsg] = {
-    Behaviors.mutable(ctx => new EngineBehavior(script, sequencerRef, ctx))
+  def behavior(script: Script, sequencerRef: ActorRef[SequencerMsg], parentRef: ActorRef[SupervisorMsg]): Behavior[EngineMsg] = {
+    Behaviors.mutable(ctx => new EngineBehavior(script, sequencerRef, ctx, parentRef))
   }
 }
