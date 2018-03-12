@@ -3,22 +3,24 @@ import $file.helpers
 
 import scala.collection.mutable
 
-init[OcsSequencer]
+println()
 
-class OcsSequencer(cs: CommandService) extends Script(cs) {
+class Iris(cs: CommandService) extends Script(cs) {
 
   var results: mutable.Buffer[CommandResult] = mutable.Buffer.empty
 
   override def onSetup(command: Command): CommandResult = {
-    if (command.name == "setup-assembly1") {
-      println("*" * 50)
-      val result = cs.setup("assembly1", command)
-      results += result
-      Thread.sleep(10000)
-      println(result)
-      println("")
-      println("")
-      result
+    if (command.name == "setup-iris") {
+
+      val result1 = cs.setup("iris-assembly1", command)
+      results += result1
+      println(result1)
+
+      val result2 = cs.setup("iris-assembly2", command)
+      results += result2
+      println(result2)
+
+      CommandResult.Multiple(List(result1, result2))
     }
     else {
       println(s"unknown command=$command")

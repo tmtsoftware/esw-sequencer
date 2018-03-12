@@ -5,7 +5,7 @@ import ammonite.ops.{Path, RelPath}
 import tmt.sequencer.models.{Command, Id}
 
 object Main extends App {
-  val scriptFile = args.headOption.getOrElse("scripts/OcsSequencer.sc")
+  val scriptFile = args.headOption.getOrElse("scripts/ocs_sequencer.sc")
   val path: Path = ops.pwd / RelPath(scriptFile)
 
   val wiring = new Wiring(path)
@@ -13,7 +13,8 @@ object Main extends App {
 
   supervisorRef
 
-  sequencer.addAll(List(Command(Id("command0"), "setup-assembly1", List(1, 2))))
+  sequencer.addAll(List(Command(Id("command0"), "setup-iris", List(1, 2))))
+  sequencer.addAll(List(Command(Id("command1"), "setup-tcs", List(10, 20))))
 
   remoteRepl.server().start()
 }
