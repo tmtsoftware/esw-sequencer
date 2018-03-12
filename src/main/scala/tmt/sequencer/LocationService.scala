@@ -6,12 +6,21 @@ import tmt.sequencer.models.{Command, CommandResult}
 import scala.concurrent.{ExecutionContext, Future}
 
 class LocationService(actorSystem: ActorSystem[_]) {
-  def resolve(name: String): ComponentRef = ComponentRef(name)
+  def resolve(name: String): CommandService = {
+    CommandService(AkkaLocation(name))
+  }
 }
 
-case class ComponentRef(name: String) {
-  def setup(command: Command)(implicit ec: ExecutionContext): Future[CommandResult] = Future {
-    println(s"\nCommand received: [$name] - $command")
-    CommandResult.Single(s"Result: [$name] - $command")
+case class AkkaLocation(name: String)
+
+case class CommandService(assemblyLoc: AkkaLocation) {
+  def submit(command: Command)(implicit ec: ExecutionContext): Future[CommandResult] = Future {
+    println(s"\nCommand received submit: [${assemblyLoc.name}] - $command")
+    CommandResult.Single(s"\nResult submit: [${assemblyLoc.name}] - $command")
+  }
+
+  def submitAndSubscribe(command: Command)(implicit ec: ExecutionContext): Future[CommandResult] = Future {
+    println(s"\nCommand received submit and subscribe: [${assemblyLoc.name}] - $command")
+    CommandResult.Single(s"\nResult submit and subscribe: [${assemblyLoc.name}] - $command")
   }
 }

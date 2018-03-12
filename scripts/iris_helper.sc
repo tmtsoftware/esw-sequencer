@@ -17,7 +17,7 @@ class Iris(cs: CommandService) extends Script(cs) {
       results += result1
       println(s"\nResult received: [Iris-sequencer] - ${result1}")
 
-      val result2 = cs.setup("iris-assembly2", command)
+      val result2 = cs.setupAndSubscribe("iris-assembly2", command)
       results += result2
       println(s"\nResult received: [Iris-sequencer] - ${result2}")
 
