@@ -11,9 +11,10 @@ class Tcs(cs: CommandService) extends Script(cs) {
 
   override def onSetup(command: Command): CommandResult = {
     if (command.name == "setup-tcs") {
+      println(s"\nCommand received: [Tcs-sequencer] - ${command.name}")
       val result = cs.setup("tcs-assembly1", command)
       results += result
-      println(results)
+      println(s"\nResult received: [Tcs-sequencer] - ${result}")
       result
     }
     else {

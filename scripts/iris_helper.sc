@@ -11,14 +11,15 @@ class Iris(cs: CommandService) extends Script(cs) {
 
   override def onSetup(command: Command): CommandResult = {
     if (command.name == "setup-iris") {
+      println(s"\nCommand received: [Iris-sequencer] - ${command.name}")
 
       val result1 = cs.setup("iris-assembly1", command)
       results += result1
-      println(result1)
+      println(s"\nResult received: [Iris-sequencer] - ${result1}")
 
       val result2 = cs.setup("iris-assembly2", command)
       results += result2
-      println(result2)
+      println(s"\nResult received: [Iris-sequencer] - ${result2}")
 
       CommandResult.Multiple(List(result1, result2))
     }

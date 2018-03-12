@@ -14,22 +14,22 @@ class OcsSequencer(cs: CommandService) extends Script(cs) {
 
   override def onSetup(command: Command): CommandResult = {
     if (command.name == "setup-iris") {
-      println("*" * 50)
+      println("*" * 150)
+      println(s"\nCommand received: [Ocs-sequencer] - ${command.name}")
       val result = iris.onSetup(command)
       results += result
       Thread.sleep(10000)
-      println(results)
-      println("")
-      println("")
+      println(s"\nResult received: [Ocs-sequencer] - ${result}")
+      println("*" * 150 + "\n\n")
       result
     } else if (command.name == "setup-tcs") {
-      println("*" * 50)
+      println("*" * 150)
+      println(s"\nCommand received: [Ocs-sequencer] - ${command.name}")
       val result = tcs.onSetup(command)
       results += result
       Thread.sleep(10000)
-      println(results)
-      println("")
-      println("")
+      println(s"\nResult received: [Ocs-sequencer] - ${result}")
+      println("*" * 150 + "\n\n")
       result
     }
     else {
