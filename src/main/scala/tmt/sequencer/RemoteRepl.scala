@@ -24,7 +24,7 @@ class RemoteRepl(commandService: CswServices, sequencer: Sequencer, supervisor: 
       "Command"        -> Command,
       "Id"             -> Id,
       "supervisor"     -> supervisor,
-      "ControlCommand" -> ControlCommand
+      "controlCommand" -> ControlCommand
     )
   )
 }

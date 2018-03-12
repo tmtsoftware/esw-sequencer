@@ -5,11 +5,6 @@ import tmt.sequencer.models.EngineMsg.SequencerCommand
 
 sealed trait SupervisorMsg
 
-object SupervisorMsg {
-  case class CommandResponse(commandResult: CommandResult) extends SupervisorMsg
-  case class InterruptResponse(interrupt: String)          extends SupervisorMsg
-}
-
 sealed trait EngineMsg
 
 object EngineMsg {

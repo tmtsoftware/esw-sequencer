@@ -5,21 +5,18 @@ import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 import tmt.sequencer.models.SequencerMsg.ExternalSequencerMsg
 import tmt.sequencer.models.EngineMsg.ControlCommand
-import tmt.sequencer.models.SupervisorMsg.{CommandResponse, InterruptResponse}
 import tmt.sequencer.models.{EngineMsg, SequencerMsg, SupervisorMsg}
 
 class SupervisorBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: ActorContext[SupervisorMsg])
     extends MutableBehavior[SupervisorMsg] {
 
   private val engineRef: ActorRef[EngineMsg] =
-    ctx.spawn(EngineBehavior.behavior(script, sequencerRef, ctx.self), "engine")
+    ctx.spawn(EngineBehavior.behavior(script, sequencerRef), "engine")
 
   override def onMessage(msg: SupervisorMsg): Behavior[SupervisorMsg] = {
     msg match {
       case msg: ControlCommand       => engineRef ! msg
       case msg: ExternalSequencerMsg => sequencerRef ! msg
-      case msg: CommandResponse      => println(s"Got command response $msg")
-      case msg: InterruptResponse    => println(s"Got interrupt response $msg")
       case _                         =>
     }
     this
