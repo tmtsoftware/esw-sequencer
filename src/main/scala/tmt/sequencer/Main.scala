@@ -16,5 +16,7 @@ object Main extends App {
   sequencer.addAll(List(Command(Id("command0"), "setup-iris", List(1, 2))))
   sequencer.addAll(List(Command(Id("command1"), "setup-tcs", List(10, 20))))
 
+  println("")
+
   remoteRepl.server().start()
 }
