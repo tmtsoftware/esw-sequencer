@@ -4,15 +4,22 @@ import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.actor.{typed, ActorSystem}
 import akka.util.Timeout
-import ammonite.ops.Path
+import ammonite.ops.{Path, RelPath}
 import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
+import tmt.sequencer.util.ScriptRepo
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationDouble
 
-class Wiring(path: Path) {
+class Wiring(scriptFile: String, isProd: Boolean) {
   implicit lazy val timeout: Timeout          = Timeout(5.seconds)
   lazy val system: typed.ActorSystem[Nothing] = ActorSystem("test").toTyped
+
+  lazy val scriptConfigs = new ScriptConfigs(system)
+  lazy val repoDir: Path = if (isProd) Path(scriptConfigs.cloneDir) else ammonite.ops.pwd
+  lazy val path: Path    = repoDir / RelPath(scriptFile)
+
+  lazy val scriptRepo = new ScriptRepo(scriptConfigs)
 
   lazy val sequencerRef: ActorRef[SequencerMsg] =
     Await.result(system.systemActorOf(SequencerBehaviour.behavior, "sequencer"), timeout.duration)

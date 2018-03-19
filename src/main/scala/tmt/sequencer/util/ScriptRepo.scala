@@ -2,10 +2,16 @@ package tmt.sequencer.util
 
 import java.io.File
 
+import ammonite.ops.Path
 import org.eclipse.jgit.api.Git
+import tmt.sequencer.ScriptConfigs
 
-object ScriptRepo {
-  def getFile(basePath: String) = new File(basePath)
+class ScriptRepo(scriptConfigs: ScriptConfigs) {
+  //temporary vals will be replaced by location-service
+  def gitHost = "0.0.0.0"
+  def gitPort = 8080
+
+  def gitRemote = s"https:$gitHost:$gitPort/${scriptConfigs.repoOwner}/${scriptConfigs.repoName}.git"
 
   private def cleanExistingRepo(file: File): Unit = {
     if (file.isDirectory)
@@ -14,17 +20,16 @@ object ScriptRepo {
       throw new Exception(s"Unable to delete ${file.getAbsolutePath}")
   }
 
-  def clone(remote: String, basePath: String): Git = {
-    val file = getFile(basePath)
+  def cloneRepo(): Unit = {
+    val cloneDir = new File(scriptConfigs.cloneDir)
 
-    cleanExistingRepo(file)
+    cleanExistingRepo(cloneDir)
 
     Git
       .cloneRepository()
-      .setURI(remote)
-      .setDirectory(file)
+      .setURI(gitRemote)
+      .setDirectory(cloneDir)
       .setBranch("refs/heads/master")
-      .call();
+      .call()
   }
-
 }

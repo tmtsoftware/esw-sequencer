@@ -1,16 +1,13 @@
 package tmt.sequencer
 
-import ammonite.ops.{Path, RelPath}
-
 object ScriptRunner {
-  def run(scriptFile: String): Unit = {
-    val path: Path = ammonite.ops.pwd / RelPath(scriptFile)
-
-    val wiring = new Wiring(path)
+  def run(scriptFile: String, isProd: Boolean): Unit = {
+    val wiring = new Wiring(scriptFile, isProd)
     import wiring._
-
+    if (isProd) {
+      scriptRepo.cloneRepo()
+    }
     supervisorRef
-
     remoteRepl.server().start()
   }
 }
