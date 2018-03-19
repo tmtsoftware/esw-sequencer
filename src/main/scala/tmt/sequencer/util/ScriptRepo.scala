@@ -11,7 +11,7 @@ class ScriptRepo(scriptConfigs: ScriptConfigs) {
   def gitHost = "0.0.0.0"
   def gitPort = 8080
 
-  def gitRemote = s"https:$gitHost:$gitPort/${scriptConfigs.repoOwner}/${scriptConfigs.repoName}.git"
+  def gitRemote = s"http://$gitHost:$gitPort/${scriptConfigs.repoOwner}/${scriptConfigs.repoName}.git"
 
   private def cleanExistingRepo(file: File): Unit = {
     if (file.isDirectory)
