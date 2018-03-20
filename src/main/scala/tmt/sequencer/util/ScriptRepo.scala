@@ -2,6 +2,7 @@ package tmt.sequencer.util
 
 import java.io.File
 
+import ammonite.ops.Path
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import tmt.sequencer.ScriptConfigs
@@ -14,10 +15,7 @@ class ScriptRepo(scriptConfigs: ScriptConfigs) {
   def gitRemote = s"http://$gitHost:$gitPort/${scriptConfigs.repoOwner}/${scriptConfigs.repoName}.git"
 
   private def cleanExistingRepo(file: File): Unit = {
-    if (file.isDirectory)
-      file.listFiles.foreach(cleanExistingRepo)
-    if (file.exists && !file.delete)
-      throw new Exception(s"Unable to delete ${file.getAbsolutePath}")
+    ammonite.ops.rm ! Path(file)
   }
 
   def cloneRepo(): Unit = {
