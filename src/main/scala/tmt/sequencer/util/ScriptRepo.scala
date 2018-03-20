@@ -2,8 +2,8 @@ package tmt.sequencer.util
 
 import java.io.File
 
-import ammonite.ops.Path
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import tmt.sequencer.ScriptConfigs
 
 class ScriptRepo(scriptConfigs: ScriptConfigs) {
@@ -22,14 +22,24 @@ class ScriptRepo(scriptConfigs: ScriptConfigs) {
 
   def cloneRepo(): Unit = {
     val cloneDir = new File(scriptConfigs.cloneDir)
-
-    cleanExistingRepo(cloneDir)
-
-    Git
-      .cloneRepository()
-      .setURI(gitRemote)
-      .setDirectory(cloneDir)
-      .setBranch("refs/heads/master")
-      .call()
+    try {
+      git().pull().call()
+    } catch {
+      case ex: Exception =>
+        cleanExistingRepo(cloneDir)
+        Git
+          .cloneRepository()
+          .setURI(gitRemote)
+          .setDirectory(cloneDir)
+          .setBranch("refs/heads/master")
+          .call()
+    }
   }
+
+  private def git(): Git = new Git(
+    new FileRepositoryBuilder()
+      .setMustExist(true)
+      .setGitDir(new File(s"${scriptConfigs.cloneDir}/.git"))
+      .build()
+  )
 }
