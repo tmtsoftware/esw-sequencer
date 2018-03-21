@@ -10,4 +10,5 @@ class ScriptConfigs(actorSystem: ActorSystem[_]) {
   val cloneDir: String  = config.getString("clone-dir")
   val repoOwner: String = config.getString("repo.owner")
   val repoName: String  = config.getString("repo.name")
+  val branch: String    = config.getString("repo.branch")
 }
