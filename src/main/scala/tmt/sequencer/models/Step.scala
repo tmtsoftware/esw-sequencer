@@ -41,10 +41,4 @@ object CommandResult {
   case class Failed(value: String)                extends CommandResult
   case class Multiple(values: Seq[CommandResult]) extends CommandResult
   case object Empty                               extends CommandResult
-
-  def from(values: Seq[CommandResult]): CommandResult = values match {
-    case Nil      => Empty
-    case x :: Nil => x
-    case xs       => Multiple(xs)
-  }
 }

@@ -29,6 +29,7 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
         }
       case CommandCompletion(commandResult) => script.onCommandCompletion(commandResult)
       case StepCompletion(commandResult) =>
+        script.onStepCompletion(commandResult)
         sequencerRef ! UpdateStatus(currentStep.id, StepStatus.Finished(commandResult))
         sequencerRef ! GetNext(ctx.self)
       case ControlCommand("shutdown") =>

@@ -1,28 +1,49 @@
 package tmt.sequencer
 
 import akka.actor.typed.ActorRef
+import tmt.sequencer.models.CommandResult.{Empty, Multiple}
 import tmt.sequencer.models.EngineMsg.{CommandCompletion, StepCompletion}
 import tmt.sequencer.models.{Command, CommandResult, EngineMsg}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.control.NonFatal
 
 class CswServices(locationService: LocationService, _engineRef: => ActorRef[EngineMsg])(implicit ec: ExecutionContext) {
   private lazy val engineRef = _engineRef
 
+  @volatile
+  private var _stepStracker: StepTracker = StepTracker(Nil, 0)
+
+  def stepTracker: StepTracker = _stepStracker
+
   def setup(componentName: String, command: Command): Unit = {
     val assembly = locationService.resolve(componentName)
-    commandCompletion(assembly.submit(command))
-  }
-
-  def stepComplete(commandResult: CommandResult): Unit = {
-    engineRef ! StepCompletion(commandResult)
+    _stepStracker = _stepStracker.sent()
+    trackCompletion(assembly.submit(command))
   }
 
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
 
-  private def commandCompletion(commandResultF: Future[CommandResult]): Unit = commandResultF.onComplete {
-    case Success(commandResult) => engineRef ! CommandCompletion(commandResult)
-    case Failure(ex)            => engineRef ! CommandCompletion(CommandResult.Failed(ex.getMessage))
+  private def trackCompletion(commandResultF: Future[CommandResult]): Unit =
+    commandResultF.recover {
+      case NonFatal(ex) => CommandResult.Failed(ex.getMessage)
+    } map { commandResult =>
+      engineRef ! CommandCompletion(commandResult)
+      _stepStracker = _stepStracker.received(commandResult)
+      if (_stepStracker.isFinished) {
+        engineRef ! StepCompletion(_stepStracker.aggResult)
+      }
+    }
+}
+
+case class StepTracker(results: List[CommandResult], commandCount: Int) {
+  def sent(): StepTracker                                 = copy(commandCount = commandCount + 1)
+  def received(commandResult: CommandResult): StepTracker = copy(results :+ commandResult, commandCount - 1)
+  def isFinished: Boolean                                 = commandCount == 0 && results.nonEmpty
+
+  def aggResult: CommandResult = results match {
+    case Nil      => Empty
+    case x :: Nil => x
+    case xs       => Multiple(xs)
   }
 }
