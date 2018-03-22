@@ -3,9 +3,9 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.EngineMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 import tmt.sequencer.models.SequencerMsg.{GetNext, UpdateStatus}
 import tmt.sequencer.models._
+import tmt.sequencer.models.EngineMsg.{ControlCommand, SequencerCommand, SequencerEvent}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}

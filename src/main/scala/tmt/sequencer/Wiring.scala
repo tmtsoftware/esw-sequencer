@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.actor.{typed, ActorSystem}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
-import tmt.sequencer.models.SupervisorMsg
+import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
 import tmt.sequencer.util.ScriptRepo
 
 import scala.concurrent.Await
@@ -21,15 +21,18 @@ class Wiring(scriptFile: String, isProd: Boolean) {
 
   lazy val scriptRepo = new ScriptRepo(scriptConfigs)
 
+  lazy val sequencerRef: ActorRef[SequencerMsg] =
+    Await.result(system.systemActorOf(SequencerBehaviour.behavior, "sequencer"), timeout.duration)
+
+  lazy val sequencer = new Sequencer(sequencerRef, system)
+
   lazy val locationService = new LocationService(system)
-  lazy val commandService  = new CswServices(locationService)(system.executionContext)
+  lazy val commandService  = new CswServices(locationService, sequencer)(system.executionContext)
 
   lazy val script: Script = ScriptImports.load(path, commandService)
 
   lazy val supervisorRef: ActorRef[SupervisorMsg] =
-    Await.result(system.systemActorOf(SupervisorBehavior.behavior(script), "supervisor"), timeout.duration)
+    Await.result(system.systemActorOf(SupervisorBehavior.behavior(script, sequencerRef), "supervisor"), timeout.duration)
 
-  lazy val supervisor = new Supervisor(supervisorRef, system)
-
-  lazy val remoteRepl = new RemoteRepl(commandService, supervisor)
+  lazy val remoteRepl = new RemoteRepl(commandService, sequencer, supervisorRef)
 }
