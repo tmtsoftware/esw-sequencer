@@ -1,11 +1,10 @@
-import $file.helpers
 import tmt.sequencer.ScriptImports._
 
 import scala.collection.mutable
 
-init[DD]
+init[IrisSequencer]
 
-class DD(cs: CommandService) extends Script(cs) {
+class IrisSequencer(cs: CommandService) extends Script(cs) {
 
   var results: mutable.Buffer[CommandResult] = mutable.Buffer.empty
   var commandCount = 0
