@@ -3,9 +3,9 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.SequencerMsg._
 import tmt.sequencer.models.EngineMsg.SequencerCommand
-import tmt.sequencer.models.{Sequence, SequencerMsg, Step, StepStatus}
+import tmt.sequencer.models.SequencerMsg._
+import tmt.sequencer.models.{Sequence, SequencerMsg, StepStatus}
 
 class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavior[SequencerMsg] {
 

@@ -3,12 +3,14 @@ package tmt.sequencer
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.SequencerMsg.ExternalSequencerMsg
 import tmt.sequencer.models.EngineMsg.ControlCommand
+import tmt.sequencer.models.SequencerMsg.ExternalSequencerMsg
 import tmt.sequencer.models.{EngineMsg, SequencerMsg, SupervisorMsg}
 
-class SupervisorBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: ActorContext[SupervisorMsg])
-    extends MutableBehavior[SupervisorMsg] {
+class SupervisorBehavior(script: Script, ctx: ActorContext[SupervisorMsg]) extends MutableBehavior[SupervisorMsg] {
+
+  private val sequencerRef: ActorRef[SequencerMsg] =
+    ctx.spawn(SequencerBehaviour.behavior, "sequencer")
 
   private val engineRef: ActorRef[EngineMsg] =
     ctx.spawn(EngineBehavior.behavior(script, sequencerRef), "engine")
@@ -24,7 +26,7 @@ class SupervisorBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], c
 }
 
 object SupervisorBehavior {
-  def behavior(script: Script, sequencerRef: ActorRef[SequencerMsg]): Behavior[SupervisorMsg] = {
-    Behaviors.mutable(ctx => new SupervisorBehavior(script, sequencerRef, ctx))
+  def behavior(script: Script): Behavior[SupervisorMsg] = {
+    Behaviors.mutable(ctx => new SupervisorBehavior(script, ctx))
   }
 }
