@@ -22,6 +22,11 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
     trackCompletion(assembly.submit(command))
   }
 
+  def setup2(componentName: String, command: Command): Future[CommandResult] = {
+    val assembly = locationService.resolve(componentName)
+    assembly.submit(command)
+  }
+
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
 
   private def trackCompletion(commandResultF: Future[CommandResult]): Unit =

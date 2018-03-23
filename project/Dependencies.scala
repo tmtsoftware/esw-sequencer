@@ -10,6 +10,6 @@ object Dependencies {
   val `scala-compiler`     = "org.scala-lang" % "scala-compiler" % "2.12.4"
   val `ammonite`           = "com.lihaoyi" % "ammonite" % "1.0.3" cross CrossVersion.full
   val `ammonite-sshd`      = "com.lihaoyi" % "ammonite-sshd" % "1.0.3" cross CrossVersion.full
-  private val jgitVersion  = "4.11.0.201803080745-r"
-  val `jgit`               = "org.eclipse.jgit" % "org.eclipse.jgit" % jgitVersion
+  val `jgit`               = "org.eclipse.jgit" % "org.eclipse.jgit" % "4.11.0.201803080745-r"
+  val `reactify`           = "com.outr" %% "reactify" % "2.3.0"
 }

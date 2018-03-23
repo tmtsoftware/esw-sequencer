@@ -17,7 +17,8 @@ lazy val root = (project in file(".")).
       `scala-compiler`,
       `ammonite`,
       `ammonite-sshd`,
-      `jgit`
+      `jgit`,
+      `reactify`
     )
   ).enablePlugins(JavaAppPackaging)
 
