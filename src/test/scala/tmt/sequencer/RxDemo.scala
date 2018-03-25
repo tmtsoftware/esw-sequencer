@@ -1,18 +1,17 @@
 package tmt.sequencer
 
 import akka.actor.{ActorSystem, Scheduler}
-import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
-import reactify._
-import tmt.sequencer.FutureActor.{ActorMsg, FutureMsg, GetX}
+
+import scala.concurrent.duration.DurationDouble
+import rx._
+import Ctx.Owner.Unsafe._
 import tmt.sequencer.FutureExt.RichFuture
 
 import scala.concurrent.Future
-import scala.concurrent.duration.DurationDouble
 
 class RxDemo extends FunSuite with BeforeAndAfterAll {
 
@@ -24,115 +23,84 @@ class RxDemo extends FunSuite with BeforeAndAfterAll {
 
   override protected def afterAll(): Unit = {}
 
-  test("plain") {
-    @volatile
+  test("rx") {
+    var x     = 0
+    val delta = Var(new Delta(0))
+
+    println(x)
+
+    val dd = Rx {
+      x += delta().value
+    }
+
+    Future
+      .sequence(
+        List(
+          Source(1 to 10000).runForeach(x => delta() = new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(-1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(-1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(-1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(-1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(-1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta() = new Delta(-1)),
+        )
+      )
+      .await
+
+    println(x)
+
+  }
+
+  test("rx-atomic") {
     var x = 0
 
-    println(x)
+    var wasIncr  = false
+    var wasIncr2 = false
 
-    val dd = List(
-      Source(1 to 10000).runForeach(_ => x = x + 1),
-      Source(1 to 10000).runForeach(_ => x = x - 1),
-    )
-
-    Future.sequence(dd).await
+    val delta  = Var(new Delta(0))
+    val delta2 = Var(new Delta(0))
 
     println(x)
 
-  }
+    Rx {
+      Rx {
+        if (wasIncr) {
+          x -= delta().value
+          wasIncr = false
+        } else {
+          x += delta().value
+          wasIncr = true
+        }
+      }
 
-  test("reactify") {
-    val x = Var(0)
-
-//    z.attach(println)
-
-    println(x())
-
-    val dd = List(
-      Source(1 to 10000).runForeach(_ => x := x() + 1),
-      Source(1 to 10000).runForeach(_ => x := x() - 1),
-      Source(1 to 10000).runForeach(_ => x := x() + 1),
-      Source(1 to 10000).runForeach(_ => x := x() - 1),
-      Source(1 to 10000).runForeach(_ => x := x() + 1),
-      Source(1 to 10000).runForeach(_ => x := x() - 1),
-      Source(1 to 10000).runForeach(_ => x := x() + 1),
-      Source(1 to 10000).runForeach(_ => x := x() - 1),
-    )
-
-    Future.sequence(dd).await
-
-    println(x())
-
-  }
-
-  test("future-actor") {
-    val actorRef = actorSystem.spawnAnonymous(FutureActor.behavior)
-
-    println((actorRef ? GetX).await)
-
-    val dd = List(
-      Source(1 to 10000).runForeach(_ => actorRef ! ActorMsg),
-      Source(1 to 10000).runForeach(_ => actorRef ! FutureMsg),
-    )
-
-    Future.sequence(dd).await
-
-    Thread.sleep(2000)
-
-    println((actorRef ? GetX).await)
-  }
-
-  test("atomic-future-actor") {
-    val actorRef = actorSystem.spawnAnonymous(AtomicFutureActor.behavior)
-
-    println((actorRef ? AtomicFutureActor.GetX).await)
-
-    val dd = List(
-      Source(1 to 10000).runForeach(_ => actorRef ! AtomicFutureActor.ActorMsg),
-      Source(1 to 10000).runForeach(_ => actorRef ! AtomicFutureActor.FutureMsg),
-    )
-
-    Future.sequence(dd).await
-
-    Thread.sleep(2000)
-
-    println((actorRef ? AtomicFutureActor.GetX).await)
-  }
-
-  test("reactify-atomic") {
-    val x                            = Var(0)
-    val wasIncremented: Var[Boolean] = Var(false)
-
-    //    z.attach(println)
-
-    println(x())
-
-    def f = Source(1 to 10000).runForeach { _ =>
-      if (wasIncremented) {
-        x := x() - 1
-        wasIncremented := false
-      } else {
-        x := x() + 1
-        wasIncremented := true
+      Rx {
+        if (wasIncr2) {
+          x -= delta2().value
+          wasIncr2 = false
+        } else {
+          x += delta2().value
+          wasIncr2 = true
+        }
       }
     }
 
-    Future.sequence(List.fill(10)(f)).await
+    Future
+      .sequence(
+        List(
+          Source(1 to 1000).runForeach(x => delta() = new Delta(1)),
+          Source(1 to 1000).runForeach(x => delta2() = new Delta(2)),
+        )
+      )
+      .await
 
-    println(x())
+    println(x)
 
   }
 
-  test("observe") {
-    val x = Var(0)
-    x.attach { d =>
-      println(d)
-      x := 10
-    }
-
-    println(x())
-    x := 100
-    println(x())
-  }
-
+  class Delta(val value: Int)
 }

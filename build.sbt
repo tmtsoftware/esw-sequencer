@@ -18,7 +18,8 @@ lazy val root = (project in file(".")).
       `ammonite`,
       `ammonite-sshd`,
       `jgit`,
-      `reactify`
+      `reactify`,
+      `scalarx`
     )
   ).enablePlugins(JavaAppPackaging)
 
