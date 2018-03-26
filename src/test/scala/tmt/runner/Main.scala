@@ -4,7 +4,7 @@ import tmt.sequencer.ScriptRunner
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val scriptFile = args.headOption.getOrElse("src/test/scala/scripts/iris_sequencer.sc")
+    val scriptFile = args.headOption.getOrElse("src/test/scala/scripts/iris_sequencer2.sc")
     ScriptRunner.run(scriptFile, isProd = false)
   }
 }

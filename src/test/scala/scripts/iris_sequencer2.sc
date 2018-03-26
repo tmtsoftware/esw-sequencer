@@ -5,16 +5,22 @@ init[IrisSequencer2]
 
 class IrisSequencer2(cs: CommandService) extends Script(cs) {
 
-  val dd: Var[CommandResult] = Var(CommandResult.Empty)
+  val resultCount = Var(0)
+  val eventCount = Var(0)
 
   override def onSetup(command: Command): Unit = {
     if (command.name == "setup-iris") {
-      dd := cs.setup2("iris-assembly1", command)
-      dd.attach { v =>
-        if(v.isInstanceOf[CommandResult.Failed]) {
-          dd := cs.setup2("iris-assembly2", command)
+      val topResult = cs.setup2("iris-assembly1", command)
+      topResult.attach { v =>
+        resultCount := resultCount + 1
+        val resultCh = if(v.isInstanceOf[CommandResult.Failed]) {
+          cs.setup2("iris-assembly2", command)
         } else {
-          dd := cs.setup2("iris-assembly3", command)
+          cs.setup2("iris-assembly3", command)
+        }
+        resultCh.attach { res =>
+          resultCount := resultCount + 1
+          cs.complete(res)
         }
       }
 
@@ -23,16 +29,16 @@ class IrisSequencer2(cs: CommandService) extends Script(cs) {
     }
   }
 
-  override def onCommandCompletion(commandResult: CommandResult): Unit = {}
-
-  override def onStepCompletion(commandResult: CommandResult): Unit = {}
+  override def onEvent(event: SequencerEvent): Unit = {
+    eventCount := eventCount + 1
+    println(event)
+  }
 
   override def onShutdown(): Unit = {
     println("shutdown")
   }
 
-  override def onEvent(event: SequencerEvent): Unit = {
-    dd := CommandResult.Single(event.value)
-    println(event)
-  }
+  override def onCommandCompletion(commandResult: CommandResult): Unit = {}
+
+  override def onStepCompletion(commandResult: CommandResult): Unit = {}
 }

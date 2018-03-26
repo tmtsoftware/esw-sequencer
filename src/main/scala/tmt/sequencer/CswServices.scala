@@ -1,14 +1,19 @@
 package tmt.sequencer
 
 import akka.actor.typed.ActorRef
+import reactify.Channel
+import tmt.sequencer.FutureExt.CommandResultFuture
 import tmt.sequencer.models.CommandResult.{Empty, Multiple}
 import tmt.sequencer.models.EngineMsg.{CommandCompletion, StepCompletion}
 import tmt.sequencer.models.{Command, CommandResult, EngineMsg}
+import tmt.sequencer.reactive.Engine
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class CswServices(locationService: LocationService, _engineRef: => ActorRef[EngineMsg])(implicit ec: ExecutionContext) {
+class CswServices(locationService: LocationService, _engineRef: => ActorRef[EngineMsg], engine: => Engine)(
+    implicit ec: ExecutionContext
+) {
   private lazy val engineRef = _engineRef
 
   @volatile
@@ -22,10 +27,12 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
     trackCompletion(assembly.submit(command))
   }
 
-  def setup2(componentName: String, command: Command): Future[CommandResult] = {
+  def setup2(componentName: String, command: Command): Channel[CommandResult] = {
     val assembly = locationService.resolve(componentName)
-    assembly.submit(command)
+    assembly.submit(command).resultChannel
   }
+
+  def complete(commandResult: CommandResult): Unit = engine.resultCh := commandResult
 
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
 

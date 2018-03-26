@@ -8,6 +8,7 @@ object ScriptRunner {
       scriptRepo.cloneRepo()
     }
     supervisorRef
+    engine
     remoteRepl.server().start()
   }
 }
