@@ -22,7 +22,7 @@ class IrisSequencer(cs: CommandService) extends Script(cs) {
       par(
         cs.setup("iris-assembly2", Command(Id("command2"), "setup2", List(1, 2))),
         cs.setup("iris-assembly3", Command(Id("command3"), "setup3", List(1, 2)))
-      )
+      ) //Putting 2 commands in par is not making any difference
     } else if (resultCount == 3){
       cs.stepComplete(results)
       results = List.empty[CommandResult]
