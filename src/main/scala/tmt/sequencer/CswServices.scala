@@ -16,11 +16,6 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
 ) {
   private lazy val engineRef = _engineRef
 
-  @volatile
-  private var _stepStracker: StepTracker = StepTracker(Nil)
-
-  def stepTracker: StepTracker = _stepStracker
-
   def setup(componentName: String, command: Command): Unit = {
     val assembly = locationService.resolve(componentName)
     trackCompletion(command, assembly.submit(command))
@@ -40,23 +35,16 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
       case NonFatal(ex) => CommandResult.Failed(ex.getMessage)
     } map { commandResult =>
       engineRef ! CommandCompletion(command, commandResult)
-      _stepStracker = _stepStracker.received(commandResult)
     }
 
-  def stepComplete(): Unit = {
-    engineRef ! StepCompletion(_stepStracker.aggResult)
-    _stepStracker = _stepStracker.reset
+  def stepComplete(stepResults: List[CommandResult]): Unit = {
+    val aggregatedResult = aggResult(stepResults)
+    engineRef ! StepCompletion(aggregatedResult)
   }
-}
 
-case class StepTracker(results: List[CommandResult]) {
-  def received(commandResult: CommandResult): StepTracker = copy(results :+ commandResult)
-
-  def aggResult: CommandResult = results match {
+  private def aggResult(stepResults: List[CommandResult]) = stepResults match {
     case Nil      => Empty
     case x :: Nil => x
     case xs       => Multiple(xs)
   }
-
-  def reset: StepTracker = copy(Nil)
 }

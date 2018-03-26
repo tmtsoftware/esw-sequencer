@@ -21,7 +21,7 @@ class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg], system: Actor
 
   val currentStep: Var[Step] = Var(null)
 
-  private val stepCh: Channel[Step]      = (sequencerRef ? GetNext).asChannel.map(_.step)
+  private val stepCh: Channel[Step]      = Channel[Step] //(sequencerRef ? GetNext).asChannel.map(_.step)
   val resultCh: Channel[CommandResult]   = Channel[CommandResult]
   val controlCh: Channel[ControlCommand] = Channel[ControlCommand]
   val eventCh: Channel[SequencerEvent]   = Channel[SequencerEvent]

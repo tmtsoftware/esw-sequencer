@@ -11,7 +11,7 @@ object EngineMsg {
   case class SequencerCommand(step: Step)                                      extends EngineMsg
   case class SequencerEvent(value: String)                                     extends EngineMsg
   case class CommandCompletion(command: Command, commandResult: CommandResult) extends EngineMsg
-  case class StepCompletion(commandResult: CommandResult)                      extends EngineMsg
+  case class StepCompletion(stepResult: CommandResult)                         extends EngineMsg
   case class ControlCommand(name: String)                                      extends EngineMsg with SupervisorMsg
 }
 
