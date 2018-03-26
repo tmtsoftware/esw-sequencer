@@ -16,7 +16,7 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
 ) {
   private lazy val engineRef = _engineRef
 
-  def setup(componentName: String, command: Command): CommandResult = {
+  def setup(componentName: String, command: Command): Future[CommandResult] = {
     println(s"command ${command.name} received")
     val assembly = locationService.resolve(componentName)
     trackCompletion(command, assembly.submit(command))
@@ -31,15 +31,13 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
 
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
 
-  private def trackCompletion(command: Command, commandResultF: Future[CommandResult]): CommandResult = {
-    var result: CommandResult = null
+  private def trackCompletion(command: Command, commandResultF: Future[CommandResult]): Future[CommandResult] = {
     commandResultF.recover {
-      case NonFatal(ex) => result = CommandResult.Failed(ex.getMessage)
+      case NonFatal(ex) => CommandResult.Failed(ex.getMessage)
     } map { commandResult =>
-      result = commandResult.asInstanceOf[CommandResult]
-      engineRef ! CommandCompletion(command, result)
+      engineRef ! CommandCompletion(command, commandResult)
+      commandResult
     }
-    result
   }
 
   def stepComplete(stepResults: List[CommandResult]): Unit = {
