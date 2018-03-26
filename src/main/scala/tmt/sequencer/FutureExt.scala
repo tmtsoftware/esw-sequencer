@@ -13,14 +13,9 @@ object FutureExt {
     def await: T                     = await(Duration.Inf)
     def asChannel(implicit ec: ExecutionContext): Channel[T] = {
       val channel = Channel[T]
-      f.map { x =>
-          channel := x
-        }
-        .recover {
-          case NonFatal(ex) =>
-            ex.printStackTrace()
-            channel := (throw ex)
-        }
+      f.map(x => channel := x).recover {
+        case NonFatal(ex) => ex.printStackTrace()
+      }
       channel
     }
 

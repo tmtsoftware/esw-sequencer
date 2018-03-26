@@ -17,14 +17,13 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
   private lazy val engineRef = _engineRef
 
   @volatile
-  private var _stepStracker: StepTracker = StepTracker(Nil, 0)
+  private var _stepStracker: StepTracker = StepTracker(Nil)
 
   def stepTracker: StepTracker = _stepStracker
 
   def setup(componentName: String, command: Command): Unit = {
     val assembly = locationService.resolve(componentName)
-    _stepStracker = _stepStracker.sent()
-    trackCompletion(assembly.submit(command))
+    trackCompletion(command, assembly.submit(command))
   }
 
   def setup2(componentName: String, command: Command): Channel[CommandResult] = {
@@ -36,26 +35,28 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
 
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
 
-  private def trackCompletion(commandResultF: Future[CommandResult]): Unit =
+  private def trackCompletion(command: Command, commandResultF: Future[CommandResult]): Unit =
     commandResultF.recover {
       case NonFatal(ex) => CommandResult.Failed(ex.getMessage)
     } map { commandResult =>
-      engineRef ! CommandCompletion(commandResult)
+      engineRef ! CommandCompletion(command, commandResult)
       _stepStracker = _stepStracker.received(commandResult)
-      if (_stepStracker.isFinished) {
-        engineRef ! StepCompletion(_stepStracker.aggResult)
-      }
     }
+
+  def stepComplete(): Unit = {
+    engineRef ! StepCompletion(_stepStracker.aggResult)
+    _stepStracker = _stepStracker.reset
+  }
 }
 
-case class StepTracker(results: List[CommandResult], commandCount: Int) {
-  def sent(): StepTracker                                 = copy(commandCount = commandCount + 1)
-  def received(commandResult: CommandResult): StepTracker = copy(results :+ commandResult, commandCount - 1)
-  def isFinished: Boolean                                 = commandCount == 0 && results.nonEmpty
+case class StepTracker(results: List[CommandResult]) {
+  def received(commandResult: CommandResult): StepTracker = copy(results :+ commandResult)
 
   def aggResult: CommandResult = results match {
     case Nil      => Empty
     case x :: Nil => x
     case xs       => Multiple(xs)
   }
+
+  def reset: StepTracker = copy(Nil)
 }

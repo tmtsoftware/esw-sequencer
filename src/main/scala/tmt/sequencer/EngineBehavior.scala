@@ -15,9 +15,9 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
 
   import ctx.executionContext
 
-  var currentStep: Step = null
+  var currentStep: Step = _
 
-//  sequencerRef ! GetNext(ctx.self)
+  sequencerRef ! GetNext(ctx.self)
 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {
@@ -27,9 +27,9 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
           case x if x.startsWith("setup-") => script.onSetup(step.command)
           case x                           =>
         }
-      case CommandCompletion(commandResult) => script.onCommandCompletion(commandResult)
+      case CommandCompletion(command, commandResult) => script.onCommandCompletion(command, commandResult)
       case StepCompletion(commandResult) =>
-        script.onStepCompletion(commandResult)
+        println(s"step ${currentStep.command.name} completes with result = $commandResult")
         sequencerRef ! UpdateStatus(currentStep.id, StepStatus.Finished(commandResult))
         sequencerRef ! GetNext(ctx.self)
       case ControlCommand("shutdown") =>

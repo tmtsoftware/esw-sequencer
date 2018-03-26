@@ -114,6 +114,7 @@ class ReactifyDemo extends FunSuite with BeforeAndAfterAll {
     val delta       = Var(new Delta(0))
     val delta2      = Var(new Delta(0))
     val mergedDelta = Var(new Delta(0))
+
     delta.and(delta2).attach(d => mergedDelta := d)
 
     println(x)

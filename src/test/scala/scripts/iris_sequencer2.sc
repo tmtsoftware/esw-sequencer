@@ -12,8 +12,10 @@ class IrisSequencer2(cs: CommandService) extends Script(cs) {
     if (command.name == "setup-iris") {
       val topResult = cs.setup2("iris-assembly1", command)
       topResult.attach { v =>
+        Thread.sleep(2000)
         resultCount := resultCount + 1
         val resultCh = if(v.isInstanceOf[CommandResult.Failed]) {
+          Thread.sleep(2000)
           cs.setup2("iris-assembly2", command)
         } else {
           cs.setup2("iris-assembly3", command)
@@ -38,7 +40,6 @@ class IrisSequencer2(cs: CommandService) extends Script(cs) {
     println("shutdown")
   }
 
-  override def onCommandCompletion(commandResult: CommandResult): Unit = {}
+  override def onCommandCompletion(command: Command, commandResult: CommandResult): Unit = {}
 
-  override def onStepCompletion(commandResult: CommandResult): Unit = {}
 }
