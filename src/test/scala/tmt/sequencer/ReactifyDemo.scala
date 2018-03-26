@@ -1,14 +1,11 @@
 package tmt.sequencer
 
-import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.actor.{ActorSystem, Scheduler}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import reactify._
-import tmt.sequencer.FutureActor.{ActorMsg, FutureMsg, GetX}
 import tmt.sequencer.FutureExt.RichFuture
 
 import scala.concurrent.Future
@@ -101,6 +98,49 @@ class ReactifyDemo extends FunSuite with BeforeAndAfterAll {
           Source(1 to 10000).runForeach(x => delta2 := new Delta(-1)),
           Source(1 to 10000).runForeach(x => delta := new Delta(1)),
           Source(1 to 10000).runForeach(x => delta2 := new Delta(-1)),
+        )
+      )
+      .await
+
+    println(x)
+
+  }
+
+  test("reactify-atomic-merge") {
+    val x = Var(0)
+
+    val wasIncr = Var(false)
+
+    val delta       = Var(new Delta(0))
+    val delta2      = Var(new Delta(0))
+    val mergedDelta = Var(new Delta(0))
+    delta.and(delta2).attach(d => mergedDelta := d)
+
+    println(x)
+
+    mergedDelta.attach { d =>
+      if (wasIncr) {
+        x := x - d.value
+        wasIncr := false
+      } else {
+        x := x + d.value
+        wasIncr := true
+      }
+    }
+
+    Future
+      .sequence(
+        List(
+          Source(1 to 10000).runForeach(x => delta := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta2 := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta2 := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta2 := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta2 := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta := new Delta(1)),
+          Source(1 to 10000).runForeach(x => delta2 := new Delta(1)),
         )
       )
       .await
