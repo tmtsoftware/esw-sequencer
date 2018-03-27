@@ -13,8 +13,7 @@ import ControlDsl._
 
 class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
-  private implicit val actorSystem: ActorSystem = ActorSystem("test")
-  import actorSystem.dispatcher
+  private implicit val actorSystem: ActorSystem        = ActorSystem("test")
   private implicit val materializer: ActorMaterializer = ActorMaterializer()
   private implicit val scheduler: Scheduler            = actorSystem.scheduler
   private implicit val timeout: Timeout                = Timeout(5.seconds)
@@ -26,19 +25,22 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
     println(x)
 
+    def incr(): Unit = x += 1
+    def decr(): Unit = x -= 1
+
     Future
       .sequence(
         List(
-          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
         )
       )
       .get
