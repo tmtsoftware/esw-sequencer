@@ -16,7 +16,7 @@ import scala.async.internal
 trait ControlDsl {
   implicit def toFuture(x: => CommandResult): Future[CommandResult] = Future(x)
 
-  def par(fs: Future[CommandResult]*): Seq[CommandResult] = Future.sequence(fs.toList).await
+  def par(fs: Future[CommandResult]*): Future[List[CommandResult]] = Future.sequence(fs.toList)
 
   implicit class RichCommandResponse(commandResponse: => CommandResult) {
     def async: Future[CommandResult] = Future(commandResponse)
