@@ -111,15 +111,10 @@ class ReactifyDemo extends FunSuite with BeforeAndAfterAll {
 
     val wasIncr = Var(false)
 
-    val delta       = Var(new Delta(0))
-    val delta2      = Var(new Delta(0))
-    val mergedDelta = Var(new Delta(0))
+    val delta  = Var(new Delta(0))
+    val delta2 = Var(new Delta(0))
 
-    delta.and(delta2).attach(d => mergedDelta := d)
-
-    println(x)
-
-    mergedDelta.attach { d =>
+    delta.attach { d =>
       if (wasIncr) {
         x := x - d.value
         wasIncr := false
@@ -128,6 +123,18 @@ class ReactifyDemo extends FunSuite with BeforeAndAfterAll {
         wasIncr := true
       }
     }
+
+    delta2.attach { d =>
+      if (wasIncr) {
+        x := x - d.value
+        wasIncr := false
+      } else {
+        x := x + d.value
+        wasIncr := true
+      }
+    }
+
+    println(x)
 
     Future
       .sequence(
