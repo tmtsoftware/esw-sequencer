@@ -1,19 +1,17 @@
 package tmt.sequencer
 
-import java.util.concurrent.Executors
-
 import akka.actor.{ActorSystem, Scheduler}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.tmt.macros.SingleThreadedAsync
 import tmt.sequencer.FutureExt.RichFuture
 
+import scala.language.experimental.macros
 import scala.annotation.compileTimeOnly
+import scala.concurrent.Future
 import scala.concurrent.duration.DurationDouble
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Future}
-import scala.async.internal
-import async.Async._
 import scala.language.experimental.macros
 
 class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
@@ -93,10 +91,7 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 }
 
 object Fiber {
-  private implicit val ec: ExecutionContextExecutorService =
-    ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor())
-
-  def async[T](body: => T)(implicit execContext: ExecutionContext): Future[T] = macro internal.ScalaConcurrentAsync.asyncImpl[T]
+  def async[T](body: => T): Future[T] = macro SingleThreadedAsync.impl[T]
   @compileTimeOnly("`await` must be enclosed in an `spawn` block")
   def await[T](awaitable: Future[T]): T =
     ??? // No implementation here, as calls to this are translated to `onComplete` by the macro.
