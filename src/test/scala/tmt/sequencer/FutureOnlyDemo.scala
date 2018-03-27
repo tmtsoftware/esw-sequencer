@@ -5,14 +5,11 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
-import org.tmt.macros.SingleThreadedAsync
 import tmt.sequencer.FutureExt.RichFuture
 
-import scala.language.experimental.macros
-import scala.annotation.compileTimeOnly
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationDouble
-import scala.language.experimental.macros
+import Fiber._
 
 class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
@@ -29,19 +26,22 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
     println(x)
 
+    def incr(): Unit = x += 1
+    def decr(): Unit = x -= 1
+
     Future
       .sequence(
         List(
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x -= 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x -= 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x -= 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x -= 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x += 1)).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => Fiber.async(x -= 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
         )
       )
       .await
@@ -51,13 +51,14 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
   }
 
   test("future-atomic") {
+
     var x = 0
 
     var wasIncr = false
 
     println(x)
 
-    def f(d: Int) = Fiber.async {
+    def f(d: Int) = spawn {
       if (wasIncr) {
         x = x - d
         wasIncr = false
@@ -88,11 +89,14 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
   }
 
-}
+  test("custom-async-await") {
 
-object Fiber {
-  def async[T](body: => T): Future[T] = macro SingleThreadedAsync.impl[T]
-  @compileTimeOnly("`await` must be enclosed in an `spawn` block")
-  def await[T](awaitable: Future[T]): T =
-    ??? // No implementation here, as calls to this are translated to `onComplete` by the macro.
+    val f1 = spawn(10)
+    val f2 = spawn(20)
+
+    spawn {
+      f1.get + f2.get
+    }.map(println).await
+  }
+
 }
