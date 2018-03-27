@@ -12,6 +12,8 @@ import tmt.sequencer.FutureExt.RichFuture
 import scala.annotation.compileTimeOnly
 import scala.concurrent.duration.DurationDouble
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Future}
+import scala.async.internal
+import async.Async._
 
 class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
