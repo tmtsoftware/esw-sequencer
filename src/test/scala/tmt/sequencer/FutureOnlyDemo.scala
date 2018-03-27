@@ -14,6 +14,7 @@ import scala.concurrent.duration.DurationDouble
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Future}
 import scala.async.internal
 import async.Async._
+import scala.language.experimental.macros
 
 class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 

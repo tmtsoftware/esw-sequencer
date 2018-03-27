@@ -17,7 +17,7 @@ class EngineBehavior(script: Script, sequencerRef: ActorRef[SequencerMsg], ctx: 
 
   var currentStep: Step = _
 
-  sequencerRef ! GetNext(ctx.self)
+//  sequencerRef ! GetNext(ctx.self)
 
   override def onMessage(msg: EngineMsg): Behavior[EngineMsg] = {
     msg match {

@@ -1,7 +1,4 @@
-import tmt.sequencer.Fiber._
 import tmt.sequencer.ScriptImports._
-
-import scala.concurrent.Future
 
 init[IrisSequencer3]
 
@@ -22,7 +19,9 @@ class IrisSequencer3(cs: CommandService) extends Script(cs) {
         await(cs.setup3("iris-assembly3", command))
       }
       resultCount = resultCount + 1
-      CommandResult.Multiple(List(topR, result))
+      val results = CommandResult.Multiple(List(topR, result))
+      println(s"final result = $results")
+      results
     } else {
       println(s"unknown command=$command")
       CommandResult.Empty

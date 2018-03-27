@@ -20,6 +20,8 @@ object ScriptImports {
   type CommandResult = tmt.sequencer.models.CommandResult
   val CommandResult = tmt.sequencer.models.CommandResult
 
+  type Future[T] = scala.concurrent.Future[T]
+
   type Id = tmt.sequencer.models.Id
   val Id = tmt.sequencer.models.Id
 

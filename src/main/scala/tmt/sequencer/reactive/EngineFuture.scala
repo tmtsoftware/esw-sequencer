@@ -19,7 +19,7 @@ class EngineFuture(script: Script, sequencerRef: ActorRef[SequencerMsg], system:
   private implicit val timeout: Timeout     = Timeout(5.days)
   private implicit val scheduler: Scheduler = system.scheduler
 
-  var currentStep: Step = null
+  var currentStep: Step = _
 
   (sequencerRef ? GetNext).foreach(x => loop(x.step))
 
