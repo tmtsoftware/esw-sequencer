@@ -14,13 +14,13 @@ class Sequencer(sequencer: ActorRef[SequencerMsg], system: ActorSystem[_]) {
   private implicit val timeout: Timeout     = Timeout(10.hour)
   private implicit val scheduler: Scheduler = system.scheduler
 
-  def next: Step                                         = (sequencer ? GetNext).await.step
+  def next: Step                                         = (sequencer ? GetNext).get.step
   def addAll(commands: List[Command]): Unit              = sequencer ! Add(commands)
-  def hasNext: Boolean                                   = (sequencer ? HasNext).await
+  def hasNext: Boolean                                   = (sequencer ? HasNext).get
   def pause(): Unit                                      = sequencer ! Pause
   def resume(): Unit                                     = sequencer ! Resume
   def reset(): Unit                                      = sequencer ! Reset
-  def sequence: Sequence                                 = (sequencer ? GetSequence).await
+  def sequence: Sequence                                 = (sequencer ? GetSequence).get
   def delete(ids: List[Id]): Unit                        = sequencer ! Delete(ids)
   def addBreakpoints(ids: List[Id]): Unit                = sequencer ! AddBreakpoints(ids)
   def removeBreakpoints(ids: List[Id]): Unit             = sequencer ! RemoveBreakpoints(ids)

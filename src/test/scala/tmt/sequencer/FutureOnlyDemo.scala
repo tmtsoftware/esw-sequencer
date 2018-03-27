@@ -9,7 +9,7 @@ import tmt.sequencer.FutureExt.RichFuture
 
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationDouble
-import Fiber._
+import ControlDsl._
 
 class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
@@ -26,25 +26,22 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
     println(x)
 
-    def incr(): Unit = x += 1
-    def decr(): Unit = x -= 1
-
     Future
       .sequence(
         List(
-          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(incr())).runForeach(_ => ()),
-          Source(1 to 10000).mapAsync(1)(d => spawn(decr())).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x += 1)).runForeach(_ => ()),
+          Source(1 to 10000).mapAsync(1)(d => spawn(x -= 1)).runForeach(_ => ()),
         )
       )
-      .await
+      .get
 
     println(x)
 
@@ -83,7 +80,7 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
           Source(1 to 10000).mapAsync(1)(_ => f(1)).runForeach(_ => ()),
         )
       )
-      .await
+      .get
 
     println(x)
 
@@ -96,7 +93,7 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
 
     spawn {
       f1.get + f2.get
-    }.map(println).await
+    }.map(println).get
   }
 
 }

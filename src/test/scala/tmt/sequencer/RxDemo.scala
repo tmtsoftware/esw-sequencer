@@ -50,7 +50,7 @@ class RxDemo extends FunSuite with BeforeAndAfterAll {
           Source(1 to 10000).runForeach(x => delta() = new Delta(-1)),
         )
       )
-      .await
+      .get
 
     println(x)
 
@@ -96,7 +96,7 @@ class RxDemo extends FunSuite with BeforeAndAfterAll {
           Source(1 to 1000).runForeach(x => delta2() = new Delta(2)),
         )
       )
-      .await
+      .get
 
     println(x)
 

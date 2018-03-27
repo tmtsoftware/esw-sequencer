@@ -7,16 +7,16 @@ class IrisSequencer3(cs: CommandService) extends Script(cs) {
   var resultCount = 0
   var eventCount = 0
 
-  override def onSetup(command: Command): Future[CommandResult] = async {
+  override def onSetup(command: Command): Future[CommandResult] = spawn {
     if (command.name == "setup-iris") {
-      val topR = await(cs.setup3("iris-assembly1", command))
+      val topR = cs.setup3("iris-assembly1", command).await
       Thread.sleep(2000)
       resultCount = resultCount + 1
       val result = if (topR.isInstanceOf[CommandResult.Failed]) {
         Thread.sleep(2000)
-        await(cs.setup3("iris-assembly2", command))
+        cs.setup3("iris-assembly2", command).await
       } else {
-        await(cs.setup3("iris-assembly3", command))
+        cs.setup3("iris-assembly3", command).await
       }
       resultCount = resultCount + 1
       val results = CommandResult.Multiple(List(topR, result))
@@ -28,12 +28,12 @@ class IrisSequencer3(cs: CommandService) extends Script(cs) {
     }
   }
 
-  override def onEvent(event: SequencerEvent): Future[Unit] = async {
+  override def onEvent(event: SequencerEvent): Future[Unit] = spawn {
     eventCount = eventCount + 1
     println(event)
   }
 
-  override def onShutdown(): Future[Unit] = async {
+  override def onShutdown(): Future[Unit] = spawn {
     println("shutdown")
   }
 

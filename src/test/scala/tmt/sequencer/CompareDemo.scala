@@ -35,7 +35,7 @@ class CompareDemo extends FunSuite with BeforeAndAfterAll {
       Source(1 to 10000).runForeach(_ => x = x - 1),
     )
 
-    Future.sequence(dd).await
+    Future.sequence(dd).get
 
     println(x)
 
@@ -59,7 +59,7 @@ class CompareDemo extends FunSuite with BeforeAndAfterAll {
       Source(1 to 10000).runForeach(_ => x := x() - 1),
     )
 
-    Future.sequence(dd).await
+    Future.sequence(dd).get
 
     println(x())
 
@@ -68,35 +68,35 @@ class CompareDemo extends FunSuite with BeforeAndAfterAll {
   test("future-actor") {
     val actorRef = actorSystem.spawnAnonymous(FutureActor.behavior)
 
-    println((actorRef ? GetX).await)
+    println((actorRef ? GetX).get)
 
     val dd = List(
       Source(1 to 10000).runForeach(_ => actorRef ! ActorMsg),
       Source(1 to 10000).runForeach(_ => actorRef ! FutureMsg),
     )
 
-    Future.sequence(dd).await
+    Future.sequence(dd).get
 
     Thread.sleep(2000)
 
-    println((actorRef ? GetX).await)
+    println((actorRef ? GetX).get)
   }
 
   test("atomic-future-actor") {
     val actorRef = actorSystem.spawnAnonymous(AtomicFutureActor.behavior)
 
-    println((actorRef ? AtomicFutureActor.GetX).await)
+    println((actorRef ? AtomicFutureActor.GetX).get)
 
     val dd = List(
       Source(1 to 10000).runForeach(_ => actorRef ! AtomicFutureActor.ActorMsg),
       Source(1 to 10000).runForeach(_ => actorRef ! AtomicFutureActor.FutureMsg),
     )
 
-    Future.sequence(dd).await
+    Future.sequence(dd).get
 
     Thread.sleep(2000)
 
-    println((actorRef ? AtomicFutureActor.GetX).await)
+    println((actorRef ? AtomicFutureActor.GetX).get)
   }
 
   test("reactify-atomic") {
@@ -117,7 +117,7 @@ class CompareDemo extends FunSuite with BeforeAndAfterAll {
       }
     }
 
-    Future.sequence(List.fill(10)(f)).await
+    Future.sequence(List.fill(10)(f)).get
 
     println(x())
 

@@ -48,7 +48,7 @@ class ReactifyDemo extends FunSuite with BeforeAndAfterAll {
           Source(1 to 10000).runForeach(x => delta := new Delta(-1)),
         )
       )
-      .await
+      .get
 
     println(x)
 
@@ -100,7 +100,7 @@ class ReactifyDemo extends FunSuite with BeforeAndAfterAll {
           Source(1 to 10000).runForeach(x => delta2 := new Delta(-1)),
         )
       )
-      .await
+      .get
 
     println(x)
 
@@ -151,7 +151,7 @@ class ReactifyDemo extends FunSuite with BeforeAndAfterAll {
           Source(1 to 10000).runForeach(x => delta2 := new Delta(1)),
         )
       )
-      .await
+      .get
 
     println(x)
 
