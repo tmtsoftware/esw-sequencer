@@ -13,4 +13,5 @@ object Dependencies {
   val `jgit`               = "org.eclipse.jgit" % "org.eclipse.jgit" % "4.11.0.201803080745-r"
   val `reactify`           = "com.outr" %% "reactify" % "2.3.0"
   val `scalarx`            = "com.lihaoyi" %% "scalarx" % "0.3.2"
+  val `scala-async`        = "org.scala-lang.modules" %% "scala-async" % "0.9.7"
 }

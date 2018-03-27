@@ -27,6 +27,11 @@ class CswServices(locationService: LocationService, _engineRef: => ActorRef[Engi
     assembly.submit(command).resultChannel
   }
 
+  def setup3(componentName: String, command: Command): Future[CommandResult] = {
+    val assembly = locationService.resolve(componentName)
+    assembly.submit(command)
+  }
+
   def complete(commandResult: CommandResult): Unit = engine.resultCh := commandResult
 
   def split(params: List[Int]): (List[Int], List[Int]) = params.partition(_ % 2 != 0)
