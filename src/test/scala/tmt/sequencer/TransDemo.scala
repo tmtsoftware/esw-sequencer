@@ -10,7 +10,7 @@ import tmt.sequencer.FutureExt.RichFuture
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationDouble
 
-class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll with ControlDsl {
+class StrandDemo extends FunSuite with BeforeAndAfterAll with ControlDsl {
 
   private implicit val actorSystem: ActorSystem        = ActorSystem("test")
   private implicit val materializer: ActorMaterializer = ActorMaterializer()

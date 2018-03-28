@@ -13,27 +13,40 @@ import tmt.sequencer.models._
 
 import scala.concurrent.duration.DurationDouble
 import scala.concurrent.{ExecutionContext, Future}
+import async.Async._
 
 class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg], system: ActorSystem[_]) {
   private implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor())
   private implicit val timeout: Timeout     = Timeout(5.days)
   private implicit val scheduler: Scheduler = system.scheduler
 
-  var currentStep: Step = _
+  loop(nextStep())
 
-  (sequencerRef ? GetNext).foreach(x => loop(x.step))
-
-  private def loop(step: Step): Unit = {
-    currentStep = step
+  private def loop(stepF: Future[Step]): Unit = async {
+    val step = await(stepF)
     step.command.name match {
       case x if x.startsWith("setup-") =>
-        script.onSetup(step.command).foreach { commandResult =>
-          sequencerRef ! UpdateStatus(currentStep.id, StepStatus.Finished(commandResult))
-          (sequencerRef ? GetNext).foreach(x => loop(x.step))
-        }
+        val commandResult = await(script.onSetup(step.command))
+        sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(commandResult))
+        loop(nextStep())
       case x =>
     }
   }
+
+  private def loop2(): Future[Unit] = async {
+    var step = await(nextStep())
+    while (true) {
+      step.command.name match {
+        case x if x.startsWith("setup-") =>
+          val commandResult = await(script.onSetup(step.command))
+          sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(commandResult))
+          step = await(nextStep())
+        case x =>
+      }
+    }
+  }
+
+  private def nextStep(): Future[Step] = (sequencerRef ? GetNext).map(_.step)
 
   def control(controlCommand: ControlCommand): Future[Unit] = controlCommand.name match {
     case "shutdown" => script.onShutdown()
