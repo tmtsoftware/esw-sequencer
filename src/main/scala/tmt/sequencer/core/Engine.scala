@@ -26,7 +26,7 @@ class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg], system: Actor
     val step = await(stepF)
     step.command.name match {
       case x if x.startsWith("setup-") =>
-        val commandResult = await(script.onSetup(step.command))
+        val commandResult = await(script.execute(step.command))
         sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(commandResult))
         loop(nextStep())
       case x =>
@@ -36,7 +36,7 @@ class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg], system: Actor
   private def nextStep(): Future[Step] = (sequencerRef ? GetNext).map(_.step)
 
   def control(controlCommand: ControlCommand): Future[Unit] = controlCommand.name match {
-    case "shutdown" => script.onShutdown()
+    case "shutdown" => script.shutdown()
     case _          => Future.unit
   }
 

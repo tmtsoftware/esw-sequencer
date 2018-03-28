@@ -21,7 +21,7 @@ class EngineTest extends FunSuite {
   private implicit val timeout: Timeout                = Timeout(5.seconds)
 
   val script: Script = new Script(null) {
-    override def onSetup(x: Command): Future[CommandResults]            = Future(CommandResults.empty)
+    override def execute(x: Command): Future[CommandResults]            = Future(CommandResults.empty)
     override def onShutdown(): Future[Unit]                             = ???
     override def onEvent(event: EngineMsg.SequencerEvent): Future[Unit] = ???
   }

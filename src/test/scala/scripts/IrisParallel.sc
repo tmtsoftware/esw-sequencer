@@ -6,7 +6,7 @@ class IrisParallel(cs: CswServices) extends Script(cs) {
 
   var eventCount = 0
 
-  override def onSetup(command: Command): Future[CommandResults] = spawn {
+  override def execute(command: Command): Future[CommandResults] = spawn {
     if (command.name == "setup-iris") {
       val topR = cs.setup("iris-assembly1", command).await
       Thread.sleep(2000)
