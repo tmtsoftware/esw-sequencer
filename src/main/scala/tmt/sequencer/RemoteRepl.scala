@@ -1,7 +1,6 @@
 package tmt.sequencer
 
 import akka.actor.typed.ActorRef
-import akka.stream.StreamRefMessages
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
 import tmt.sequencer.models.EngineMsg.ControlCommand

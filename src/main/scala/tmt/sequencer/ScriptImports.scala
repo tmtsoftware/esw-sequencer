@@ -1,7 +1,6 @@
 package tmt.sequencer
 
 import ammonite.ops.Path
-import reactify.State
 import tmt.sequencer.models.EngineMsg
 
 import scala.reflect.{classTag, ClassTag}
@@ -36,6 +35,4 @@ object ScriptImports {
   def init[T <: Script: ClassTag]: Unit = {
     tag = classTag[T]
   }
-
-  implicit def state2Value[T](p: State[T]): T = p()
 }

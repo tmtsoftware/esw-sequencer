@@ -1,5 +1,3 @@
-import Dependencies._
-
 lazy val root = (project in file("."))
   .enablePlugins(JavaAppPackaging)
   .dependsOn(macros)
@@ -11,24 +9,22 @@ lazy val root = (project in file("."))
     )),
     name := "sequencer-framework",
     libraryDependencies ++= Seq(
-      scalaTest % Test,
-      `akka-stream`,
-      `akka-typed`,
-      `akka-typed-testkit`,
-      `scala-reflect`,
-      `scala-compiler`,
-      `ammonite`,
-      `ammonite-sshd`,
-      `jgit`,
-      `reactify`,
-      `scalarx`,
-      `scala-async`
+      Libs.`scala-reflect`,
+      Libs.`scala-compiler`,
+      Akka.`akka-stream`,
+      Akka.`akka-typed`,
+      Akka.`akka-typed-testkit`,
+      Ammonite.`ammonite`,
+      Ammonite.`ammonite-sshd`,
+      Libs.`jgit`,
+      Libs.`scala-async`,
+      Libs.scalaTest % Test,
     )
   )
 
 lazy val macros = project.settings(
   libraryDependencies ++= Seq(
-    `scala-async`,
-    `scala-reflect`,
+    Libs.`scala-async`,
+    Libs.`scala-reflect`,
   )
 )

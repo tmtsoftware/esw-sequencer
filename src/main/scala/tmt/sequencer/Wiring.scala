@@ -5,8 +5,8 @@ import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.actor.{typed, ActorSystem}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
-import tmt.sequencer.models.{EngineMsg, SequencerMsg, SupervisorMsg}
-import tmt.sequencer.reactive.{Engine, EngineFuture}
+import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
+import tmt.sequencer.reactive.EngineFuture
 import tmt.sequencer.util.ScriptRepo
 
 import scala.concurrent.Await
@@ -29,20 +29,15 @@ class Wiring(scriptFile: String, isProd: Boolean) {
 
   lazy val locationService = new LocationService(system)
 
-  lazy val commandService = new CswServices(locationService, engineRef, engine)(system.executionContext)
+  lazy val commandService = new CswServices(locationService)(system.executionContext)
 
   lazy val script: Script = ScriptImports.load(path, commandService)
 
-  lazy val engine = new Engine(script, sequencerRef, system)
-
   lazy val engineFuture = new EngineFuture(script, sequencerRef, system)
-
-  lazy val engineRef: ActorRef[EngineMsg] =
-    Await.result(system.systemActorOf(EngineBehavior.behavior(script, sequencerRef), "engine"), timeout.duration)
 
   lazy val supervisorRef: ActorRef[SupervisorMsg] =
     Await.result(
-      system.systemActorOf(SupervisorBehavior.behavior(script, sequencerRef, engineRef, engine, engineFuture), "supervisor"),
+      system.systemActorOf(SupervisorBehavior.behavior(script, sequencerRef, engineFuture), "supervisor"),
       timeout.duration
     )
 

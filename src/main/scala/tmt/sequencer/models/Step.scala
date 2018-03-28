@@ -1,6 +1,5 @@
 package tmt.sequencer.models
 
-import tmt.sequencer.models.CommandResult.{Empty, Failed, Multiple, Single}
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
 
 case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
