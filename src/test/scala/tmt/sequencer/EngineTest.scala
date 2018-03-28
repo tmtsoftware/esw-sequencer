@@ -21,14 +21,13 @@ class EngineTest extends FunSuite {
   private implicit val timeout: Timeout                = Timeout(5.seconds)
 
   val script: Script = new Script(null) {
-    override def execute(x: Command): Future[CommandResults]            = Future(CommandResults.empty)
-    override def onShutdown(): Future[Unit]                             = ???
-    override def onEvent(event: EngineMsg.SequencerEvent): Future[Unit] = ???
+    override def execute(x: Command): Future[CommandResults] = Future(CommandResults.empty)
+    override def onShutdown(): Future[Unit]                  = ???
   }
 
   test("demo") {
     val stepF  = Future(Step.from(Command(Id("command5"), "setup-iris", List(1, 2, 3, 4))))
-    val engine = new Engine(script, null, actorSystem.toTyped)
+    val engine = new Engine(script, null, actorSystem)
 //    engine.loop(stepF)
 //    engine.loop2()
     Thread.sleep(100000)

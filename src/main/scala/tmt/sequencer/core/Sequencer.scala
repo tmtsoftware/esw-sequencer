@@ -1,8 +1,8 @@
 package tmt.sequencer.core
 
-import akka.actor.Scheduler
+import akka.actor.{ActorSystem, Scheduler}
+import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern._
-import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.util.Timeout
 import tmt.sequencer.models.SequencerMsg._
 import tmt.sequencer.models._
@@ -10,10 +10,10 @@ import tmt.sequencer.models._
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationLong
 
-class Sequencer(sequencer: ActorRef[SequencerMsg], system: ActorSystem[_]) {
+class Sequencer(sequencer: ActorRef[SequencerMsg], system: ActorSystem) {
   private implicit val timeout: Timeout     = Timeout(10.hour)
   private implicit val scheduler: Scheduler = system.scheduler
-  import system.executionContext
+  import system.dispatcher
 
   def next: Future[Step]                                 = (sequencer ? GetNext).map(_.step)
   def addAll(commands: List[Command]): Unit              = sequencer ! Add(commands)

@@ -1,11 +1,11 @@
 package tmt.sequencer.gateway
 
-import akka.actor.typed.ActorSystem
+import akka.actor.ActorSystem
 import tmt.sequencer.models.{Command, CommandResult}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class LocationService(actorSystem: ActorSystem[_]) {
+class LocationService(actorSystem: ActorSystem) {
   def resolve(name: String): CommandService = {
     CommandService(AkkaLocation(name))
   }

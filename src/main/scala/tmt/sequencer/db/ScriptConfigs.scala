@@ -1,9 +1,9 @@
 package tmt.sequencer.db
 
-import akka.actor.typed.ActorSystem
+import akka.actor.ActorSystem
 import com.typesafe.config.Config
 
-class ScriptConfigs(actorSystem: ActorSystem[_]) {
+class ScriptConfigs(actorSystem: ActorSystem) {
 
   private val config: Config = actorSystem.settings.config.getConfig("scripts")
 
