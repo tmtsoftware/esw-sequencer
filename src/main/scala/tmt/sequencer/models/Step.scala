@@ -28,17 +28,19 @@ sealed trait StepStatus
 object StepStatus {
   case object Pending                        extends StepStatus
   case object InFlight                       extends StepStatus
-  case class Finished(result: CommandResult) extends StepStatus
+  case class Finished(result: CommandResults) extends StepStatus
 }
 
 case class Id(value: String)
 case class Command(id: Id, name: String, params: List[Int])
 
 sealed trait CommandResult
-
 object CommandResult {
-  case class Single(value: String)                extends CommandResult
-  case class Failed(value: String)                extends CommandResult
-  case class Multiple(values: Seq[CommandResult]) extends CommandResult
-  case object Empty                               extends CommandResult
+  case class Success(value: String) extends CommandResult
+  case class Failed(value: String)  extends CommandResult
+}
+
+case class CommandResults(values: List[CommandResult])
+object CommandResults {
+  def empty = CommandResults(Nil)
 }

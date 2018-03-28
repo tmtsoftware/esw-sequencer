@@ -6,11 +6,11 @@ import akka.actor.typed.{ActorRef, Behavior}
 import tmt.sequencer.models.EngineMsg.ControlCommand
 import tmt.sequencer.models.SequencerMsg.ExternalSequencerMsg
 import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
-import tmt.sequencer.reactive.EngineFuture
+import tmt.sequencer.reactive.Engine
 
 class SupervisorBehavior(script: Script,
                          sequencerRef: ActorRef[SequencerMsg],
-                         engineFuture: EngineFuture,
+                         engineFuture: Engine,
                          ctx: ActorContext[SupervisorMsg])
     extends MutableBehavior[SupervisorMsg] {
 
@@ -27,7 +27,7 @@ class SupervisorBehavior(script: Script,
 }
 
 object SupervisorBehavior {
-  def behavior(script: Script, sequencerRef: ActorRef[SequencerMsg], engineFuture: EngineFuture): Behavior[SupervisorMsg] = {
+  def behavior(script: Script, sequencerRef: ActorRef[SequencerMsg], engineFuture: Engine): Behavior[SupervisorMsg] = {
     Behaviors.mutable(ctx => new SupervisorBehavior(script, sequencerRef, engineFuture, ctx))
   }
 }

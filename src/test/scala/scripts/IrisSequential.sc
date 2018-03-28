@@ -2,12 +2,12 @@ import tmt.sequencer.ScriptImports._
 
 init[IrisSequential]
 
-class IrisSequential(cs: CommandService) extends Script(cs) {
+class IrisSequential(cs: CswServices) extends Script(cs) {
 
   var resultCount = 0
   var eventCount = 0
 
-  override def onSetup(command: Command): Future[CommandResult] = spawn {
+  override def onSetup(command: Command): Future[CommandResults] = spawn {
     if (command.name == "setup-iris") {
       val topR = cs.setup("iris-assembly1", command).await
       Thread.sleep(2000)
@@ -19,12 +19,12 @@ class IrisSequential(cs: CommandService) extends Script(cs) {
         cs.setup("iris-assembly3", command).await
       }
       resultCount = resultCount + 1
-      val results = CommandResult.Multiple(List(topR, result))
+      val results = CommandResults(List(topR, result))
       println(s"final result = $results")
       results
     } else {
       println(s"unknown command=$command")
-      CommandResult.Empty
+      CommandResults.empty
     }
   }
 

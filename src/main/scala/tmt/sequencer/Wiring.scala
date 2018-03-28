@@ -6,7 +6,7 @@ import akka.actor.{typed, ActorSystem}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
 import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
-import tmt.sequencer.reactive.EngineFuture
+import tmt.sequencer.reactive.Engine
 import tmt.sequencer.util.ScriptRepo
 
 import scala.concurrent.Await
@@ -33,11 +33,11 @@ class Wiring(scriptFile: String, isProd: Boolean) {
 
   lazy val script: Script = ScriptImports.load(path, commandService)
 
-  lazy val engineFuture = new EngineFuture(script, sequencerRef, system)
+  lazy val engine = new Engine(script, sequencerRef, system)
 
   lazy val supervisorRef: ActorRef[SupervisorMsg] =
     Await.result(
-      system.systemActorOf(SupervisorBehavior.behavior(script, sequencerRef, engineFuture), "supervisor"),
+      system.systemActorOf(SupervisorBehavior.behavior(script, sequencerRef, engine), "supervisor"),
       timeout.duration
     )
 

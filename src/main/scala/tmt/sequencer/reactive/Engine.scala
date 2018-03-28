@@ -14,7 +14,7 @@ import tmt.sequencer.models._
 import scala.concurrent.duration.DurationDouble
 import scala.concurrent.{ExecutionContext, Future}
 
-class EngineFuture(script: Script, sequencerRef: ActorRef[SequencerMsg], system: ActorSystem[_]) {
+class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg], system: ActorSystem[_]) {
   private implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor())
   private implicit val timeout: Timeout     = Timeout(5.days)
   private implicit val scheduler: Scheduler = system.scheduler
