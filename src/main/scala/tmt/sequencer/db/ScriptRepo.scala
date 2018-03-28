@@ -1,4 +1,4 @@
-package tmt.sequencer.util
+package tmt.sequencer.db
 
 import java.io.File
 
@@ -7,7 +7,6 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand.ResetType
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.transport.RefSpec
-import tmt.sequencer.ScriptConfigs
 
 class ScriptRepo(scriptConfigs: ScriptConfigs) {
   //temporary vals will be replaced by location-service

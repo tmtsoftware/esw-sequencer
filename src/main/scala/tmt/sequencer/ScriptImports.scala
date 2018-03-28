@@ -9,8 +9,8 @@ object ScriptImports {
   @volatile
   private var tag: ClassTag[_] = _
 
-  type Script         = tmt.sequencer.Script
-  type CswServices    = tmt.sequencer.CswServices
+  type Script         = dsl.Script
+  type CswServices    = gateway.CswServices
   type SequencerEvent = EngineMsg.SequencerEvent
 
   type Command = tmt.sequencer.models.Command

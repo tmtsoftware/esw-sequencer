@@ -5,7 +5,6 @@ import scala.concurrent.{Await, Future}
 
 object FutureExt {
   implicit class RichFuture[T](val f: Future[T]) extends AnyVal {
-    def get(duration: Duration): T = Await.result(f, duration)
-    def get: T                     = get(Duration.Inf)
+    def get: T = Await.result(f, Duration.Inf)
   }
 }

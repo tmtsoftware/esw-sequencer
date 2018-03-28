@@ -3,8 +3,10 @@ package tmt.sequencer
 import akka.actor.typed.ActorRef
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
+import tmt.sequencer.gateway.CswServices
 import tmt.sequencer.models.EngineMsg.ControlCommand
 import tmt.sequencer.models.{Command, Id, SupervisorMsg}
+import tmt.sequencer.core.Sequencer
 
 class RemoteRepl(commandService: CswServices, sequencer: Sequencer, supervisor: ActorRef[SupervisorMsg]) {
 

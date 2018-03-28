@@ -1,5 +1,6 @@
-package tmt.sequencer
+package tmt.sequencer.dsl
 
+import tmt.sequencer.gateway.CswServices
 import tmt.sequencer.models.EngineMsg.SequencerEvent
 import tmt.sequencer.models.{Command, CommandResults}
 

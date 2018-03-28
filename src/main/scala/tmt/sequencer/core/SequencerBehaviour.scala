@@ -1,4 +1,4 @@
-package tmt.sequencer
+package tmt.sequencer.core
 
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}

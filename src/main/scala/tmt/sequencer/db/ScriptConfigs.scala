@@ -1,4 +1,4 @@
-package tmt.sequencer
+package tmt.sequencer.db
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.config.Config

@@ -1,4 +1,4 @@
-package tmt.sequencer.reactive
+package tmt.sequencer.core
 
 import java.util.concurrent.Executors
 
@@ -6,7 +6,7 @@ import akka.actor.Scheduler
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.util.Timeout
-import tmt.sequencer.Script
+import tmt.sequencer.dsl.Script
 import tmt.sequencer.models.EngineMsg.{ControlCommand, SequencerEvent}
 import tmt.sequencer.models.SequencerMsg.{GetNext, UpdateStatus}
 import tmt.sequencer.models._
@@ -30,19 +30,6 @@ class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg], system: Actor
         sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(commandResult))
         loop(nextStep())
       case x =>
-    }
-  }
-
-  private def loop2(): Future[Unit] = async {
-    var step = await(nextStep())
-    while (true) {
-      step.command.name match {
-        case x if x.startsWith("setup-") =>
-          val commandResult = await(script.onSetup(step.command))
-          sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(commandResult))
-          step = await(nextStep())
-        case x =>
-      }
     }
   }
 

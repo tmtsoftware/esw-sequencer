@@ -1,11 +1,12 @@
-package tmt.sequencer.reactive
+package tmt.sequencer
 
 import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.actor.{ActorSystem, Scheduler}
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import org.scalatest.FunSuite
-import tmt.sequencer.Script
+import tmt.sequencer.core.Engine
+import tmt.sequencer.dsl.Script
 import tmt.sequencer.models._
 
 import scala.concurrent.Future

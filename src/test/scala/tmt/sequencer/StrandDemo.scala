@@ -6,6 +6,7 @@ import akka.stream.scaladsl.Source
 import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import tmt.sequencer.FutureExt.RichFuture
+import tmt.sequencer.dsl.ControlDsl
 
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationDouble

@@ -1,12 +1,12 @@
-package tmt.sequencer
+package tmt.sequencer.core
 
 import akka.actor.typed.scaladsl.Behaviors.MutableBehavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
+import tmt.sequencer.dsl.Script
 import tmt.sequencer.models.EngineMsg.ControlCommand
 import tmt.sequencer.models.SequencerMsg.ExternalSequencerMsg
 import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
-import tmt.sequencer.reactive.Engine
 
 class SupervisorBehavior(script: Script,
                          sequencerRef: ActorRef[SequencerMsg],

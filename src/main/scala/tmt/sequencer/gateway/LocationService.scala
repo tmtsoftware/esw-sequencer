@@ -1,4 +1,4 @@
-package tmt.sequencer
+package tmt.sequencer.gateway
 
 import akka.actor.typed.ActorSystem
 import tmt.sequencer.models.{Command, CommandResult}
