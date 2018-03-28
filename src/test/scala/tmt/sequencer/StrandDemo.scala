@@ -6,12 +6,12 @@ import akka.stream.scaladsl.Source
 import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import tmt.sequencer.FutureExt.RichFuture
-import tmt.sequencer.dsl.ControlDsl
+import tmt.sequencer.dsl.Strand
 
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationDouble
 
-class StrandDemo extends FunSuite with BeforeAndAfterAll with ControlDsl {
+class StrandDemo extends FunSuite with BeforeAndAfterAll with Strand {
 
   private implicit val actorSystem: ActorSystem        = ActorSystem("test")
   private implicit val materializer: ActorMaterializer = ActorMaterializer()

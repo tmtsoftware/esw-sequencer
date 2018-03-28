@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Futu
 import scala.language.experimental.macros
 import scala.language.implicitConversions
 
-trait ControlDsl {
+trait Strand {
   protected implicit val ec: ExecutionContextExecutorService =
     ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor())
 
@@ -24,4 +24,4 @@ trait ControlDsl {
   private[sequencer] def shutdownEc(): Unit = ec.shutdown()
 }
 
-object ControlDsl extends ControlDsl
+object Strand extends Strand

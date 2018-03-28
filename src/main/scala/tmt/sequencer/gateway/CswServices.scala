@@ -1,9 +1,8 @@
 package tmt.sequencer.gateway
 
-import akka.Done
 import akka.actor.Cancellable
-import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
 import akka.stream.scaladsl.{Keep, Sink, Source}
+import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
 import tmt.sequencer.models.EngineMsg.SequencerEvent
 import tmt.sequencer.models.{Command, CommandResult}
 
