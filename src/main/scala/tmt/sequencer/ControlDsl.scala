@@ -12,7 +12,7 @@ import scala.annotation.compileTimeOnly
 import scala.async.internal
 
 trait ControlDsl {
-  implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor())
+  protected implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor())
 
   def par(fs: Future[CommandResult]*): Future[List[CommandResult]] = Future.sequence(fs.toList)
 
