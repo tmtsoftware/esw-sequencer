@@ -94,7 +94,7 @@ class FutureOnlyDemo extends FunSuite with BeforeAndAfterAll {
     val f2 = spawn(20)
 
     spawn {
-      f1.get + f2.get
+      f1.await + f2.await
     }.map(println).get
   }
 
