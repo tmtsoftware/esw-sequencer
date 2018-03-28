@@ -8,9 +8,9 @@ sealed trait SupervisorMsg
 sealed trait EngineMsg
 
 object EngineMsg {
-  case class SequencerCommand(step: Step)  extends EngineMsg
-  case class SequencerEvent(value: String) extends EngineMsg
-  case class ControlCommand(name: String)  extends EngineMsg with SupervisorMsg
+  case class SequencerCommand(step: Step)               extends EngineMsg
+  case class SequencerEvent(key: String, value: String) extends EngineMsg
+  case class ControlCommand(name: String)               extends EngineMsg with SupervisorMsg
 }
 
 sealed trait SequencerMsg

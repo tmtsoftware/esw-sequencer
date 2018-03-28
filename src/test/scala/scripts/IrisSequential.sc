@@ -28,11 +28,6 @@ class IrisSequential(cs: CswServices) extends Script(cs) {
     }
   }
 
-  override def onEvent(event: SequencerEvent): Future[Unit] = spawn {
-    eventCount = eventCount + 1
-    println(event)
-  }
-
   override def onShutdown(): Future[Unit] = spawn {
     println("shutdown")
   }
