@@ -1,10 +1,8 @@
 package tmt.sequencer.core
 
-import java.util.concurrent.Executors
-
-import akka.actor.{ActorSystem, Scheduler}
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern.Askable
+import akka.actor.{ActorSystem, Scheduler}
 import akka.util.Timeout
 import tmt.sequencer.dsl.Script
 import tmt.sequencer.models.EngineMsg.ControlCommand
@@ -12,13 +10,13 @@ import tmt.sequencer.models.SequencerMsg.{GetNext, UpdateStatus}
 import tmt.sequencer.models._
 
 import scala.async.Async._
+import scala.concurrent.Future
 import scala.concurrent.duration.DurationDouble
-import scala.concurrent.{ExecutionContext, Future}
 
 class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg], system: ActorSystem) {
-  private implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor())
   private implicit val timeout: Timeout     = Timeout(5.days)
   private implicit val scheduler: Scheduler = system.scheduler
+  import system.dispatcher
 
   loop(nextStep())
 
