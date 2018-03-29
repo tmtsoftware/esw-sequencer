@@ -5,7 +5,7 @@ import tmt.sequencer.models.{Command, CommandResults}
 
 import scala.concurrent.Future
 
-abstract class Script(cs: CswServices) extends Strand {
+abstract class Script(cs: CswServices) extends ActiveObject {
   def observingMode: String
   def execute(x: Command): Future[CommandResults]
   def shutdown(): Future[Unit] = onShutdown().map(_ => shutdownEc())

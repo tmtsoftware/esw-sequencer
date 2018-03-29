@@ -2,7 +2,6 @@ package tmt.sequencer
 
 import ammonite.ops.Path
 import tmt.sequencer.dsl.ScriptFactory
-import tmt.sequencer.gateway.CswServices
 import tmt.sequencer.models.EngineMsg
 
 import scala.reflect.{classTag, ClassTag}

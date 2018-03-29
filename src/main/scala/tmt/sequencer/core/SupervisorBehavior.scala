@@ -16,11 +16,9 @@ class SupervisorBehavior(script: Script,
 
   override def onMessage(msg: SupervisorMsg): Behavior[SupervisorMsg] = {
     msg match {
-      case msg: ControlCommand =>
-        engineFuture.control(msg)
-      case msg: ExternalSequencerMsg =>
-        sequencerRef ! msg
-      case _ =>
+      case msg: ControlCommand       => engineFuture.control(msg)
+      case msg: ExternalSequencerMsg => sequencerRef ! msg
+      case _                         =>
     }
     this
   }
