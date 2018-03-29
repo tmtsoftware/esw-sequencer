@@ -3,7 +3,7 @@ import tmt.sequencer.models.EngineMsg.SequencerEvent
 
 import scala.concurrent.duration.DurationDouble
 
-class IrisDarkNight(cs: CswServices) extends Script(cs) {
+class IrisDarkNight(cs: CswServices, observationMode: String) extends Script(cs, observationMode) {
 
   var eventCount = 0
   var commandCount = 0
@@ -20,6 +20,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
   override def execute(command: Command): Future[CommandResults] = spawn {
     commandCount += 1
     if (command.name == "setup-iris") {
+      println("[Iris] command received")
       val topR = cs.setup("iris-assembly1", command).await
       Thread.sleep(2000)
       val result = if (topR.isInstanceOf[CommandResult.Failed]) {

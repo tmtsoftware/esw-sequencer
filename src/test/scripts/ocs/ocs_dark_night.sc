@@ -1,14 +1,17 @@
 import tmt.sequencer.ScriptImports._
 import tmt.sequencer.models.EngineMsg.SequencerEvent
+import $file.^.iris.iris_factory
 
 import scala.concurrent.duration.DurationDouble
 
-class OcsDarkNight(cs: CswServices) extends Script(cs) {
+class OcsDarkNight(cs: CswServices, observationMode: String) extends Script(cs, observationMode) {
+
+  val iris = new iris_factory.IrisFactory(cs).get(observationMode)
 
   var eventCount = 0
   var commandCount = 0
 
-  val subscription = cs.subscribe("iris") { event =>
+  val subscription = cs.subscribe("ocs") { event =>
     eventCount = eventCount + 1
     println(event)
   }
@@ -19,21 +22,9 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   override def execute(command: Command): Future[CommandResults] = spawn {
     commandCount += 1
+    println("[Ocs] command received")
     if (command.name == "setup-iris") {
-      val topR = cs.setup("iris-assembly1", command).await
-      Thread.sleep(2000)
-      val result = if (topR.isInstanceOf[CommandResult.Failed]) {
-        Thread.sleep(2000)
-        List(cs.setup("iris-assembly2", command).await)
-      } else {
-        par(
-          cs.setup("iris-assembly3", command),
-          cs.setup("iris-assembly4", command)
-        ).await
-      }
-      val results = CommandResults(topR :: result)
-      println(s"final result = $results")
-      results
+      iris.execute(command).await
     } else {
       println(s"unknown command=$command")
       CommandResults.empty

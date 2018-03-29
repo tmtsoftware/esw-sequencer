@@ -7,7 +7,7 @@ import tmt.sequencer.dsl.Script
 
 class IrisFactory(cs: CswServices) {
   def get(name: String): Script = ObservingMode.withNameInsensitive(name) match {
-    case DarkNight => new iris_dark_night.IrisDarkNight(cs)
+    case DarkNight => new iris_dark_night.IrisDarkNight(cs, name)
     case ClearSkies => ???
   }
 }

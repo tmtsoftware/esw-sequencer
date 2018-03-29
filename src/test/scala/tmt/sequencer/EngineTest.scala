@@ -20,7 +20,7 @@ class EngineTest extends FunSuite {
   private implicit val scheduler: Scheduler            = actorSystem.scheduler
   private implicit val timeout: Timeout                = Timeout(5.seconds)
 
-  val script: Script = new Script(null) {
+  val script: Script = new Script(null, null) {
     override def execute(x: Command): Future[CommandResults] = Future(CommandResults.empty)
     override def onShutdown(): Future[Unit]                  = ???
   }
