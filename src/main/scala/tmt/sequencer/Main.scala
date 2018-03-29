@@ -2,7 +2,8 @@ package tmt.sequencer
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val scriptFile = args.headOption.getOrElse(throw new RuntimeException("script name is missing"))
-    ScriptRunner.run(scriptFile, isProd = true)
+    val sequencerId     = args.headOption.getOrElse(throw new RuntimeException("sequencerId is missing"))
+    val observationMode = args.lastOption.getOrElse(throw new RuntimeException("observation mode is missing"))
+    ScriptRunner.run(sequencerId, observationMode, true)
   }
 }

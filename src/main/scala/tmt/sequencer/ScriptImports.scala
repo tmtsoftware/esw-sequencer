@@ -1,6 +1,8 @@
 package tmt.sequencer
 
 import ammonite.ops.Path
+import tmt.sequencer.dsl.ScriptFactory
+import tmt.sequencer.gateway.CswServices
 import tmt.sequencer.models.EngineMsg
 
 import scala.reflect.{classTag, ClassTag}
@@ -27,15 +29,15 @@ object ScriptImports {
   type Id = tmt.sequencer.models.Id
   val Id = tmt.sequencer.models.Id
 
-  private[tmt] def load(path: Path, cs: CswServices): Script = synchronized {
+  private[tmt] def load(path: Path): ScriptFactory = synchronized {
     ammonite.Main().runScript(path, Seq.empty) match {
       case (x, _) => println(s"script loading status: $x")
     }
     val constructor = tag.runtimeClass.getConstructors.toList.head
-    constructor.newInstance(cs).asInstanceOf[Script]
+    constructor.newInstance().asInstanceOf[ScriptFactory]
   }
 
-  def init[T <: Script: ClassTag]: Unit = {
+  def init[T <: ScriptFactory: ClassTag]: Unit = {
     tag = classTag[T]
   }
 }

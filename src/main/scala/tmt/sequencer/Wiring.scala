@@ -1,28 +1,27 @@
 package tmt.sequencer
 
+import akka.actor.ActorSystem
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
-import akka.actor.{typed, ActorSystem}
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
-import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
 import tmt.sequencer.core.{Engine, Sequencer, SequencerBehaviour, SupervisorBehavior}
 import tmt.sequencer.db.{ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.Script
 import tmt.sequencer.gateway.{CswServices, LocationService}
+import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
 
-import scala.concurrent.Await
 import scala.concurrent.duration.DurationDouble
 
-class Wiring(scriptFile: String, isProd: Boolean) {
+class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
   implicit lazy val timeout: Timeout                = Timeout(5.seconds)
   lazy implicit val system: ActorSystem             = ActorSystem("test")
   lazy implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   lazy val scriptConfigs = new ScriptConfigs(system)
   lazy val repoDir: Path = if (isProd) Path(scriptConfigs.cloneDir) else ammonite.ops.pwd
-  lazy val path: Path    = repoDir / RelPath(scriptFile)
+  lazy val path: Path    = repoDir / RelPath(scriptConfigs.scriptFactoryPath)
 
   lazy val scriptRepo = new ScriptRepo(scriptConfigs)
 
@@ -32,14 +31,14 @@ class Wiring(scriptFile: String, isProd: Boolean) {
 
   lazy val locationService = new LocationService(system)
 
-  lazy val commandService = new CswServices(locationService)
+  lazy val cswServices = new CswServices(locationService)
 
-  lazy val script: Script = ScriptImports.load(path, commandService)
+  lazy val script: Script = ScriptImports.load(path).get(sequencerId, observingMode, cswServices)
 
   lazy val engine = new Engine(script, sequencerRef, system)
 
   lazy val supervisorRef: ActorRef[SupervisorMsg] =
     system.spawn(SupervisorBehavior.behavior(script, sequencerRef, engine), "supervisor")
 
-  lazy val remoteRepl = new RemoteRepl(commandService, sequencer, supervisorRef)
+  lazy val remoteRepl = new RemoteRepl(cswServices, sequencer, supervisorRef)
 }

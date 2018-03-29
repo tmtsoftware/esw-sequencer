@@ -1,8 +1,8 @@
 package tmt.sequencer
 
 object ScriptRunner {
-  def run(scriptFile: String, isProd: Boolean): Unit = {
-    val wiring = new Wiring(scriptFile, isProd)
+  def run(sequencerId: String, observingMode: String, isProd: Boolean): Unit = {
+    val wiring = new Wiring(sequencerId, observingMode, isProd)
     import wiring._
     if (isProd) {
       scriptRepo.cloneRepo()

@@ -8,6 +8,7 @@ object Libs {
 
   val `jgit`        = "org.eclipse.jgit"       % "org.eclipse.jgit" % "4.11.0.201803080745-r"
   val `scala-async` = "org.scala-lang.modules" %% "scala-async"     % "0.9.7"
+  val `enumeratum`  = "com.beachape"           %% "enumeratum"      % "1.5.13"
 
   val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4"
 }

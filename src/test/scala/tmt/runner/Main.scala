@@ -4,7 +4,8 @@ import tmt.sequencer.ScriptRunner
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val scriptFile = args.headOption.getOrElse("src/test/scala/scripts/IrisParallel.sc")
-    ScriptRunner.run(scriptFile, isProd = false)
+    val sequencerId     = args.headOption.getOrElse("iris")
+    val observationMode = args.lastOption.getOrElse("darknight")
+    ScriptRunner.run(sequencerId, observationMode, false)
   }
 }

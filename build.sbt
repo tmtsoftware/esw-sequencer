@@ -17,6 +17,7 @@ lazy val root = (project in file("."))
       Ammonite.`ammonite`,
       Ammonite.`ammonite-sshd`,
       Libs.`jgit`,
+      Libs.`enumeratum`,
       Libs.`scala-async`,
       Libs.scalaTest % Test,
     )

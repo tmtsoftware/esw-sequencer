@@ -3,9 +3,7 @@ import tmt.sequencer.models.EngineMsg.SequencerEvent
 
 import scala.concurrent.duration.DurationDouble
 
-init[IrisParallel]
-
-class IrisParallel(cs: CswServices) extends Script(cs) {
+class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   var eventCount = 0
   var commandCount = 0
