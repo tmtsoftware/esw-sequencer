@@ -4,9 +4,7 @@ import $file.^.iris.iris_factory
 
 class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
-  override def observingMode = "DarkNight"
-
-  val iris = iris_factory.IrisFactory.get(observingMode, cs)
+  val iris = iris_factory.IrisFactory.get(cs)
 
   var eventCount = 0
   var commandCount = 0

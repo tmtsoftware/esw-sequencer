@@ -2,8 +2,6 @@ import tmt.sequencer.ScriptImports._
 
 class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
-  override def observingMode = "DarkNight"
-
   var eventCount = 0
   var commandCount = 0
 

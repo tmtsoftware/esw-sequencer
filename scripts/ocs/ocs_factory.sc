@@ -6,8 +6,8 @@ import tmt.sequencer.ScriptImports.{CswServices, Script}
 
 
 object OcsFactory {
-  def get(observingMode: String, cs: CswServices): Script = ObservingMode.withNameInsensitive(observingMode) match {
-    case DarkNight => new ocs_dark_night.OcsDarkNight(cs)
+  def get(cs: CswServices): Script = ObservingMode.withNameInsensitive(cs.observingMode) match {
+    case DarkNight  => new ocs_dark_night.OcsDarkNight(cs)
     case ClearSkies => ???
   }
 }

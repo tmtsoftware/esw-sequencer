@@ -31,9 +31,9 @@ class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
 
   lazy val locationService = new LocationService(system)
 
-  lazy val cswServices = new CswServices(locationService)
+  lazy val cswServices = new CswServices(locationService, sequencerId, observingMode)
 
-  lazy val script: Script = ScriptImports.load(path).get(sequencerId, observingMode, cswServices)
+  lazy val script: Script = ScriptImports.load(path).get(cswServices)
 
   lazy val engine = new Engine(script, sequencerRef, system)
 

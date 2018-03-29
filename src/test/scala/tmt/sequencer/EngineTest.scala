@@ -20,7 +20,6 @@ class EngineTest extends FunSuite {
   private implicit val timeout: Timeout                = Timeout(5.seconds)
 
   val script: Script = new Script(null) {
-    override def observingMode: String                       = null
     override def execute(x: Command): Future[CommandResults] = Future(CommandResults.empty)
     override def onShutdown(): Future[Unit]                  = ???
   }

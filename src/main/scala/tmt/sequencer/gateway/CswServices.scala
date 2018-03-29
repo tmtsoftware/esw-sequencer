@@ -9,7 +9,9 @@ import tmt.sequencer.models.{Command, CommandResult}
 import scala.concurrent.duration.{DurationDouble, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
 
-class CswServices(locationService: LocationService)(implicit mat: Materializer) {
+class CswServices(locationService: LocationService, val sequencerId: String, val observingMode: String)(
+    implicit mat: Materializer
+) {
   def setup(componentName: String, command: Command): Future[CommandResult] = {
     val assembly = locationService.resolve(componentName)
     assembly.submit(command)(mat.executionContext)

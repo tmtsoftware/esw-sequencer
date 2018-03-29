@@ -11,10 +11,10 @@ import tmt.sequencer.gateway.CswServices
 ScriptImports.init[TopScriptFactory]
 
 class TopScriptFactory extends ScriptFactory {
-  def get(sequencerId: String, observingMode: String, cs: CswServices): Script = {
-    SequencerId.withNameInsensitive(sequencerId) match {
-      case Ocs  => ocs_factory.OcsFactory.get(observingMode, cs)
-      case Iris => iris_factory.IrisFactory.get(observingMode, cs)
+  def get(cs: CswServices): Script = {
+    SequencerId.withNameInsensitive(cs.sequencerId) match {
+      case Ocs  => ocs_factory.OcsFactory.get(cs)
+      case Iris => iris_factory.IrisFactory.get(cs)
       case Tcs  => ???
     }
   }
