@@ -15,18 +15,22 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   val subscription = cs.subscribe("ocs") { event =>
     eventCount = eventCount + 1
-    println(event)
+    println(s"[Received OCS]: ------------------> event=${event.value} on key=${event.key}")
   }
 
   val cancellable = cs.publish(5.seconds) {
-    SequencerEvent("metadata", (eventCount + commandCount).toString)
+    SequencerEvent("ocs-metadata", (eventCount + commandCount).toString)
   }
 
   override def execute(command: Command): Future[CommandResults] = spawn {
     commandCount += 1
-    println("[Ocs] command received")
+    println("\n\n" + "*" * 50)
+    println(s"[Ocs] Command received - ${command.name}")
     if (command.name == "setup-iris") {
-      iris.execute(command).await
+      val result = iris.execute(command).await
+      println(s"\n[Ocs] Result received - ${command.name} with result - ${result}")
+      println("\n\n" + "*" * 50)
+      result
     } else {
       println(s"unknown command=$command")
       CommandResults.empty

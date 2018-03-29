@@ -12,7 +12,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
   val subscription = cs.subscribe("iris") { event =>
     eventCount = eventCount + 1
-    println(s"received: ------------------> event=${event.value} on key=${event.key}")
+    println(s"[Received Iris]: ------------------> event=${event.value} on key=${event.key}")
   }
 
   val cancellable = cs.publish(every = 5.seconds) {
@@ -22,6 +22,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
   override def execute(command: Command): Future[CommandResults] = spawn {
     commandCount += 1
+    println(s"[Iris] Command received - ${command.name}")
     if (command.name == "setup-iris") {
       val commandResult = cs.setup("iris-assembly1", command).await
       val commandFailed = commandResult.isInstanceOf[CommandResult.Failed]
@@ -38,7 +39,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
       }
 
       val finalResults = commandResults.addResult(commandResult)
-      println(s"final result = $finalResults")
+      println(s"\n[Iris] Result received - ${command.name} with result - ${finalResults}")
       finalResults
     } else {
       println(s"unknown command=$command")
