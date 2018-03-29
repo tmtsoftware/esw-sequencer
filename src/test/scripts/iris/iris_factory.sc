@@ -5,9 +5,9 @@ import observing_modes.ObservingMode._
 import tmt.sequencer.ScriptImports.CswServices
 import tmt.sequencer.dsl.Script
 
-class IrisFactory(cs: CswServices) {
-  def get(name: String): Script = ObservingMode.withNameInsensitive(name) match {
-    case DarkNight => new iris_dark_night.IrisDarkNight(cs, name)
+object IrisFactory {
+  def get(observingMode: String, cs: CswServices): Script = ObservingMode.withNameInsensitive(observingMode) match {
+    case DarkNight => new iris_dark_night.IrisDarkNight(cs)
     case ClearSkies => ???
   }
 }

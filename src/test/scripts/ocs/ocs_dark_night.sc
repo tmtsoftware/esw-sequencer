@@ -4,9 +4,11 @@ import $file.^.iris.iris_factory
 
 import scala.concurrent.duration.DurationDouble
 
-class OcsDarkNight(cs: CswServices, observationMode: String) extends Script(cs, observationMode) {
+class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
-  val iris = new iris_factory.IrisFactory(cs).get(observationMode)
+  override def observingMode = "DarkNight"
+
+  val iris = iris_factory.IrisFactory.get(observingMode, cs)
 
   var eventCount = 0
   var commandCount = 0

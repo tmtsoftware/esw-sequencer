@@ -3,7 +3,10 @@ import tmt.sequencer.models.EngineMsg.SequencerEvent
 
 import scala.concurrent.duration.DurationDouble
 
-class IrisDarkNight(cs: CswServices, observationMode: String) extends Script(cs, observationMode) {
+class IrisDarkNight(cs: CswServices) extends Script(cs) {
+
+
+  override def observingMode = "DarkNight"
 
   var eventCount = 0
   var commandCount = 0

@@ -1,6 +1,5 @@
 package tmt.sequencer
 
-import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.actor.{ActorSystem, Scheduler}
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
@@ -20,7 +19,8 @@ class EngineTest extends FunSuite {
   private implicit val scheduler: Scheduler            = actorSystem.scheduler
   private implicit val timeout: Timeout                = Timeout(5.seconds)
 
-  val script: Script = new Script(null, null) {
+  val script: Script = new Script(null) {
+    override def observingMode: String                       = null
     override def execute(x: Command): Future[CommandResults] = Future(CommandResults.empty)
     override def onShutdown(): Future[Unit]                  = ???
   }

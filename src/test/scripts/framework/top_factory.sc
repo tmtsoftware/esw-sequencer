@@ -13,8 +13,8 @@ ScriptImports.init[TopScriptFactory]
 class TopScriptFactory extends ScriptFactory {
   def get(sequencerId: String, observingMode: String, cs: CswServices): Script = {
     SequencerId.withNameInsensitive(sequencerId) match {
-      case Ocs  => new ocs_factory.OcsFactory(cs).get(observingMode)
-      case Iris => new iris_factory.IrisFactory(cs).get(observingMode)
+      case Ocs  => ocs_factory.OcsFactory.get(observingMode, cs)
+      case Iris => iris_factory.IrisFactory.get(observingMode, cs)
       case Tcs  => ???
     }
   }

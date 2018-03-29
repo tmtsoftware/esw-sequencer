@@ -6,9 +6,9 @@ import tmt.sequencer.ScriptImports.CswServices
 import tmt.sequencer.dsl.Script
 
 
-class OcsFactory(cs: CswServices) {
-  def get(name: String): Script = ObservingMode.withNameInsensitive(name) match {
-    case DarkNight => new ocs_dark_night.OcsDarkNight(cs, name)
+object OcsFactory {
+  def get(observingMode: String, cs: CswServices): Script = ObservingMode.withNameInsensitive(observingMode) match {
+    case DarkNight => new ocs_dark_night.OcsDarkNight(cs)
     case ClearSkies => ???
   }
 }
