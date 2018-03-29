@@ -2,8 +2,7 @@ import $file.^.framework.observing_modes
 import $file.ocs_dark_night
 import observing_modes.ObservingMode
 import observing_modes.ObservingMode._
-import tmt.sequencer.ScriptImports.CswServices
-import tmt.sequencer.dsl.Script
+import tmt.sequencer.ScriptImports.{CswServices, Script}
 
 
 object OcsFactory {

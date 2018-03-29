@@ -1,8 +1,6 @@
 import tmt.sequencer.ScriptImports._
-import tmt.sequencer.models.EngineMsg.SequencerEvent
 import $file.^.iris.iris_factory
 
-import scala.concurrent.duration.DurationDouble
 
 class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
@@ -18,7 +16,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
     println(s"[Received OCS]: ------------------> event=${event.value} on key=${event.key}")
   }
 
-  val cancellable = cs.publish(5.seconds) {
+  val cancellable = cs.publish(seconds(5)) {
     SequencerEvent("ocs-metadata", (eventCount + commandCount).toString)
   }
 

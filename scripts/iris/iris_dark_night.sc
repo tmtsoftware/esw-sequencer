@@ -1,7 +1,4 @@
 import tmt.sequencer.ScriptImports._
-import tmt.sequencer.models.EngineMsg.SequencerEvent
-
-import scala.concurrent.duration.DurationDouble
 
 class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
@@ -15,7 +12,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
     println(s"[Received Iris]: ------------------> event=${event.value} on key=${event.key}")
   }
 
-  val cancellable = cs.publish(every = 5.seconds) {
+  val cancellable = cs.publish(seconds(5)) {
     val totalCount = eventCount + commandCount
     SequencerEvent("iris-metadata", totalCount.toString)
   }

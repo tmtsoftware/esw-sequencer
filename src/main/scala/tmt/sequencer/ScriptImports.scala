@@ -1,9 +1,11 @@
 package tmt.sequencer
 
 import ammonite.ops.Path
+import tmt.sequencer
 import tmt.sequencer.dsl.ScriptFactory
 import tmt.sequencer.models.EngineMsg
 
+import scala.concurrent.duration.{DurationDouble, FiniteDuration}
 import scala.reflect.{classTag, ClassTag}
 
 object ScriptImports {
@@ -13,6 +15,7 @@ object ScriptImports {
   type Script         = dsl.Script
   type CswServices    = gateway.CswServices
   type SequencerEvent = EngineMsg.SequencerEvent
+  val SequencerEvent = EngineMsg.SequencerEvent
 
   type Command = tmt.sequencer.models.Command
   val Command = tmt.sequencer.models.Command
@@ -27,6 +30,8 @@ object ScriptImports {
 
   type Id = tmt.sequencer.models.Id
   val Id = tmt.sequencer.models.Id
+
+  def seconds(duration: Int): FiniteDuration = (duration).second
 
   private[tmt] def load(path: Path): ScriptFactory = synchronized {
     ammonite.Main().runScript(path, Seq.empty) match {
