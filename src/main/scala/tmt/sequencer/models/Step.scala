@@ -26,8 +26,8 @@ object Step {
 sealed trait StepStatus
 
 object StepStatus {
-  case object Pending                        extends StepStatus
-  case object InFlight                       extends StepStatus
+  case object Pending                         extends StepStatus
+  case object InFlight                        extends StepStatus
   case class Finished(result: CommandResults) extends StepStatus
 }
 
@@ -40,7 +40,10 @@ object CommandResult {
   case class Failed(value: String)  extends CommandResult
 }
 
-case class CommandResults(values: List[CommandResult])
+case class CommandResults(values: List[CommandResult]) {
+  def addResult(commandResult: CommandResult): CommandResults = copy(values :+ commandResult)
+}
 object CommandResults {
-  def empty = CommandResults(Nil)
+  def empty                                = CommandResults(Nil)
+  def from(commandResults: CommandResult*) = CommandResults(commandResults.toList)
 }

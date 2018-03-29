@@ -5,7 +5,6 @@ import scala.concurrent.duration.DurationDouble
 
 class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
-
   override def observingMode = "DarkNight"
 
   var eventCount = 0
@@ -13,31 +12,34 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
   val subscription = cs.subscribe("iris") { event =>
     eventCount = eventCount + 1
-    println(event)
+    println(s"received: ------------------> event=${event.value} on key=${event.key}")
   }
 
-  val cancellable = cs.publish(5.seconds) {
-    SequencerEvent("metadata", (eventCount + commandCount).toString)
+  val cancellable = cs.publish(every = 5.seconds) {
+    val totalCount = eventCount + commandCount
+    SequencerEvent("iris-metadata", totalCount.toString)
   }
 
   override def execute(command: Command): Future[CommandResults] = spawn {
     commandCount += 1
     if (command.name == "setup-iris") {
-      println("[Iris] command received")
-      val topR = cs.setup("iris-assembly1", command).await
-      Thread.sleep(2000)
-      val result = if (topR.isInstanceOf[CommandResult.Failed]) {
-        Thread.sleep(2000)
-        List(cs.setup("iris-assembly2", command).await)
+      val commandResult = cs.setup("iris-assembly1", command).await
+      val commandFailed = commandResult.isInstanceOf[CommandResult.Failed]
+
+      val commandResults = if (commandFailed) {
+        CommandResults.from(cs.setup("iris-assembly2", command).await)
       } else {
-        par(
-          cs.setup("iris-assembly3", command),
-          cs.setup("iris-assembly4", command)
-        ).await
+        CommandResults(
+          par(
+            cs.setup("iris-assembly3", command),
+            cs.setup("iris-assembly4", command)
+          ).await
+        )
       }
-      val results = CommandResults(topR :: result)
-      println(s"final result = $results")
-      results
+
+      val finalResults = commandResults.addResult(commandResult)
+      println(s"final result = $finalResults")
+      finalResults
     } else {
       println(s"unknown command=$command")
       CommandResults.empty

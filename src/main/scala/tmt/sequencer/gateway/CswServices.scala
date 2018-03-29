@@ -27,7 +27,7 @@ class CswServices(locationService: LocationService)(implicit mat: Materializer) 
     Source
       .fromIterator(() => Iterator.from(1))
       .map(x => SequencerEvent(key, x.toString))
-      .throttle(1, 1.second, 1, ThrottleMode.shaping)
+      .throttle(1, 3.second, 1, ThrottleMode.shaping)
       .mapAsync(1)(callback)
       .viaMat(KillSwitches.single)(Keep.right)
       .to(Sink.ignore)
@@ -37,7 +37,7 @@ class CswServices(locationService: LocationService)(implicit mat: Materializer) 
   private def publishAsync(every: FiniteDuration)(eventGeneratorBlock: => Future[SequencerEvent]): Cancellable = {
     val source = Source.tick(0.millis, every, ()).mapAsync(1)(_ => eventGeneratorBlock)
     val sink = Sink.foreach[SequencerEvent] {
-      case SequencerEvent(k, v) => println(s"event=$v got published on key=$k")
+      case SequencerEvent(k, v) => println(s"published: event=$v on key=$k")
     }
     source.to(sink).run()
   }
