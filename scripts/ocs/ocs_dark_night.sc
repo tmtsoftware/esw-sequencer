@@ -20,6 +20,8 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   handleCommand("setup-iris") { command =>
     spawn {
+      println("\n\n" + "*" * 50)
+      println(s"\n[Ocs] Command received - ${command.name}")
       val result = iris.execute(command).await
       println(s"\n[Ocs] Result received - ${command.name} with result - $result")
       println("\n\n" + "*" * 50)

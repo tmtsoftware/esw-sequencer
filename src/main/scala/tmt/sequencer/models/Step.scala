@@ -43,8 +43,10 @@ object CommandResult {
 }
 
 case class CommandResults(values: List[CommandResult]) {
-  def addResult(commandResult: CommandResult): CommandResults = copy(values :+ commandResult)
+  def prepend(commandResult: CommandResult): CommandResults = copy(commandResult :: values)
+  def append(commandResult: CommandResult): CommandResults  = copy(values :+ commandResult)
 }
+
 object CommandResults {
   def empty                                = CommandResults(Nil)
   def from(commandResults: CommandResult*) = CommandResults(commandResults.toList)

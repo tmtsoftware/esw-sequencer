@@ -17,6 +17,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
   handleCommand("setup-iris") { command =>
     spawn {
+      println(s"\n[Iris] Command received - ${command.name}")
         val commandResult = cs.setup("iris-assembly1", command).await
         val commandFailed = commandResult.isInstanceOf[CommandResult.Failed]
 
@@ -31,7 +32,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
           )
         }
 
-        val finalResults = commandResults.addResult(commandResult)
+        val finalResults = commandResults.prepend(commandResult)
         println(s"\n[Iris] Result received - ${command.name} with result - $finalResults")
         finalResults
       }
