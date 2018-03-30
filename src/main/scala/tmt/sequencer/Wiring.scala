@@ -3,7 +3,7 @@ package tmt.sequencer
 import akka.actor.ActorSystem
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
-import akka.stream.ActorMaterializer
+import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
 import tmt.sequencer.core.{Engine, Sequencer, SequencerBehaviour, SupervisorBehavior}
@@ -15,9 +15,10 @@ import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
 import scala.concurrent.duration.DurationDouble
 
 class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
-  implicit lazy val timeout: Timeout                = Timeout(5.seconds)
-  lazy implicit val system: ActorSystem             = ActorSystem("test")
-  lazy implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit lazy val timeout: Timeout           = Timeout(5.seconds)
+  lazy implicit val system: ActorSystem        = ActorSystem("test")
+  lazy implicit val materializer: Materializer = ActorMaterializer()
+  materializer
 
   lazy val scriptConfigs = new ScriptConfigs(system)
   lazy val repoDir: Path = if (isProd) Path(scriptConfigs.cloneDir) else ammonite.ops.pwd
@@ -35,7 +36,7 @@ class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
 
   lazy val script: Script = ScriptImports.load(path).get(cswServices)
 
-  lazy val engine = new Engine(script, sequencerRef, system)
+  lazy val engine = new Engine(script, sequencerRef)
 
   lazy val supervisorRef: ActorRef[SupervisorMsg] =
     system.spawn(SupervisorBehavior.behavior(script, sequencerRef, engine), "supervisor")

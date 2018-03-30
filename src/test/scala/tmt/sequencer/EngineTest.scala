@@ -26,7 +26,7 @@ class EngineTest extends FunSuite {
 
   test("demo") {
     val stepF  = Future(Step.from(Command(Id("command5"), "setup-iris", List(1, 2, 3, 4))))
-    val engine = new Engine(script, null, actorSystem)
+    val engine = new Engine(script, null)
 //    engine.loop(stepF)
 //    engine.loop2()
     Thread.sleep(100000)

@@ -18,6 +18,11 @@ class RemoteRepl(commandService: CswServices, sequencer: Sequencer, supervisor: 
     ),
     predef = """
          |def setFlags() = repl.compiler.settings.Ydelambdafy.value = "inline"
+         |import scala.concurrent.duration.Duration
+         |import scala.concurrent.{Await, Future}
+         |implicit class RichFuture[T](val f: Future[T]) {
+         |  def get: T = Await.result(f, Duration.Inf)
+         |}
       """.stripMargin,
     replArgs = Seq(
       "cs"             -> commandService,

@@ -3,6 +3,8 @@ package tmt.sequencer.core
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.{ActorSystem, Scheduler}
+import akka.stream.Materializer
+import akka.stream.scaladsl.Source
 import akka.util.Timeout
 import tmt.sequencer.dsl.Script
 import tmt.sequencer.models.EngineMsg.ControlCommand
@@ -13,25 +15,23 @@ import scala.async.Async._
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationDouble
 
-class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg], system: ActorSystem) {
+class Engine(script: Script, sequencerRef: ActorRef[SequencerMsg])(implicit system: ActorSystem, mat: Materializer) {
   private implicit val timeout: Timeout     = Timeout(5.days)
   private implicit val scheduler: Scheduler = system.scheduler
-  import system.dispatcher
 
-  loop(nextStep())
+  import mat.executionContext
 
-  private def loop(stepF: Future[Step]): Unit = async {
-    val step = await(stepF)
+  Source.repeat(()).mapAsync(1)(_ => execute()).runForeach(_ => ())
+
+  private def execute(): Future[Unit] = async {
+    val step = await((sequencerRef ? GetNext).map(_.step))
     step.command.name match {
       case x if x.startsWith("setup-") =>
         val commandResult = await(script.execute(step.command))
         sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(commandResult))
-        loop(nextStep())
       case x =>
     }
   }
-
-  private def nextStep(): Future[Step] = (sequencerRef ? GetNext).map(_.step)
 
   def control(controlCommand: ControlCommand): Future[Unit] = controlCommand.name match {
     case "shutdown" => script.shutdown()
