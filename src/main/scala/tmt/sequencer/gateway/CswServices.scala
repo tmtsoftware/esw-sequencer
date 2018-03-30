@@ -3,15 +3,24 @@ package tmt.sequencer.gateway
 import akka.actor.Cancellable
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
+import tmt.sequencer.ScriptImports.Script
+import tmt.sequencer.core.{Engine, Sequencer}
 import tmt.sequencer.models.EngineMsg.SequencerEvent
 import tmt.sequencer.models.{Command, CommandResult}
 
 import scala.concurrent.duration.{DurationDouble, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
 
-class CswServices(locationService: LocationService, val sequencerId: String, val observingMode: String)(
+class CswServices(sequencer: Sequencer,
+                  engine: Engine,
+                  locationService: LocationService,
+                  val sequencerId: String,
+                  val observingMode: String)(
     implicit mat: Materializer
 ) {
+
+  def processNext(script: Script): Future[Unit] = engine.execute(sequencer, script)
+
   def setup(componentName: String, command: Command): Future[CommandResult] = {
     val assembly = locationService.resolve(componentName)
     assembly.submit(command)(mat.executionContext)

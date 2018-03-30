@@ -28,4 +28,6 @@ class Sequencer(sequencer: ActorRef[SequencerMsg], system: ActorSystem) {
   def insertAfter(id: Id, commands: List[Command]): Unit = sequencer ! InsertAfter(id, commands)
   def prepend(commands: List[Command]): Unit             = sequencer ! Prepend(commands)
   def replace(id: Id, commands: List[Command]): Unit     = sequencer ! Replace(id, commands)
+
+  private[sequencer] def update(step: Step): Unit = sequencer ! Update(step)
 }

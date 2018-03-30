@@ -7,6 +7,7 @@ object ScriptRunner {
     if (isProd) {
       scriptRepo.cloneRepo()
     }
+    engine.start(sequencer, script)
     supervisorRef
     remoteRepl.server().start()
   }
