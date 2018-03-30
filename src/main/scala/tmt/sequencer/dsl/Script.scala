@@ -6,8 +6,10 @@ import tmt.sequencer.models.{Command, CommandResults}
 import scala.concurrent.Future
 
 abstract class Script(cs: CswServices) extends ActiveObject {
-  def execute(x: Command): Future[CommandResults]
-  def shutdown(): Future[Unit] = onShutdown().map(_ => shutdownEc())
+  def commandHandler: Command => Future[CommandResults]
+
+  def execute(command: Command): Future[CommandResults] = commandHandler(command)
+  def shutdown(): Future[Unit]                          = onShutdown().map(_ => shutdownEc())
 
   protected def onShutdown(): Future[Unit]
 }

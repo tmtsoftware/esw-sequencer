@@ -15,30 +15,32 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
     SequencerEvent("iris-metadata", totalCount.toString)
   }
 
-  override def execute(command: Command): Future[CommandResults] = spawn {
-    commandCount += 1
-    println(s"[Iris] Command received - ${command.name}")
-    if (command.name == "setup-iris") {
-      val commandResult = cs.setup("iris-assembly1", command).await
-      val commandFailed = commandResult.isInstanceOf[CommandResult.Failed]
+  val commandHandler = { command =>
+    spawn {
+      commandCount += 1
+      println(s"[Iris] Command received - ${command.name}")
+      if (command.name == "setup-iris") {
+        val commandResult = cs.setup("iris-assembly1", command).await
+        val commandFailed = commandResult.isInstanceOf[CommandResult.Failed]
 
-      val commandResults = if (commandFailed) {
-        CommandResults.from(cs.setup("iris-assembly2", command).await)
+        val commandResults = if (commandFailed) {
+          CommandResults.from(cs.setup("iris-assembly2", command).await)
+        } else {
+          CommandResults(
+            par(
+              cs.setup("iris-assembly3", command),
+              cs.setup("iris-assembly4", command)
+            ).await
+          )
+        }
+
+        val finalResults = commandResults.addResult(commandResult)
+        println(s"\n[Iris] Result received - ${command.name} with result - ${finalResults}")
+        finalResults
       } else {
-        CommandResults(
-          par(
-            cs.setup("iris-assembly3", command),
-            cs.setup("iris-assembly4", command)
-          ).await
-        )
+        println(s"unknown command=$command")
+        CommandResults.empty
       }
-
-      val finalResults = commandResults.addResult(commandResult)
-      println(s"\n[Iris] Result received - ${command.name} with result - ${finalResults}")
-      finalResults
-    } else {
-      println(s"unknown command=$command")
-      CommandResults.empty
     }
   }
 

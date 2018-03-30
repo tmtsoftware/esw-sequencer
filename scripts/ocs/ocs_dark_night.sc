@@ -18,18 +18,20 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
     SequencerEvent("ocs-metadata", (eventCount + commandCount).toString)
   }
 
-  override def execute(command: Command): Future[CommandResults] = spawn {
-    commandCount += 1
-    println("\n\n" + "*" * 50)
-    println(s"[Ocs] Command received - ${command.name}")
-    if (command.name == "setup-iris") {
-      val result = iris.execute(command).await
-      println(s"\n[Ocs] Result received - ${command.name} with result - ${result}")
+  val commandHandler = { command =>
+    spawn {
+      commandCount += 1
       println("\n\n" + "*" * 50)
-      result
-    } else {
-      println(s"unknown command=$command")
-      CommandResults.empty
+      println(s"[Ocs] Command received - ${command.name}")
+      if (command.name == "setup-iris") {
+        val result = iris.execute(command).await
+        println(s"\n[Ocs] Result received - ${command.name} with result - ${result}")
+        println("\n\n" + "*" * 50)
+        result
+      } else {
+        println(s"unknown command=$command")
+        CommandResults.empty
+      }
     }
   }
 
