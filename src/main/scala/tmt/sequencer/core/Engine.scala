@@ -1,14 +1,11 @@
 package tmt.sequencer.core
 
 import akka.Done
-import akka.actor.typed.ActorRef
-import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.{ActorSystem, Scheduler}
 import akka.stream.Materializer
 import akka.stream.scaladsl.Source
 import akka.util.Timeout
 import tmt.sequencer.dsl.Script
-import tmt.sequencer.models.SequencerMsg.{GetNext, Update}
 import tmt.sequencer.models._
 
 import scala.async.Async._
