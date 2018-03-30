@@ -16,9 +16,9 @@ object EngineMsg {
 sealed trait SequencerMsg
 
 object SequencerMsg {
-  case class GetNext(replyTo: ActorRef[SequencerCommand])     extends SequencerMsg
-  case class UpdateStatus(stepId: Id, stepStatus: StepStatus) extends SequencerMsg
-  case class HasNext(replyTo: ActorRef[Boolean])              extends SequencerMsg
+  case class GetNext(replyTo: ActorRef[SequencerCommand]) extends SequencerMsg
+  case class Update(step: Step)                           extends SequencerMsg
+  case class HasNext(replyTo: ActorRef[Boolean])          extends SequencerMsg
 
   sealed trait ExternalSequencerMsg extends SequencerMsg with SupervisorMsg
 

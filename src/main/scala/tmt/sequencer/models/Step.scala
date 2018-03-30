@@ -2,7 +2,7 @@ package tmt.sequencer.models
 
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
 
-case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
+case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean, commandResults: CommandResults) {
   def id: Id             = command.id
   def isPending: Boolean = status == StepStatus.Pending
 
@@ -11,24 +11,26 @@ case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
 
   def withStatus(newStatus: StepStatus): Step = {
     (status, newStatus) match {
-      case (Pending, InFlight)     => copy(status = newStatus)
-      case (InFlight, Finished(x)) => copy(status = newStatus)
-      case _                       => this
+      case (Pending, InFlight)  => copy(status = newStatus)
+      case (InFlight, Finished) => copy(status = newStatus)
+      case _                    => this
     }
   }
+
+  def withResults(commandResults: CommandResults): Step = copy(commandResults = commandResults)
 }
 
 object Step {
-  def from(command: Command)                    = Step(command, StepStatus.Pending, hasBreakpoint = false)
+  def from(command: Command)                    = Step(command, StepStatus.Pending, hasBreakpoint = false, CommandResults.empty)
   def from(commands: List[Command]): List[Step] = commands.map(from)
 }
 
 sealed trait StepStatus
 
 object StepStatus {
-  case object Pending                         extends StepStatus
-  case object InFlight                        extends StepStatus
-  case class Finished(result: CommandResults) extends StepStatus
+  case object Pending  extends StepStatus
+  case object InFlight extends StepStatus
+  case object Finished extends StepStatus
 }
 
 case class Id(value: String)

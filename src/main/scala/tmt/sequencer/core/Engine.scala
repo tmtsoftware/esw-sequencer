@@ -9,7 +9,7 @@ import akka.util.Timeout
 import tmt.sequencer.ScriptImports.CswServices
 import tmt.sequencer.dsl.{Script, ScriptFactory}
 import tmt.sequencer.models.EngineMsg.ControlCommand
-import tmt.sequencer.models.SequencerMsg.{GetNext, UpdateStatus}
+import tmt.sequencer.models.SequencerMsg.{GetNext, Update}
 import tmt.sequencer.models._
 
 import scala.async.Async._
@@ -33,9 +33,10 @@ class Engine(scriptFactory: ScriptFactory, cswServices: CswServices, sequencerRe
     val step = await((sequencerRef ? GetNext).map(_.step))
     step.command.name match {
       case x if x.startsWith("setup-") =>
-        val commandResult = await(script.execute(step.command))
-        sequencerRef ! UpdateStatus(step.id, StepStatus.Finished(commandResult))
-      case x =>
+        val commandResults = await(script.execute(step.command))
+        val updatedStep    = step.withResults(commandResults).withStatus(StepStatus.Finished)
+        sequencerRef ! Update(updatedStep)
+      case _ =>
     }
   }
 

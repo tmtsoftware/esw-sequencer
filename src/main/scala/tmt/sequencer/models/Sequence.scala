@@ -32,13 +32,13 @@ case class Sequence(steps: List[Step]) { outer =>
 
   def reset: Sequence = copy(steps.filterNot(_.isPending))
 
-  def addBreakpoints(ids: List[Id]): Sequence                = updateAll(ids.toSet, _.addBreakpoint())
-  def removeBreakpoints(ids: List[Id]): Sequence             = updateAll(ids.toSet, _.removeBreakpoint())
-  def updateStatus(id: Id, stepStatus: StepStatus): Sequence = update(id, _.withStatus(stepStatus))
+  def addBreakpoints(ids: List[Id]): Sequence    = updateAll(ids.toSet, _.addBreakpoint())
+  def removeBreakpoints(ids: List[Id]): Sequence = updateAll(ids.toSet, _.removeBreakpoint())
 
-  def pause: Sequence  = next.map(step => update(step.id, _.addBreakpoint())).flat
-  def resume: Sequence = next.map(step => update(step.id, _.removeBreakpoint())).flat
+  def pause: Sequence  = next.map(step => updateStep(step.addBreakpoint())).flat
+  def resume: Sequence = next.map(step => updateStep(step.removeBreakpoint())).flat
 
+  def updateStep(step: Step): Sequence          = update(step.id, _ => step)
   def update(id: Id, f: Step => Step): Sequence = updateAll(Set(id), f)
 
   def updateAll(ids: Set[Id], f: Step => Step): Sequence = copy {

@@ -14,20 +14,20 @@ class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavio
 
   override def onMessage(msg: SequencerMsg): Behavior[SequencerMsg] = {
     msg match {
-      case GetSequence(replyTo)             => replyTo ! sequence
-      case HasNext(replyTo)                 => replyTo ! sequence.hasNext
-      case GetNext(replyTo)                 => sendNext(replyTo)
-      case UpdateStatus(stepId, stepStatus) => sequence = sequence.updateStatus(stepId, stepStatus)
-      case Add(commands)                    => sequence = sequence.append(commands)
-      case Pause                            => sequence = sequence.pause
-      case Resume                           => sequence = sequence.resume
-      case Reset                            => sequence = sequence.reset
-      case Replace(stepId, commands)        => sequence = sequence.replace(stepId, commands)
-      case Prepend(commands)                => sequence = sequence.prepend(commands)
-      case Delete(ids)                      => sequence = sequence.delete(ids.toSet)
-      case InsertAfter(id, commands)        => sequence = sequence.insertAfter(id, commands)
-      case AddBreakpoints(ids)              => sequence = sequence.addBreakpoints(ids)
-      case RemoveBreakpoints(ids)           => sequence = sequence.removeBreakpoints(ids)
+      case GetSequence(replyTo)      => replyTo ! sequence
+      case HasNext(replyTo)          => replyTo ! sequence.hasNext
+      case GetNext(replyTo)          => sendNext(replyTo)
+      case Update(step)              => sequence = sequence.updateStep(step)
+      case Add(commands)             => sequence = sequence.append(commands)
+      case Pause                     => sequence = sequence.pause
+      case Resume                    => sequence = sequence.resume
+      case Reset                     => sequence = sequence.reset
+      case Replace(stepId, commands) => sequence = sequence.replace(stepId, commands)
+      case Prepend(commands)         => sequence = sequence.prepend(commands)
+      case Delete(ids)               => sequence = sequence.delete(ids.toSet)
+      case InsertAfter(id, commands) => sequence = sequence.insertAfter(id, commands)
+      case AddBreakpoints(ids)       => sequence = sequence.addBreakpoints(ids)
+      case RemoveBreakpoints(ids)    => sequence = sequence.removeBreakpoints(ids)
     }
     trySend()
     this
@@ -36,7 +36,7 @@ class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavio
   def sendNext(replyTo: ActorRef[SequencerCommand]): Unit = {
     if (sequence.hasNext) {
       val nextStep = sequence.next.get
-      sequence = sequence.updateStatus(nextStep.id, StepStatus.InFlight)
+      sequence = sequence.updateStep(nextStep.withStatus(StepStatus.InFlight))
       replyTo ! SequencerCommand(nextStep)
     } else {
       refOpt = Some(replyTo)
@@ -49,7 +49,7 @@ class SequencerBehaviour(ctx: ActorContext[SequencerMsg]) extends MutableBehavio
       if sequence.hasNext
       step <- sequence.next
     } {
-      sequence = sequence.updateStatus(step.id, StepStatus.InFlight)
+      sequence = sequence.updateStep(step.withStatus(StepStatus.InFlight))
       ref ! SequencerCommand(step)
       refOpt = None
     }
