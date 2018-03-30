@@ -15,11 +15,8 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
     SequencerEvent("iris-metadata", totalCount.toString)
   }
 
-  val commandHandler = { command =>
+  handleCommand("setup-iris") { command =>
     spawn {
-      commandCount += 1
-      println(s"[Iris] Command received - ${command.name}")
-      if (command.name == "setup-iris") {
         val commandResult = cs.setup("iris-assembly1", command).await
         val commandFailed = commandResult.isInstanceOf[CommandResult.Failed]
 
@@ -35,14 +32,10 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
         }
 
         val finalResults = commandResults.addResult(commandResult)
-        println(s"\n[Iris] Result received - ${command.name} with result - ${finalResults}")
+        println(s"\n[Iris] Result received - ${command.name} with result - $finalResults")
         finalResults
-      } else {
-        println(s"unknown command=$command")
-        CommandResults.empty
       }
     }
-  }
 
   override def onShutdown(): Future[Unit] = spawn {
     subscription.shutdown()
