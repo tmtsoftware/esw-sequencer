@@ -1,14 +1,17 @@
 package tmt.sequencer
 
 import ammonite.ops.Path
-import tmt.sequencer
 import tmt.sequencer.dsl.ScriptFactory
 import tmt.sequencer.models.EngineMsg
 
-import scala.concurrent.duration.{DurationDouble, FiniteDuration}
+import scala.concurrent.duration.DurationDouble
+import scala.language.implicitConversions
 import scala.reflect.{classTag, ClassTag}
 
 object ScriptImports {
+
+  implicit def toDuration(d: Double): DurationDouble = new DurationDouble(d)
+
   @volatile
   private var tag: ClassTag[_] = _
 
@@ -30,8 +33,6 @@ object ScriptImports {
 
   type Id = tmt.sequencer.models.Id
   val Id = tmt.sequencer.models.Id
-
-  def seconds(duration: Int): FiniteDuration = (duration).second
 
   private[tmt] def load(path: Path): ScriptFactory = synchronized {
     ammonite.Main().runScript(path, Seq.empty) match {

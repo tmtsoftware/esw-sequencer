@@ -5,6 +5,8 @@ import tmt.sequencer.models.{Command, CommandResults}
 
 import scala.collection.mutable
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationDouble
+import scala.language.implicitConversions
 
 abstract class Script(cs: CswServices) extends ActiveObject {
   private var commandHandlers: mutable.Buffer[PartialFunction[Command, Future[CommandResults]]] = mutable.Buffer.empty
@@ -25,5 +27,5 @@ abstract class Script(cs: CswServices) extends ActiveObject {
     case command if command.name == name => f(command)
   }
 
-  protected def onShutdown(): Future[Unit]
+  protected def onShutdown(): Future[Unit] = spawn(())
 }

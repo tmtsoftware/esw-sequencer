@@ -1,7 +1,6 @@
 import tmt.sequencer.ScriptImports._
 import $file.^.iris.iris_factory
 
-
 class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   val iris = iris_factory.IrisFactory.get(cs)
@@ -14,7 +13,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
     println(s"[Received OCS]: ------------------> event=${event.value} on key=${event.key}")
   }
 
-  val cancellable = cs.publish(seconds(5)) {
+  val cancellable = cs.publish(6.seconds) {
     SequencerEvent("ocs-metadata", (eventCount + commandCount).toString)
   }
 
