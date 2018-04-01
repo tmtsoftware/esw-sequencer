@@ -1,11 +1,11 @@
 package tmt.sequencer.dsl
 
+import akka.Done
 import tmt.sequencer.gateway.CswServices
 import tmt.sequencer.models.{Command, CommandResults}
 
 import scala.collection.mutable
 import scala.concurrent.Future
-import scala.concurrent.duration.DurationDouble
 import scala.language.implicitConversions
 
 abstract class Script(cs: CswServices) extends ActiveObject {
@@ -23,9 +23,9 @@ abstract class Script(cs: CswServices) extends ActiveObject {
 
   protected def processNext(): Future[Unit] = cs.processNext(this)
 
-  protected def handleCommand(name: String)(f: Command => Future[CommandResults]): Unit = commandHandlers += {
-    case command if command.name == name => f(command)
+  protected def handleCommand(name: String)(handler: Command => Future[CommandResults]): Unit = commandHandlers += {
+    case command if command.name == name => handler(command)
   }
 
-  protected def onShutdown(): Future[Unit] = spawn(())
+  protected def onShutdown(): Future[Done] = spawn(Done)
 }

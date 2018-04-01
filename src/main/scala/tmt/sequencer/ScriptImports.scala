@@ -15,6 +15,9 @@ object ScriptImports {
   @volatile
   private var tag: ClassTag[_] = _
 
+  type Done = akka.Done
+  val Done = akka.Done
+
   type Script         = dsl.Script
   type CswServices    = gateway.CswServices
   type SequencerEvent = EngineMsg.SequencerEvent

@@ -1,5 +1,6 @@
 package tmt.sequencer.gateway
 
+import akka.Done
 import akka.actor.Cancellable
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
@@ -26,7 +27,7 @@ class CswServices(sequencer: Sequencer,
     assembly.submit(command)(mat.executionContext)
   }
 
-  def subscribe(key: String)(callback: SequencerEvent => Unit)(implicit strandEc: ExecutionContext): KillSwitch = {
+  def subscribe(key: String)(callback: SequencerEvent => Done)(implicit strandEc: ExecutionContext): KillSwitch = {
     subscribeAsync(key)(e => Future(callback(e))(strandEc))
   }
 
@@ -34,7 +35,7 @@ class CswServices(sequencer: Sequencer,
     publishAsync(every)(Future(eventGeneratorBlock)(strandEc))
   }
 
-  private def subscribeAsync(key: String)(callback: SequencerEvent => Future[Unit]): KillSwitch = {
+  private def subscribeAsync(key: String)(callback: SequencerEvent => Future[Done]): KillSwitch = {
     Source
       .fromIterator(() => Iterator.from(1))
       .map(x => SequencerEvent(key, x.toString))

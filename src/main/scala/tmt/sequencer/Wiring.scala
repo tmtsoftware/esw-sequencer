@@ -21,18 +21,17 @@ class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
 
   lazy val scriptConfigs = new ScriptConfigs(system)
   lazy val repoDir: Path = if (isProd) Path(scriptConfigs.cloneDir) else ammonite.ops.pwd
-  lazy val path: Path    = repoDir / RelPath(scriptConfigs.scriptFactoryPath)
   lazy val scriptRepo    = new ScriptRepo(scriptConfigs)
+  lazy val path: Path    = repoDir / RelPath(scriptConfigs.scriptFactoryPath)
 
   lazy val sequencerRef: ActorRef[SequencerMsg] = system.spawn(SequencerBehaviour.behavior, "sequencer")
   lazy val sequencer                            = new Sequencer(sequencerRef, system)
 
   lazy val locationService = new LocationService(system)
+  lazy val engine          = new Engine
   lazy val cswServices     = new CswServices(sequencer, engine, locationService, sequencerId, observingMode)
 
-  lazy val script: Script = ScriptImports.load(path).get(cswServices)
-  lazy val engine         = new Engine
-
+  lazy val script: Script                         = ScriptImports.load(path).get(cswServices)
   lazy val supervisorRef: ActorRef[SupervisorMsg] = system.spawn(SupervisorBehavior.behavior(sequencerRef, script), "supervisor")
   lazy val remoteRepl                             = new RemoteRepl(cswServices, sequencer, supervisorRef)
 }

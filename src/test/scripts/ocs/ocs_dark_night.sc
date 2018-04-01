@@ -11,6 +11,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
   val subscription = cs.subscribe("ocs") { event =>
     eventCount = eventCount + 1
     println(s"[Received OCS]: ------------------> event=${event.value} on key=${event.key}")
+    Done
   }
 
   val cancellable = cs.publish(6.seconds) {
@@ -38,9 +39,10 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
   }
 
 
-  override def onShutdown(): Future[Unit] = spawn {
+  override def onShutdown(): Future[Done] = spawn {
     subscription.shutdown()
     cancellable.cancel()
     println("shutdown")
+    Done
   }
 }
