@@ -8,6 +8,7 @@ lazy val root = (project in file("."))
       version := "0.1.0-SNAPSHOT"
     )),
     name := "sequencer-framework",
+    resolvers += "jitpack" at "https://jitpack.io",
     libraryDependencies ++= Seq(
       Libs.`scala-reflect`,
       Libs.`scala-compiler`,
@@ -19,6 +20,9 @@ lazy val root = (project in file("."))
       Libs.`jgit`,
       Libs.`enumeratum`,
       Libs.`scala-async`,
+      Libs.`boopickle`,
+      Covenant.`covenant-http`,
+      Covenant.`covenant-ws`,
       Libs.scalaTest % Test,
     )
   )
