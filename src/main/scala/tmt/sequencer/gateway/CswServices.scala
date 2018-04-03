@@ -6,7 +6,6 @@ import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
 import tmt.sequencer.ScriptImports.Script
 import tmt.sequencer.core.{Engine, Sequencer}
-import tmt.sequencer.models.EngineMsg.SequencerEvent
 import tmt.sequencer.models.{Command, CommandResult}
 
 import scala.concurrent.duration.{DurationDouble, FiniteDuration}

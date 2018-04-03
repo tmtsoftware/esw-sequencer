@@ -2,7 +2,6 @@ package tmt.sequencer
 
 import ammonite.ops.Path
 import tmt.sequencer.dsl.ScriptFactory
-import tmt.sequencer.models.EngineMsg
 
 import scala.concurrent.duration.DurationDouble
 import scala.language.implicitConversions
@@ -20,8 +19,8 @@ object ScriptImports {
 
   type Script         = dsl.Script
   type CswServices    = gateway.CswServices
-  type SequencerEvent = EngineMsg.SequencerEvent
-  val SequencerEvent = EngineMsg.SequencerEvent
+  type SequencerEvent = gateway.SequencerEvent
+  val SequencerEvent = gateway.SequencerEvent
 
   type Command = tmt.sequencer.models.Command
   val Command = tmt.sequencer.models.Command

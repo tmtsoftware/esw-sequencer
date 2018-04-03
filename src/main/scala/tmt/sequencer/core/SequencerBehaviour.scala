@@ -2,16 +2,15 @@ package tmt.sequencer.core
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
-import tmt.sequencer.models.EngineMsg.SequencerCommand
 import tmt.sequencer.models.SequencerMsg._
 import tmt.sequencer.models.{Sequence, SequencerMsg, Step, StepStatus}
 
 object SequencerBehaviour {
   def behavior: Behavior[SequencerMsg] = Behaviors.setup { _ =>
-    var refOpt: Option[ActorRef[SequencerCommand]] = None
-    var sequence: Sequence                         = Sequence.empty
+    var refOpt: Option[ActorRef[Step]] = None
+    var sequence: Sequence             = Sequence.empty
 
-    def sendNext(replyTo: ActorRef[SequencerCommand]): Unit = {
+    def sendNext(replyTo: ActorRef[Step]): Unit = {
       if (sequence.hasNext) {
         send(replyTo, sequence.next.get)
       } else {
@@ -30,10 +29,10 @@ object SequencerBehaviour {
       }
     }
 
-    def send(replyTo: ActorRef[SequencerCommand], step: Step): Unit = {
+    def send(replyTo: ActorRef[Step], step: Step): Unit = {
       val inFlightStep = step.withStatus(StepStatus.InFlight)
       sequence = sequence.updateStep(inFlightStep)
-      replyTo ! SequencerCommand(inFlightStep)
+      replyTo ! inFlightStep
     }
 
     Behaviors.immutable { (_, msg) =>

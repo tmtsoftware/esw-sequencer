@@ -19,7 +19,7 @@ abstract class Script(cs: CswServices) extends ActiveObject {
     spawn(CommandResults.empty)
   }
 
-  def shutdown(): Future[Unit] = onShutdown().map(_ => shutdownEc())
+  def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())
 
   protected def processNext(): Future[Unit] = cs.processNext(this)
 

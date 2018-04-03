@@ -2,6 +2,7 @@ package tmt.sequencer.dsl
 
 import java.util.concurrent.Executors
 
+import akka.Done
 import org.tmt.macros.AsyncMacros
 import tmt.sequencer.models.CommandResult
 
@@ -21,5 +22,8 @@ trait ActiveObject {
 
   def spawn[T](body: => T)(implicit ec: ExecutionContext): Future[T] = macro AsyncMacros.async[T]
 
-  private[sequencer] def shutdownEc(): Unit = ec.shutdown()
+  private[sequencer] def shutdownEc(): Done = {
+    ec.shutdown()
+    Done
+  }
 }

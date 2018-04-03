@@ -1,24 +1,23 @@
 package tmt.sequencer.models
 
+import akka.Done
 import akka.actor.typed.ActorRef
-import tmt.sequencer.models.EngineMsg.SequencerCommand
+
+import scala.util.Try
 
 sealed trait SupervisorMsg
 
-sealed trait EngineMsg
-
-object EngineMsg {
-  case class SequencerCommand(step: Step)               extends EngineMsg
-  case class SequencerEvent(key: String, value: String) extends EngineMsg
-  case class ControlCommand(name: String)               extends EngineMsg with SupervisorMsg
+object SupervisorMsg {
+  case class Execute(command: Command, replyTo: ActorRef[Try[CommandResults]]) extends SupervisorMsg
+  case class ControlCommand(name: String, replyTo: ActorRef[Try[Done]])        extends SupervisorMsg
 }
 
 sealed trait SequencerMsg
 
 object SequencerMsg {
-  case class GetNext(replyTo: ActorRef[SequencerCommand]) extends SequencerMsg
-  case class Update(step: Step)                           extends SequencerMsg
-  case class HasNext(replyTo: ActorRef[Boolean])          extends SequencerMsg
+  case class GetNext(replyTo: ActorRef[Step])    extends SequencerMsg
+  case class Update(step: Step)                  extends SequencerMsg
+  case class HasNext(replyTo: ActorRef[Boolean]) extends SequencerMsg
 
   sealed trait ExternalSequencerMsg extends SequencerMsg with SupervisorMsg
 

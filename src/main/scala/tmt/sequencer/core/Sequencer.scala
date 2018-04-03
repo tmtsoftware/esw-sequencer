@@ -13,9 +13,8 @@ import scala.concurrent.duration.DurationLong
 class Sequencer(sequencer: ActorRef[SequencerMsg], system: ActorSystem) {
   private implicit val timeout: Timeout     = Timeout(10.hour)
   private implicit val scheduler: Scheduler = system.scheduler
-  import system.dispatcher
 
-  def next: Future[Step]                                 = (sequencer ? GetNext).map(_.step)
+  def next: Future[Step]                                 = sequencer ? GetNext
   def addAll(commands: List[Command]): Unit              = sequencer ! Add(commands)
   def hasNext: Future[Boolean]                           = sequencer ? HasNext
   def pause(): Unit                                      = sequencer ! Pause
