@@ -19,10 +19,10 @@ class Engine(implicit system: ActorSystem, mat: Materializer) {
   import mat.executionContext
 
   def start(sequencer: Sequencer, script: Script): Future[Done] = {
-    Source.repeat(()).mapAsync(1)(_ => execute(sequencer, script)).runForeach(_ => ())
+    Source.repeat(()).mapAsync(1)(_ => processStep(sequencer, script)).runForeach(_ => ())
   }
 
-  def execute(sequencer: Sequencer, script: Script): Future[Unit] = async {
+  def processStep(sequencer: Sequencer, script: Script): Future[Done] = async {
     val step = await(sequencer.next)
     step.command.name match {
       case x if x.startsWith("setup-") =>
@@ -31,5 +31,6 @@ class Engine(implicit system: ActorSystem, mat: Materializer) {
         sequencer.update(updatedStep)
       case _ =>
     }
+    Done
   }
 }

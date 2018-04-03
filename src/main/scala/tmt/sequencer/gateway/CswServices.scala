@@ -19,7 +19,7 @@ class CswServices(sequencer: Sequencer,
     implicit mat: Materializer
 ) {
 
-  def processNext(script: Script): Future[Unit] = engine.execute(sequencer, script)
+  def processNext(script: Script): Future[Done] = engine.processStep(sequencer, script)
 
   def setup(componentName: String, command: Command): Future[CommandResult] = {
     val assembly = locationService.resolve(componentName)

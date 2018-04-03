@@ -21,7 +21,7 @@ abstract class Script(cs: CswServices) extends ActiveObject {
 
   def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())
 
-  protected def processNext(): Future[Unit] = cs.processNext(this)
+  protected def processNext(): Future[Done] = cs.processNext(this)
 
   protected def handleCommand(name: String)(handler: Command => Future[CommandResults]): Unit = commandHandlers += {
     case command if command.name == name => handler(command)
