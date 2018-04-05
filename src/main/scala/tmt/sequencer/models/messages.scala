@@ -8,8 +8,8 @@ import scala.util.Try
 sealed trait SupervisorMsg
 
 object SupervisorMsg {
-  case class Execute(command: Command, replyTo: ActorRef[Try[CommandResults]]) extends SupervisorMsg
-  case class ControlCommand(name: String, replyTo: ActorRef[Try[Done]])        extends SupervisorMsg
+  case class Execute(command: Command, replyTo: ActorRef[Try[CommandResult]]) extends SupervisorMsg
+  case class ControlCommand(name: String, replyTo: ActorRef[Try[Done]])       extends SupervisorMsg
 }
 
 sealed trait SequencerMsg
