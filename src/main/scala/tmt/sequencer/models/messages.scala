@@ -8,16 +8,15 @@ import scala.util.Try
 sealed trait SupervisorMsg
 
 object SupervisorMsg {
-  case class Execute(command: Command, replyTo: ActorRef[Try[CommandResult]]) extends SupervisorMsg
-  case class ControlCommand(name: String, replyTo: ActorRef[Try[Done]])       extends SupervisorMsg
+  case class ControlCommand(name: String, replyTo: ActorRef[Try[Done]]) extends SupervisorMsg
 }
 
 sealed trait SequencerMsg
 
 object SequencerMsg {
-  case class GetNext(replyTo: ActorRef[Step])    extends SequencerMsg
-  case class Update(step: Step)                  extends SequencerMsg
-  case class HasNext(replyTo: ActorRef[Boolean]) extends SequencerMsg
+  case class GetNext(replyTo: ActorRef[Step])           extends SequencerMsg
+  case class MaybeNext(replyTo: ActorRef[Option[Step]]) extends SequencerMsg
+  case class Update(step: Step)                         extends SequencerMsg
 
   sealed trait ExternalSequencerMsg extends SequencerMsg with SupervisorMsg
 

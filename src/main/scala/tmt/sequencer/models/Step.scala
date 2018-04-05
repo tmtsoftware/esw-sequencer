@@ -2,7 +2,7 @@ package tmt.sequencer.models
 
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
 
-case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean, commandResult: CommandResult) {
+case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean, commandResults: Set[CommandResponse]) {
   def id: Id             = command.id
   def isPending: Boolean = status == StepStatus.Pending
 
@@ -17,11 +17,11 @@ case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean, co
     }
   }
 
-  def withResults(commandResult: CommandResult): Step = copy(commandResult = commandResult)
+  def withResults(commandResults: Set[CommandResponse]): Step = copy(commandResults = commandResults)
 }
 
 object Step {
-  def from(command: Command)                    = Step(command, StepStatus.Pending, hasBreakpoint = false, CommandResult.Empty(command.id))
+  def from(command: Command)                    = Step(command, StepStatus.Pending, hasBreakpoint = false, Set.empty)
   def from(commands: List[Command]): List[Step] = commands.map(from)
 }
 
@@ -36,18 +36,12 @@ object StepStatus {
 case class Id(value: String)
 case class Command(id: Id, name: String, params: List[Int])
 
-sealed trait CommandResult {
+sealed trait CommandResponse {
   def id: Id
 }
 
-object CommandResult {
-  case class Success(id: Id, value: String) extends CommandResult
-  case class Failed(id: Id, value: String)  extends CommandResult
-
-  case class Composite(id: Id, results: List[CommandResult]) extends CommandResult {
-    def prepend(commandResult: CommandResult): CommandResult = copy(results = commandResult :: results)
-    def append(commandResult: CommandResult): CommandResult  = copy(results = results :+ commandResult)
-  }
-
-  case class Empty(id: Id) extends CommandResult
+object CommandResponse {
+  case class Success(id: Id, value: String)                    extends CommandResponse
+  case class Failed(id: Id, value: String)                     extends CommandResponse
+  case class Composite(id: Id, response: Set[CommandResponse]) extends CommandResponse
 }

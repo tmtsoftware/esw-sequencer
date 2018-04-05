@@ -25,8 +25,8 @@ object ScriptImports {
   type Command = tmt.sequencer.models.Command
   val Command = tmt.sequencer.models.Command
 
-  type CommandResult = tmt.sequencer.models.CommandResult
-  val CommandResult = tmt.sequencer.models.CommandResult
+  type CommandResponse = tmt.sequencer.models.CommandResponse
+  val CommandResponse = tmt.sequencer.models.CommandResponse
 
   type Future[T] = scala.concurrent.Future[T]
 

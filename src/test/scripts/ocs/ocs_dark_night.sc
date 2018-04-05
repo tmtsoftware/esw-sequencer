@@ -21,11 +21,17 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
   handleCommand("setup-iris") { command =>
     spawn {
       println("\n\n" + "*" * 50)
+      var ee: CommandResponse = null
+//      val dd = cs.nextIf(c2 => c2.name == "setup-iris").await
+//      if(dd.isDefined) {
+//        ee = iris.execute(dd.get).await
+//      }
+
       println(s"\n[Ocs] Command received - ${command.name}")
-      val result = iris.execute(command).await
-      println(s"\n[Ocs] Result received - ${command.name} with result - $result")
+      val irisResponse: CommandResponse = iris.execute(command).await
+      println(s"\n[Ocs] Result received - ${command.name} with irisResponse - $irisResponse")
       println("\n\n" + "*" * 50)
-      result
+      Set(ee, irisResponse)
     }
   }
 

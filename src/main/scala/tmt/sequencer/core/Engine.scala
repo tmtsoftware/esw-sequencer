@@ -26,8 +26,8 @@ class Engine(implicit system: ActorSystem, mat: Materializer) {
     val step = await(sequencer.next)
     step.command.name match {
       case x if x.startsWith("setup-") =>
-        val commandResult = await(script.execute(step.command))
-        val updatedStep   = step.withResults(commandResult).withStatus(StepStatus.Finished)
+        val commandResults = await(script.execute(step.command))
+        val updatedStep    = step.withResults(commandResults).withStatus(StepStatus.Finished)
         sequencer.update(updatedStep)
       case _ =>
     }

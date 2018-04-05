@@ -10,26 +10,22 @@ object SequencerBehaviour {
     var refOpt: Option[ActorRef[Step]] = None
     var sequence: Sequence             = Sequence.empty
 
-    def sendNext(replyTo: ActorRef[Step]): Unit = {
-      if (sequence.hasNext) {
-        send(replyTo, sequence.next.get)
-      } else {
-        refOpt = Some(replyTo)
-      }
+    def sendNext(replyTo: ActorRef[Step]): Unit = sequence.next match {
+      case Some(step) => setInFlight(replyTo, step)
+      case None       => refOpt = Some(replyTo)
     }
 
     def trySend(): Unit = {
       for {
-        ref <- refOpt
-        if sequence.hasNext
+        ref  <- refOpt
         step <- sequence.next
       } {
-        send(ref, step)
+        setInFlight(ref, step)
         refOpt = None
       }
     }
 
-    def send(replyTo: ActorRef[Step], step: Step): Unit = {
+    def setInFlight(replyTo: ActorRef[Step], step: Step): Unit = {
       val inFlightStep = step.withStatus(StepStatus.InFlight)
       sequence = sequence.updateStep(inFlightStep)
       replyTo ! inFlightStep
@@ -38,8 +34,8 @@ object SequencerBehaviour {
     Behaviors.immutable { (_, msg) =>
       msg match {
         case GetSequence(replyTo)      => replyTo ! sequence
-        case HasNext(replyTo)          => replyTo ! sequence.hasNext
         case GetNext(replyTo)          => sendNext(replyTo)
+        case MaybeNext(replyTo)        => replyTo ! sequence.next
         case Update(step)              => sequence = sequence.updateStep(step)
         case Add(commands)             => sequence = sequence.append(commands)
         case Pause                     => sequence = sequence.pause

@@ -6,9 +6,9 @@ case class Sequence(steps: List[Step]) { outer =>
 
   //query
 
-  def hasNext: Boolean   = next.isDefined && !isPaused
-  def isPaused: Boolean  = next.exists(_.hasBreakpoint)
-  def next: Option[Step] = steps.find(_.isPending)
+  def nextPending: Option[Step] = steps.find(_.isPending)
+  def isPaused: Boolean         = nextPending.exists(_.hasBreakpoint)
+  def next: Option[Step]        = if (!isPaused) nextPending else None
 
   //update
 
@@ -35,8 +35,8 @@ case class Sequence(steps: List[Step]) { outer =>
   def addBreakpoints(ids: List[Id]): Sequence    = updateAll(ids.toSet, _.addBreakpoint())
   def removeBreakpoints(ids: List[Id]): Sequence = updateAll(ids.toSet, _.removeBreakpoint())
 
-  def pause: Sequence  = next.map(step => updateStep(step.addBreakpoint())).flat
-  def resume: Sequence = next.map(step => updateStep(step.removeBreakpoint())).flat
+  def pause: Sequence  = nextPending.map(step => updateStep(step.addBreakpoint())).flat
+  def resume: Sequence = nextPending.map(step => updateStep(step.removeBreakpoint())).flat
 
   def updateStep(step: Step): Sequence          = update(step.id, _ => step)
   def update(id: Id, f: Step => Step): Sequence = updateAll(Set(id), f)

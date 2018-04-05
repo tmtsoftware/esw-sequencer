@@ -6,8 +6,9 @@ import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
 import tmt.sequencer.ScriptImports.Script
 import tmt.sequencer.core.{Engine, Sequencer}
-import tmt.sequencer.models.{Command, CommandResult}
+import tmt.sequencer.models.{Command, CommandResponse}
 
+import scala.async.Async.{async, await}
 import scala.concurrent.duration.{DurationDouble, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -19,9 +20,13 @@ class CswServices(sequencer: Sequencer,
     implicit mat: Materializer
 ) {
 
-  def processNext(script: Script): Future[Done] = engine.processStep(sequencer, script)
+  def nextIf(f: Command => Boolean): Future[Option[Command]] =
+    async {
+      val maybeStep = await(sequencer.maybeNext)
+      maybeStep.map(_.command).filter(f)
+    }(mat.executionContext)
 
-  def setup(componentName: String, command: Command): Future[CommandResult] = {
+  def setup(componentName: String, command: Command): Future[CommandResponse] = {
     val assembly = locationService.resolve(componentName)
     assembly.submit(command)(mat.executionContext)
   }
