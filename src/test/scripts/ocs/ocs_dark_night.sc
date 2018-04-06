@@ -22,25 +22,30 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
   handleCommand("setup-iris") { command =>
     spawn {
       println("*" * 50)
-      var ee: Set[CommandResponse.Composite] = null
-//      val dd = cs.nextIf(c2 => c2.name == "setup-iris").await
-//      if(dd.isDefined) {
-//        ee = iris.execute(dd.get).await
-//      }
+      val maybeCommand = cs.nextIf(c2 => c2.name == "setup-iris").await
+
+      val maybeComposite = if (maybeCommand.isDefined) {
+        val command2 = maybeCommand.get
+        val responses2 = iris.executeToBeDeleted(command2).await
+        Some(CommandResponse.Composite(command2.id, responses2))
+      } else {
+        None
+      }
 
       println(s"[Ocs] Command received - ${command.name}")
-      val composites: Set[CommandResponse.Composite] = iris.execute(command).await
-      println(s"[Ocs] Result received - ${command.name} with composites - $composites")
-      AggregateResponse(composites ++ ee)
+      val responses: Set[CommandResponse] = iris.executeToBeDeleted(command).await
+      println(s"[Ocs] Result received - ${command.name} with responses - $responses")
+      val composite = CommandResponse.Composite(command.id, responses)
+      AggregateResponse.single(composite).add(maybeComposite)
     }
   }
 
   handleCommand("setup-iris2") { command =>
     spawn {
-      val composites = iris.execute(command).await
-      println(s"[Ocs2] Result received - ${command.name} with composites - $composites")
+      val responses = iris.executeToBeDeleted(command).await
+      println(s"[Ocs2] Result received - ${command.name} with responses - $responses")
       println("*" * 50)
-      AggregateResponse(composites)
+      AggregateResponse.single(CommandResponse.Composite(command.id, responses))
     }
   }
 

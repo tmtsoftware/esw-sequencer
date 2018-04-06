@@ -22,8 +22,8 @@ class CswServices(sequencer: Sequencer,
 
   def nextIf(f: Command => Boolean): Future[Option[Command]] =
     async {
-      val maybeStep = await(sequencer.maybeNext)
-      maybeStep.map(_.command).filter(f)
+      val hasNext = await(sequencer.maybeNext).map(_.command).exists(f)
+      if (hasNext) Some(await(sequencer.next).command) else None
     }(mat.executionContext)
 
   def setup(componentName: String, command: Command): Future[CommandResponse] = {

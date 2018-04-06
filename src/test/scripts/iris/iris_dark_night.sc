@@ -23,7 +23,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
       val composite = CommandResponse.Composite(command.id, restAssemblyResponses + firstAssemblyResponse)
       println(s"\n[Iris] Result received - ${command.name} with result - $composite")
-      AggregateResponse(Set(composite))
+      AggregateResponse.single(composite)
     }
   }
 }

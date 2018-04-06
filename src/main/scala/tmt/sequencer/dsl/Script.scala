@@ -14,7 +14,7 @@ abstract class Script(cs: CswServices) extends ActiveObject {
   private def combinedHandler: PartialFunction[Command, Future[AggregateResponse]] =
     commandHandlers.foldLeft(PartialFunction.empty[Command, Future[AggregateResponse]])(_ orElse _)
 
-  def execute(command: Command): Future[Set[CommandResponse.Composite]] = spawn {
+  private[sequencer] def execute(command: Command): Future[Set[CommandResponse.Composite]] = spawn {
     combinedHandler
       .lift(command)
       .getOrElse {
@@ -23,6 +23,10 @@ abstract class Script(cs: CswServices) extends ActiveObject {
       }
       .await
       .responses
+  }
+
+  def executeToBeDeleted(command: Command): Future[Set[CommandResponse]] = spawn {
+    execute(command).await.toSet[CommandResponse]
   }
 
   def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())

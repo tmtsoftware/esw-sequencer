@@ -46,4 +46,12 @@ object CommandResponse {
   case class Composite(id: Id, response: Set[CommandResponse]) extends CommandResponse
 }
 
-case class AggregateResponse(responses: Set[CommandResponse.Composite])
+case class AggregateResponse(responses: Set[CommandResponse.Composite]) {
+  def add(commandResponses: CommandResponse.Composite*): AggregateResponse     = copy(responses ++ commandResponses.toSet)
+  def add(maybeResponse: Option[CommandResponse.Composite]): AggregateResponse = copy(responses ++ maybeResponse.toSet)
+}
+
+object AggregateResponse {
+  def single(response: CommandResponse.Composite)     = AggregateResponse(Set(response))
+  def multiple(responses: CommandResponse.Composite*) = AggregateResponse(responses.toSet)
+}
