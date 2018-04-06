@@ -2,7 +2,7 @@ package tmt.sequencer.models
 
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
 
-case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean, commandResults: Set[CommandResponse]) {
+case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean, aggregateResponse: AggregateResponse) {
   def id: Id             = command.id
   def isPending: Boolean = status == StepStatus.Pending
 
@@ -17,11 +17,11 @@ case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean, co
     }
   }
 
-  def withResults(commandResults: Set[CommandResponse]): Step = copy(commandResults = commandResults)
+  def withResults(aggregateResponse: AggregateResponse): Step = copy(aggregateResponse = aggregateResponse)
 }
 
 object Step {
-  def from(command: Command)                    = Step(command, StepStatus.Pending, hasBreakpoint = false, Set.empty)
+  def from(command: Command)                    = Step(command, StepStatus.Pending, hasBreakpoint = false, AggregateResponse(Set.empty))
   def from(commands: List[Command]): List[Step] = commands.map(from)
 }
 
@@ -45,3 +45,5 @@ object CommandResponse {
   case class Failed(id: Id, value: String)                     extends CommandResponse
   case class Composite(id: Id, response: Set[CommandResponse]) extends CommandResponse
 }
+
+case class AggregateResponse(responses: Set[CommandResponse.Composite])

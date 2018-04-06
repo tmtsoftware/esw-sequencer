@@ -1,5 +1,6 @@
 import tmt.sequencer.ScriptImports._
 import $file.^.iris.iris_factory
+import tmt.sequencer.models.AggregateResponse
 
 class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
@@ -20,27 +21,26 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   handleCommand("setup-iris") { command =>
     spawn {
-      println("\n\n" + "*" * 50)
-      var ee: CommandResponse = null
+      println("*" * 50)
+      var ee: Set[CommandResponse.Composite] = null
 //      val dd = cs.nextIf(c2 => c2.name == "setup-iris").await
 //      if(dd.isDefined) {
 //        ee = iris.execute(dd.get).await
 //      }
 
-      println(s"\n[Ocs] Command received - ${command.name}")
-      val irisResponse: CommandResponse = iris.execute(command).await
-      println(s"\n[Ocs] Result received - ${command.name} with irisResponse - $irisResponse")
-      println("\n\n" + "*" * 50)
-      Set(ee, irisResponse)
+      println(s"[Ocs] Command received - ${command.name}")
+      val composites: Set[CommandResponse.Composite] = iris.execute(command).await
+      println(s"[Ocs] Result received - ${command.name} with composites - $composites")
+      AggregateResponse(composites ++ ee)
     }
   }
 
   handleCommand("setup-iris2") { command =>
     spawn {
-      val result = iris.execute(command).await
-      println(s"\n[Ocs2] Result received - ${command.name} with result - $result")
-      println("\n\n" + "*" * 50)
-      result
+      val composites = iris.execute(command).await
+      println(s"[Ocs2] Result received - ${command.name} with composites - $composites")
+      println("*" * 50)
+      AggregateResponse(composites)
     }
   }
 

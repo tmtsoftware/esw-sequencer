@@ -24,6 +24,19 @@ lazy val root = (project in file("."))
       Covenant.`covenant-http`,
       Covenant.`covenant-ws`,
       Libs.scalaTest % Test,
+    ),
+    scalacOptions ++= Seq(
+      "-encoding",
+      "UTF-8",
+      "-feature",
+      "-unchecked",
+      "-deprecation",
+      //"-Xfatal-warnings",
+      "-Xlint",
+      "-Yno-adapted-args",
+      "-Ywarn-dead-code",
+      "-Xfuture",
+      //      "-Xprint:typer"
     )
   )
 

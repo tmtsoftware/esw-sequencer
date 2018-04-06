@@ -2,32 +2,32 @@ package tmt.sequencer.dsl
 
 import akka.Done
 import tmt.sequencer.gateway.CswServices
-import tmt.sequencer.models.{Command, CommandResponse}
+import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse}
 
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
 abstract class Script(cs: CswServices) extends ActiveObject {
-  private var commandHandlers: mutable.Buffer[PartialFunction[Command, Future[Set[CommandResponse]]]] = mutable.Buffer.empty
+  private var commandHandlers: mutable.Buffer[PartialFunction[Command, Future[AggregateResponse]]] = mutable.Buffer.empty
 
-  private def combinedHandler: PartialFunction[Command, Future[Set[CommandResponse]]] =
-    commandHandlers.foldLeft(PartialFunction.empty[Command, Future[Set[CommandResponse]]])(_ orElse _)
+  private def combinedHandler: PartialFunction[Command, Future[AggregateResponse]] =
+    commandHandlers.foldLeft(PartialFunction.empty[Command, Future[AggregateResponse]])(_ orElse _)
 
-  def execute(command: Command): Future[CommandResponse] = spawn {
-    val responses = combinedHandler
+  def execute(command: Command): Future[Set[CommandResponse.Composite]] = spawn {
+    combinedHandler
       .lift(command)
       .getOrElse {
         println(s"unknown command=$command")
-        spawn(Set.empty)
+        spawn(AggregateResponse(Set.empty))
       }
       .await
-    CommandResponse.Composite(command.id, responses)
+      .responses
   }
 
   def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())
 
-  protected def handleCommand(name: String)(handler: Command => Future[Set[CommandResponse]]): Unit = commandHandlers += {
+  protected def handleCommand(name: String)(handler: Command => Future[AggregateResponse]): Unit = commandHandlers += {
     case command if command.name == name => handler(command)
   }
 

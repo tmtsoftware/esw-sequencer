@@ -1,4 +1,5 @@
 import tmt.sequencer.ScriptImports._
+import tmt.sequencer.models.AggregateResponse
 
 class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
@@ -20,9 +21,9 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
         ).await.toSet
       }
 
-      val irisResponse = restAssemblyResponses + firstAssemblyResponse
-      println(s"\n[Iris] Result received - ${command.name} with result - $irisResponse")
-      irisResponse
+      val composite = CommandResponse.Composite(command.id, restAssemblyResponses + firstAssemblyResponse)
+      println(s"\n[Iris] Result received - ${command.name} with result - $composite")
+      AggregateResponse(Set(composite))
     }
   }
 }
