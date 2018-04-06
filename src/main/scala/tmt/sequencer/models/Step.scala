@@ -52,7 +52,7 @@ case class AggregateResponse(childResponses: Set[CommandResponse.Composite]) {
   def add(aggregateResponse: AggregateResponse)                             = AggregateResponse(childResponses ++ aggregateResponse.childResponses)
   def responses: Set[CommandResponse]                                       = childResponses.toSet[CommandResponse]
 
-  def dd(parentId: Id): Set[CommandResponse.Composite] =
+  def groupBy(parentId: Id): Set[CommandResponse.Composite] =
     childResponses
       .groupBy(_.parentId)
       .map {

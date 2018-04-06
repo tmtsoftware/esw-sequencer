@@ -24,7 +24,7 @@ abstract class Script(cs: CswServices) extends ActiveObject {
   }
 
   def executeToBeDeleted(command: Command): Future[Set[CommandResponse.Composite]] = spawn {
-    execute(command).await.dd(command.parentId)
+    execute(command).await.groupBy(command.parentId)
   }
 
   def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())

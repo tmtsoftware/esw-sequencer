@@ -9,10 +9,10 @@ import scala.util.{Failure, Success, Try}
 
 object SequencerBehaviour {
   def behavior: Behavior[SequencerMsg] = Behaviors.setup { _ =>
-    var stepRefOpt: Option[ActorRef[Step]]                          = None
-    var sequence: Sequence                                          = Sequence.empty
-    var responseRefOpt: Option[ActorRef[Try[Set[CommandResponse]]]] = None
-    var aggregateResponse: AggregateResponse                        = AggregateResponse(Set.empty)
+    var stepRefOpt: Option[ActorRef[Step]]                       = None
+    var sequence: Sequence                                       = Sequence.empty
+    var responseRefOpt: Option[ActorRef[Try[AggregateResponse]]] = None
+    var aggregateResponse: AggregateResponse                     = AggregateResponse(Set.empty)
 
     def sendNext(replyTo: ActorRef[Step]): Unit = sequence.next match {
       case Some(step) => setInFlight(replyTo, step)
@@ -59,7 +59,7 @@ object SequencerBehaviour {
             sequence = sequence.updateStep(step)
             aggregateResponse = aggregateResponse.add(_aggregateResponse)
             if (sequence.isFinished) {
-              responseRefOpt.foreach(x => x ! Success(aggregateResponse.responses))
+              responseRefOpt.foreach(x => x ! Success(aggregateResponse))
               sequence = Sequence.empty
               aggregateResponse = AggregateResponse.empty
               responseRefOpt = None
