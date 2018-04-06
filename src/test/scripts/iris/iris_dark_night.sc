@@ -18,7 +18,7 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
         par(
           cs.setup("iris-assembly3", command),
           cs.setup("iris-assembly4", command)
-        ).await.toSet
+        ).await
       }
 
       val composite = CommandResponse.Composite(command.id, command.parentId, restAssemblyResponses + firstAssemblyResponse)
