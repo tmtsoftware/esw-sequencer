@@ -3,15 +3,16 @@ package tmt.sequencer.core
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import tmt.sequencer.models.SequencerMsg._
-import tmt.sequencer.models.{Sequence, SequencerMsg, Step, StepStatus}
+import tmt.sequencer.models._
 
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 object SequencerBehaviour {
   def behavior: Behavior[SequencerMsg] = Behaviors.setup { _ =>
-    var stepRefOpt: Option[ActorRef[Step]]              = None
-    var sequence: Sequence                              = Sequence.empty
-    var sequenceRefOpt: Option[ActorRef[Try[Sequence]]] = None
+    var stepRefOpt: Option[ActorRef[Step]]                          = None
+    var sequence: Sequence                                          = Sequence.empty
+    var responseRefOpt: Option[ActorRef[Try[Set[CommandResponse]]]] = None
+    var aggregateResponse: AggregateResponse                        = AggregateResponse(Set.empty)
 
     def sendNext(replyTo: ActorRef[Step]): Unit = sequence.next match {
       case Some(step) => setInFlight(replyTo, step)
@@ -37,25 +38,33 @@ object SequencerBehaviour {
     Behaviors.immutable { (_, msg) =>
       if (sequence.isFinished) {
         msg match {
-          case ProcessSequence(_sequence, replyTo) =>
-            if (_sequence == Sequence.empty) {
+          case ProcessSequence(commands, replyTo) =>
+            if (commands == Nil) {
               replyTo ! Failure(new RuntimeException("empty sequence can not be processed"))
             } else {
-              sequence = _sequence
-              stepRefOpt = None
-              sequenceRefOpt = Some(replyTo)
+              sequence = Sequence.from(commands)
+              responseRefOpt = Some(replyTo)
             }
           case GetSequence(replyTo) => replyTo ! sequence
           case x                    => println(s"command=$x can not be applied on a finished sequence")
         }
       } else {
         msg match {
-          case ProcessSequence(_sequence, replyTo) =>
+          case ProcessSequence(_, replyTo) =>
             replyTo ! Failure(new RuntimeException("previous sequence has not finished yet"))
-          case GetSequence(replyTo)      => replyTo ! sequence
-          case GetNext(replyTo)          => sendNext(replyTo)
-          case MaybeNext(replyTo)        => replyTo ! sequence.next
-          case Update(step)              => sequence = sequence.updateStep(step)
+          case GetSequence(replyTo) => replyTo ! sequence
+          case GetNext(replyTo)     => sendNext(replyTo)
+          case MaybeNext(replyTo)   => replyTo ! sequence.next
+          case Update(step, _aggregateResponse) =>
+            sequence = sequence.updateStep(step)
+            aggregateResponse = aggregateResponse.add(_aggregateResponse)
+            if (sequence.isFinished) {
+              responseRefOpt.foreach(x => x ! Success(aggregateResponse.responses))
+              sequence = Sequence.empty
+              aggregateResponse = AggregateResponse.empty
+              responseRefOpt = None
+              stepRefOpt = None
+            }
           case Add(commands)             => sequence = sequence.append(commands)
           case Pause                     => sequence = sequence.pause
           case Resume                    => sequence = sequence.resume

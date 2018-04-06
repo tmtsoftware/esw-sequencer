@@ -55,5 +55,6 @@ case class Sequence(steps: List[Step]) { outer =>
 }
 
 object Sequence {
-  def empty = Sequence(List.empty)
+  def empty                         = Sequence(List.empty)
+  def from(commands: List[Command]) = Sequence(Step.from(commands))
 }

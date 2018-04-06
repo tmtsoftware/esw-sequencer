@@ -20,9 +20,9 @@ class Engine(implicit mat: Materializer) {
     val step = await(sequencer.next)
     step.command.name match {
       case x if x.startsWith("setup-") =>
-        val composites  = await(script.execute(step.command))
-        val updatedStep = step.withResults(AggregateResponse(composites)).withStatus(StepStatus.Finished)
-        sequencer.update(updatedStep)
+        val aggregateResponse = await(script.execute(step.command))
+        val updatedStep       = step.withStatus(StepStatus.Finished)
+        sequencer.update(updatedStep, aggregateResponse)
       case _ =>
     }
     Done

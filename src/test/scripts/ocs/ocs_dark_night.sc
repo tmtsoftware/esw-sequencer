@@ -27,7 +27,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
       val maybeComposite = if (maybeCommand.isDefined) {
         val command2 = maybeCommand.get
         val responses2 = iris.executeToBeDeleted(command2).await
-        Some(CommandResponse.Composite(command2.id, responses2))
+        Some(CommandResponse.Composite(command2.id, command2.parentId, responses2))
       } else {
         None
       }
@@ -35,7 +35,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
       println(s"[Ocs] Command received - ${command.name}")
       val responses: Set[CommandResponse] = iris.executeToBeDeleted(command).await
       println(s"[Ocs] Result received - ${command.name} with responses - $responses")
-      val composite = CommandResponse.Composite(command.id, responses)
+      val composite = CommandResponse.Composite(command.id, command.parentId, responses)
       AggregateResponse.single(composite).add(maybeComposite)
     }
   }
@@ -45,7 +45,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
       val responses = iris.executeToBeDeleted(command).await
       println(s"[Ocs2] Result received - ${command.name} with responses - $responses")
       println("*" * 50)
-      AggregateResponse.single(CommandResponse.Composite(command.id, responses))
+      AggregateResponse.single(CommandResponse.Composite(command.id, command.parentId, responses))
     }
   }
 

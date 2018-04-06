@@ -28,5 +28,5 @@ class Sequencer(sequencer: ActorRef[SequencerMsg], system: ActorSystem) {
   def prepend(commands: List[Command]): Unit             = sequencer ! Prepend(commands)
   def replace(id: Id, commands: List[Command]): Unit     = sequencer ! Replace(id, commands)
 
-  private[sequencer] def update(step: Step): Unit = sequencer ! Update(step)
+  private[sequencer] def update(step: Step, response: AggregateResponse): Unit = sequencer ! Update(step, response)
 }
