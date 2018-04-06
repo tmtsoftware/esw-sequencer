@@ -1,24 +1,23 @@
 package tmt.sequencer.rpc
 
 import org.scalatest._
-
 import covenant.core.api._
 import covenant.ws._
 import sloth._
 import chameleon.ext.boopickle._
 import boopickle.Default._
 import java.nio.ByteBuffer
+
 import mycelium.client._
 import mycelium.server._
-
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.RouteResult._
 import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.actor.ActorSystem
-
 import cats.implicits._
 
 import scala.concurrent.Future
+import scala.language.higherKinds
 
 class WsSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
   trait Api[Result[_]] {

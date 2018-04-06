@@ -9,6 +9,7 @@ case class Sequence(steps: List[Step]) { outer =>
   def nextPending: Option[Step] = steps.find(_.isPending)
   def isPaused: Boolean         = nextPending.exists(_.hasBreakpoint)
   def next: Option[Step]        = if (!isPaused) nextPending else None
+  def isFinished: Boolean       = steps.forall(_.isFinished)
 
   //update
 
@@ -30,7 +31,7 @@ case class Sequence(steps: List[Step]) { outer =>
     copy(pre ::: post.headOption.toList ::: newSteps ::: post.tail)
   }
 
-  def reset: Sequence = copy(steps.filterNot(_.isPending))
+  def discardPending: Sequence = copy(steps.filterNot(_.isPending))
 
   def addBreakpoints(ids: List[Id]): Sequence    = updateAll(ids.toSet, _.addBreakpoint())
   def removeBreakpoints(ids: List[Id]): Sequence = updateAll(ids.toSet, _.removeBreakpoint())

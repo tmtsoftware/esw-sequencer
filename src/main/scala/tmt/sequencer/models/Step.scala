@@ -3,8 +3,9 @@ package tmt.sequencer.models
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
 
 case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean, aggregateResponse: AggregateResponse) {
-  def id: Id             = command.id
-  def isPending: Boolean = status == StepStatus.Pending
+  def id: Id              = command.id
+  def isPending: Boolean  = status == StepStatus.Pending
+  def isFinished: Boolean = status == StepStatus.Finished
 
   def addBreakpoint(): Step    = if (isPending) copy(hasBreakpoint = true) else this
   def removeBreakpoint(): Step = copy(hasBreakpoint = false)

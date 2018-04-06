@@ -6,7 +6,6 @@ import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse}
 
 import scala.collection.mutable
 import scala.concurrent.Future
-import scala.language.implicitConversions
 
 abstract class Script(cs: CswServices) extends ActiveObject {
   private var commandHandlers: mutable.Buffer[PartialFunction[Command, Future[AggregateResponse]]] = mutable.Buffer.empty

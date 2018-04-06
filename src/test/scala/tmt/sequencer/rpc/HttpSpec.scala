@@ -17,6 +17,7 @@ import akka.actor.ActorSystem
 import cats.implicits._
 
 import scala.concurrent.Future
+import scala.language.higherKinds
 
 class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
   trait Api[Result[_]] {

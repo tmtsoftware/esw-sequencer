@@ -1,22 +1,18 @@
 package tmt.sequencer
 
-import akka.actor.{ActorSystem, Scheduler}
+import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
-import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import tmt.sequencer.FutureExt.RichFuture
 import tmt.sequencer.dsl.ActiveObject
 
 import scala.concurrent.Future
-import scala.concurrent.duration.DurationDouble
 
 class ActiveObjectDemo extends FunSuite with BeforeAndAfterAll with ActiveObject {
 
   private implicit val actorSystem: ActorSystem        = ActorSystem("test")
   private implicit val materializer: ActorMaterializer = ActorMaterializer()
-  private implicit val scheduler: Scheduler            = actorSystem.scheduler
-  private implicit val timeout: Timeout                = Timeout(5.seconds)
 
   override protected def afterAll(): Unit = {}
 

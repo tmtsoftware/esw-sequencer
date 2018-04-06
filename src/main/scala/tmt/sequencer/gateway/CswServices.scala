@@ -4,7 +4,6 @@ import akka.Done
 import akka.actor.Cancellable
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
-import tmt.sequencer.ScriptImports.Script
 import tmt.sequencer.core.{Engine, Sequencer}
 import tmt.sequencer.models.{Command, CommandResponse}
 

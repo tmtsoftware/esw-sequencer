@@ -8,7 +8,6 @@ import tmt.sequencer.models.CommandResponse
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Future}
 import scala.language.experimental.macros
-import scala.language.implicitConversions
 
 trait ActiveObject {
   protected implicit val ec: ExecutionContextExecutorService =
