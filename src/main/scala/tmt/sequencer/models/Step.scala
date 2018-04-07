@@ -33,7 +33,14 @@ object StepStatus {
 }
 
 case class Id(value: String)
-case class Command(id: Id, name: String, params: List[Int], parentId: Id)
+object Id {
+  val Root = Id("Root")
+}
+
+case class Command(id: Id, parentId: Id, name: String, params: List[Int])
+object Command {
+  def root(id: Id, name: String, params: List[Int]) = Command(id, Id.Root, name, params)
+}
 
 sealed trait CommandResponse {
   def id: Id
@@ -49,16 +56,14 @@ object CommandResponse {
 case class AggregateResponse(childResponses: Set[CommandResponse.Composite]) {
   def add(commandResponses: CommandResponse.Composite*): AggregateResponse  = copy(childResponses ++ commandResponses.toSet)
   def add(maybeResponse: Set[CommandResponse.Composite]): AggregateResponse = copy(childResponses ++ maybeResponse)
-  def add(aggregateResponse: AggregateResponse)                             = AggregateResponse(childResponses ++ aggregateResponse.childResponses)
-  def responses: Set[CommandResponse]                                       = childResponses.toSet[CommandResponse]
+  def add(aggregateResponse: AggregateResponse): AggregateResponse          = copy(childResponses ++ aggregateResponse.childResponses)
 
-  def groupBy(parentId: Id): Set[CommandResponse.Composite] =
+  def groupBy(parentId: Id): Set[CommandResponse.Composite] = {
     childResponses
       .groupBy(_.parentId)
-      .map {
-        case (id, rs) => CommandResponse.Composite(id, parentId, rs.toSet[CommandResponse])
-      }
+      .map { case (id, rs) => CommandResponse.Composite(id, parentId, rs.toSet) }
       .toSet
+  }
 
 }
 

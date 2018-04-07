@@ -1,6 +1,7 @@
 package tmt.sequencer.rpc
 
 import scala.concurrent.Future
+import scala.language.higherKinds
 
 trait Basic {
   def increment(a: Int): Future[Int]
@@ -8,4 +9,8 @@ trait Basic {
 
 trait Advanced {
   def square(a: Int): Future[Int]
+}
+
+trait Streaming[Result[_]] {
+  def from(a: Int): Result[String]
 }
