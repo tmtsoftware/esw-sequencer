@@ -27,13 +27,13 @@ object Server {
     import monix.execution.Scheduler.Implicits.global
 
     val api = new WsApiConfigurationWithDefaults[Int, String, List[Int]] {
-      override def dsl: Dsl.type                               = Dsl
+      override def dsl: StreamingDsl.type                      = StreamingDsl
       override def initialState: List[Int]                     = Nil
       override def isStateValid(state: List[Int]): Boolean     = state.length < 10000
       override def serverFailure(error: ServerFailure): String = error.toString
     }
     val config   = WebsocketServerConfig(bufferSize = 5, overflowStrategy = OverflowStrategy.fail)
-    val wsRouter = Router[ByteBuffer, Dsl.ApiFunction].route[Streaming[Dsl.ApiFunction]](DslApiImpl)
+    val wsRouter = Router[ByteBuffer, StreamingDsl.ApiFunction].route[Streaming[StreamingDsl.ApiFunction]](StreamingImpl)
 
     val route = {
       pathPrefix("something-later") {

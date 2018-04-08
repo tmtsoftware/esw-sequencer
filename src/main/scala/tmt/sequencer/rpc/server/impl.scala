@@ -15,8 +15,8 @@ object AdvancedImpl extends Advanced {
   def square(a: Int): Future[Int] = Future.successful(a * a)
 }
 
-object DslApiImpl extends Streaming[Dsl.ApiFunction] {
-  import Dsl._
+object StreamingImpl extends Streaming[StreamingDsl.ApiFunction] {
+  import StreamingDsl._
   import monix.execution.Scheduler.Implicits.global
 
   def from(a: Int): ApiFunction[String] = Action { state =>
@@ -26,9 +26,7 @@ object DslApiImpl extends Streaming[Dsl.ApiFunction] {
   }
 }
 
-object Dsl extends ApiDsl[Int, String, List[Int]] {
-  override def applyEventsToState(state: List[Int], events: Seq[Int]): List[Int] =
-    state ++ events
-  override def unhandledException(t: Throwable): String =
-    t.getMessage
+object StreamingDsl extends ApiDsl[Int, String, List[Int]] {
+  override def applyEventsToState(state: List[Int], events: Seq[Int]): List[Int] = state ++ events
+  override def unhandledException(t: Throwable): String                          = t.getMessage
 }

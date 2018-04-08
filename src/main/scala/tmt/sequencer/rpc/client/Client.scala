@@ -3,6 +3,7 @@ package tmt.sequencer.rpc.client
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import covenant.ws.WsClient
+import monix.reactive.Observable
 import mycelium.client.WebsocketClientConfig
 import tmt.sequencer.rpc.{Advanced, Basic, Streaming}
 
@@ -39,7 +40,7 @@ object Client {
     val wsClient: WsClient[ByteBuffer, Future, Int, String, ClientException] = WsClient(s"ws://0.0.0.0:9090/ws", config)
     val streaming: Streaming[Future]                                         = wsClient.sendWithDefault.wire[Streaming[Future]]
 
-    wsClient.observable.event.foreach(println)
+    wsClient.observable.event.flatMap(xs => Observable.fromIterable(xs)).foreach(println)
 
     streaming.from(78).onComplete { res =>
       println(s"Got response: $res")
