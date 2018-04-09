@@ -38,24 +38,18 @@ object SequencerBehaviour {
     Behaviors.immutable { (_, msg) =>
       if (sequence.isFinished) {
         msg match {
-          case ProcessSequence(commands, replyTo) =>
-            if (commands == Nil) {
-              replyTo ! Failure(new RuntimeException("empty sequence can not be processed"))
-            } else {
-              sequence = Sequence.from(commands)
-              responseRefOpt = Some(replyTo)
-            }
-          case GetSequence(replyTo) => replyTo ! sequence
-          case GetNext(replyTo)     => sendNext(replyTo)
-          case x                    => println(s"command=$x can not be applied on a finished sequence")
+          case ProcessSequence(Nil, replyTo)      => replyTo ! Failure(new RuntimeException("empty sequence can not be processed"))
+          case ProcessSequence(commands, replyTo) => sequence = Sequence.from(commands); responseRefOpt = Some(replyTo)
+          case GetSequence(replyTo)               => replyTo ! sequence
+          case GetNext(replyTo)                   => sendNext(replyTo)
+          case x                                  => println(s"command=$x can not be applied on a finished sequence")
         }
       } else {
         msg match {
-          case ProcessSequence(_, replyTo) =>
-            replyTo ! Failure(new RuntimeException("previous sequence has not finished yet"))
-          case GetSequence(replyTo) => replyTo ! sequence
-          case GetNext(replyTo)     => sendNext(replyTo)
-          case MaybeNext(replyTo)   => replyTo ! sequence.next
+          case ProcessSequence(_, replyTo) => replyTo ! Failure(new RuntimeException("previous sequence has not finished yet"))
+          case GetSequence(replyTo)        => replyTo ! sequence
+          case GetNext(replyTo)            => sendNext(replyTo)
+          case MaybeNext(replyTo)          => replyTo ! sequence.next
           case Update(_aggregateResponse) =>
             sequence = sequence.updateStatus(_aggregateResponse.ids, StepStatus.Finished)
             aggregateResponse = aggregateResponse.add(_aggregateResponse)
