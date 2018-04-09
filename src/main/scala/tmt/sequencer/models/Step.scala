@@ -32,7 +32,9 @@ object StepStatus {
   case object Finished extends StepStatus
 }
 
-case class Id(value: String)
+case class Id(value: String) {
+  override def toString: String = value
+}
 object Id {
   val Root = Id("Root")
 }
@@ -59,10 +61,10 @@ case class AggregateResponse(childResponses: Set[CommandResponse.Composite]) {
   def add(maybeResponse: Set[CommandResponse.Composite]): AggregateResponse = copy(childResponses ++ maybeResponse)
   def add(aggregateResponse: AggregateResponse): AggregateResponse          = copy(childResponses ++ aggregateResponse.childResponses)
 
-  def groupBy(id: Id): Set[CommandResponse.Composite] = {
+  def groupByParentId(grandParentId: Id): Set[CommandResponse.Composite] = {
     childResponses
       .groupBy(_.parentId)
-      .map { case (parentId, rs) => CommandResponse.Composite(id, parentId, rs.toSet) }
+      .map { case (id, rs) => CommandResponse.Composite(id, grandParentId, rs.toSet) }
       .toSet
   }
 

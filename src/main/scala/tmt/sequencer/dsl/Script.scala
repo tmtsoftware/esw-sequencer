@@ -2,7 +2,7 @@ package tmt.sequencer.dsl
 
 import akka.Done
 import tmt.sequencer.gateway.CswServices
-import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse}
+import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse, Id}
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -23,8 +23,8 @@ abstract class Script(cs: CswServices) extends ActiveObject {
       .await
   }
 
-  def executeToBeDeleted(command: Command): Future[Set[CommandResponse.Composite]] = spawn {
-    execute(command).await.groupBy(command.id)
+  def executeToBeDeleted(command: Command, grandParentId: Id): Future[Set[CommandResponse.Composite]] = spawn {
+    execute(command).await.groupByParentId(grandParentId)
   }
 
   def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())
