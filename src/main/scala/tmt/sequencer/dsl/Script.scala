@@ -23,8 +23,8 @@ abstract class Script(cs: CswServices) extends ActiveObject {
       .await
   }
 
-  def executeToBeDeleted(command: Command, grandParentId: Id): Future[Set[CommandResponse.Composite]] = spawn {
-    execute(command).await.groupByParentId(grandParentId)
+  def executeToBeDeleted(subCommand: Command, command: Command): Future[Set[CommandResponse.Composite]] = spawn {
+    execute(subCommand).await.group(command.parentId)
   }
 
   def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())
