@@ -4,7 +4,6 @@ import akka.Done
 import akka.stream.Materializer
 import akka.stream.scaladsl.Source
 import tmt.sequencer.dsl.Script
-import tmt.sequencer.models._
 
 import scala.async.Async._
 import scala.concurrent.Future
@@ -21,8 +20,7 @@ class Engine(implicit mat: Materializer) {
     step.command.name match {
       case x if x.startsWith("setup-") =>
         val aggregateResponse = await(script.execute(step.command))
-        val updatedStep       = step.withStatus(StepStatus.Finished)
-        sequencer.update(updatedStep, aggregateResponse)
+        sequencer.update(aggregateResponse)
       case _ =>
     }
     Done

@@ -35,5 +35,5 @@ class Sequencer(sequencer: ActorRef[SequencerMsg], system: ActorSystem) {
     dd.map(_.get)
   }
 
-  private[sequencer] def update(step: Step, response: AggregateResponse): Unit = sequencer ! Update(step, response)
+  private[sequencer] def update(response: AggregateResponse): Unit = sequencer ! Update(response)
 }

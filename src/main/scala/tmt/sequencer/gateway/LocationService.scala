@@ -15,7 +15,7 @@ case class AkkaLocation(name: String)
 
 case class CommandService(assemblyLoc: AkkaLocation) {
   def submit(command: Command)(implicit ec: ExecutionContext): Future[CommandResponse] = Future {
-    Thread.sleep(10000)
+    Thread.sleep(2000)
     CommandResponse.Success(command.id, command.parentId, s"Result submit: [${assemblyLoc.name}] - $command")
   }
 

@@ -54,14 +54,15 @@ object CommandResponse {
 }
 
 case class AggregateResponse(childResponses: Set[CommandResponse.Composite]) {
+  def ids: Set[Id]                                                          = childResponses.map(_.id)
   def add(commandResponses: CommandResponse.Composite*): AggregateResponse  = copy(childResponses ++ commandResponses.toSet)
   def add(maybeResponse: Set[CommandResponse.Composite]): AggregateResponse = copy(childResponses ++ maybeResponse)
   def add(aggregateResponse: AggregateResponse): AggregateResponse          = copy(childResponses ++ aggregateResponse.childResponses)
 
-  def groupBy(parentId: Id): Set[CommandResponse.Composite] = {
+  def groupBy(id: Id): Set[CommandResponse.Composite] = {
     childResponses
       .groupBy(_.parentId)
-      .map { case (id, rs) => CommandResponse.Composite(id, parentId, rs.toSet) }
+      .map { case (parentId, rs) => CommandResponse.Composite(id, parentId, rs.toSet) }
       .toSet
   }
 

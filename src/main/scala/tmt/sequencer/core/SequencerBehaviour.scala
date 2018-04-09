@@ -46,6 +46,7 @@ object SequencerBehaviour {
               responseRefOpt = Some(replyTo)
             }
           case GetSequence(replyTo) => replyTo ! sequence
+          case GetNext(replyTo)     => sendNext(replyTo)
           case x                    => println(s"command=$x can not be applied on a finished sequence")
         }
       } else {
@@ -55,8 +56,8 @@ object SequencerBehaviour {
           case GetSequence(replyTo) => replyTo ! sequence
           case GetNext(replyTo)     => sendNext(replyTo)
           case MaybeNext(replyTo)   => replyTo ! sequence.next
-          case Update(step, _aggregateResponse) =>
-            sequence = sequence.updateStep(step)
+          case Update(_aggregateResponse) =>
+            sequence = sequence.updateStatus(_aggregateResponse.ids, StepStatus.Finished)
             aggregateResponse = aggregateResponse.add(_aggregateResponse)
             if (sequence.isFinished) {
               responseRefOpt.foreach(x => x ! Success(aggregateResponse))

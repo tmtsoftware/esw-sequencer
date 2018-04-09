@@ -14,9 +14,9 @@ object SupervisorMsg {
 sealed trait SequencerMsg
 
 object SequencerMsg {
-  case class GetNext(replyTo: ActorRef[Step])                         extends SequencerMsg
-  case class MaybeNext(replyTo: ActorRef[Option[Step]])               extends SequencerMsg
-  case class Update(step: Step, aggregateResponse: AggregateResponse) extends SequencerMsg
+  case class GetNext(replyTo: ActorRef[Step])             extends SequencerMsg
+  case class MaybeNext(replyTo: ActorRef[Option[Step]])   extends SequencerMsg
+  case class Update(aggregateResponse: AggregateResponse) extends SequencerMsg
 
   sealed trait ExternalSequencerMsg extends SequencerMsg with SupervisorMsg
 
