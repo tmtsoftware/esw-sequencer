@@ -8,7 +8,7 @@ object ScriptRunner {
       scriptRepo.cloneRepo()
     }
     engine.start(sequencer, script)
-    rpcServer.start(9090)
+    rpcServer.start
     supervisorRef
     remoteRepl.server().start()
   }

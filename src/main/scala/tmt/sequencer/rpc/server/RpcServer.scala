@@ -7,10 +7,11 @@ import akka.http.scaladsl.server.RouteResult._
 import akka.stream.ActorMaterializer
 import covenant.http.AkkaHttpRoute
 import covenant.http.ByteBufferImplicits._
+import tmt.sequencer.db.RpcConfigs
 
 import scala.concurrent.Future
 
-class RpcServer(routes: Routes)(implicit system: ActorSystem) {
+class RpcServer(rpcConfigs: RpcConfigs, routes: Routes)(implicit system: ActorSystem) {
   private implicit val materializer: ActorMaterializer = ActorMaterializer()
   import materializer.executionContext
 
@@ -19,5 +20,5 @@ class RpcServer(routes: Routes)(implicit system: ActorSystem) {
   } ~
   AkkaHttpRoute.fromFutureRouter(routes.value)
 
-  def start(port: Int): Future[Http.ServerBinding] = Http().bindAndHandle(route, interface = "0.0.0.0", port = port)
+  def start: Future[Http.ServerBinding] = Http().bindAndHandle(route, interface = "0.0.0.0", port = rpcConfigs.port)
 }

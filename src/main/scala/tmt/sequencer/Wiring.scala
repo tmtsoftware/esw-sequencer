@@ -7,7 +7,7 @@ import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
 import tmt.sequencer.core.{Engine, Sequencer, SequencerBehaviour, SupervisorBehavior}
-import tmt.sequencer.db.{ScriptConfigs, ScriptRepo}
+import tmt.sequencer.db.{RpcConfigs, ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.Script
 import tmt.sequencer.gateway.{CswServices, LocationService}
 import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
@@ -39,8 +39,9 @@ class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
 
   lazy val sequenceManager: SequenceManager     = new SequenceManagerImpl(sequencerRef, script)
   lazy val sequenceProcessor: SequenceProcessor = new SequenceProcessorImpl(sequencerRef)
-  lazy val routes                               = new Routes(sequenceProcessor)
-  lazy val rpcServer                            = new RpcServer(routes)
+  lazy val routes                               = new Routes(sequenceProcessor, sequenceManager)
+  lazy val rpcConfigs                           = new RpcConfigs(system)
+  lazy val rpcServer                            = new RpcServer(rpcConfigs, routes)
   lazy val rpcClient                            = new RpcClient
 
   lazy val supervisorRef: ActorRef[SupervisorMsg] = system.spawn(SupervisorBehavior.behavior(sequencerRef, script), "supervisor")

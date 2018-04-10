@@ -10,14 +10,20 @@ class RpcDemo extends FunSuite with BeforeAndAfterAll {
   private val wiring = new Wiring("ocs", "darknight", false)
   import wiring._
   engine.start(sequencer, script)
-  rpcServer.start(9090).get
+  rpcServer.start.get
 
   override protected def afterAll(): Unit = {
     system.terminate().get
   }
 
   test("abc") {
-    val response = rpcClient.sequenceProcessor.submit(List(Command(Id("command1"), "setup-iris", List(1, 2, 3, 4)))).get
+    val ocsProcessor = rpcClient.sequenceProcessor(9090)
+    val ocsManager   = rpcClient.sequenceManager(9090)
+
+    val response = ocsProcessor.submit(List(Command(Id("command1"), "setup-iris", List(1, 2, 3, 4)))).get
     println("----------->" + response)
+
+    val sequence = ocsManager.sequence.get
+    println("----------->" + sequence)
   }
 }
