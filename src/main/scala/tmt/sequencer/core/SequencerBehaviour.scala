@@ -35,6 +35,18 @@ object SequencerBehaviour {
       replyTo ! inFlightStep
     }
 
+    def update(_aggregateResponse: AggregateResponse): Unit = {
+      sequence = sequence.updateStatus(_aggregateResponse.ids, StepStatus.Finished)
+      aggregateResponse = aggregateResponse.add(_aggregateResponse)
+      if (sequence.isFinished) {
+        responseRefOpt.foreach(x => x ! Success(aggregateResponse))
+        sequence = Sequence.empty
+        aggregateResponse = AggregateResponse.empty
+        responseRefOpt = None
+        stepRefOpt = None
+      }
+    }
+
     Behaviors.immutable { (_, msg) =>
       if (sequence.isFinished) {
         msg match {
@@ -50,26 +62,17 @@ object SequencerBehaviour {
           case GetSequence(replyTo)        => replyTo ! sequence
           case GetNext(replyTo)            => sendNext(replyTo)
           case MaybeNext(replyTo)          => replyTo ! sequence.next
-          case Update(_aggregateResponse) =>
-            sequence = sequence.updateStatus(_aggregateResponse.ids, StepStatus.Finished)
-            aggregateResponse = aggregateResponse.add(_aggregateResponse)
-            if (sequence.isFinished) {
-              responseRefOpt.foreach(x => x ! Success(aggregateResponse))
-              sequence = Sequence.empty
-              aggregateResponse = AggregateResponse.empty
-              responseRefOpt = None
-              stepRefOpt = None
-            }
-          case Add(commands)             => sequence = sequence.append(commands)
-          case Pause                     => sequence = sequence.pause
-          case Resume                    => sequence = sequence.resume
-          case DiscardPending            => sequence = sequence.discardPending
-          case Replace(stepId, commands) => sequence = sequence.replace(stepId, commands)
-          case Prepend(commands)         => sequence = sequence.prepend(commands)
-          case Delete(ids)               => sequence = sequence.delete(ids.toSet)
-          case InsertAfter(id, commands) => sequence = sequence.insertAfter(id, commands)
-          case AddBreakpoints(ids)       => sequence = sequence.addBreakpoints(ids)
-          case RemoveBreakpoints(ids)    => sequence = sequence.removeBreakpoints(ids)
+          case Update(_aggregateResponse)  => update(_aggregateResponse)
+          case Add(commands)               => sequence = sequence.append(commands)
+          case Pause                       => sequence = sequence.pause
+          case Resume                      => sequence = sequence.resume
+          case DiscardPending              => sequence = sequence.discardPending
+          case Replace(stepId, commands)   => sequence = sequence.replace(stepId, commands)
+          case Prepend(commands)           => sequence = sequence.prepend(commands)
+          case Delete(ids)                 => sequence = sequence.delete(ids.toSet)
+          case InsertAfter(id, commands)   => sequence = sequence.insertAfter(id, commands)
+          case AddBreakpoints(ids)         => sequence = sequence.addBreakpoints(ids)
+          case RemoveBreakpoints(ids)      => sequence = sequence.removeBreakpoints(ids)
         }
       }
       trySend()
