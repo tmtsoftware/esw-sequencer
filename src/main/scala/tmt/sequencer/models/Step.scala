@@ -35,43 +35,26 @@ object StepStatus {
 case class Id(value: String) {
   override def toString: String = value
 }
-object Id {
-  val Root = Id("Root")
-}
 
-case class Command(id: Id, parentId: Id, name: String, params: List[Int])
+case class Command(id: Id, name: String, params: List[Int])
 object Command {
-  def root(id: Id, name: String, params: List[Int]) = Command(id, Id.Root, name, params)
+  def root(id: Id, name: String, params: List[Int]) = Command(id, name, params)
 }
 
 sealed trait CommandResponse {
   def id: Id
-  def parentId: Id
 }
 
 object CommandResponse {
-  case class Success(id: Id, parentId: Id, value: String)                    extends CommandResponse
-  case class Failed(id: Id, parentId: Id, value: String)                     extends CommandResponse
-  case class Composite(id: Id, parentId: Id, response: Set[CommandResponse]) extends CommandResponse
+  case class Success(id: Id, value: String) extends CommandResponse
+  case class Failed(id: Id, value: String)  extends CommandResponse
 }
 
-case class AggregateResponse(childResponses: Set[CommandResponse.Composite]) {
-  def ids: Set[Id]                                                          = childResponses.map(_.id)
-  def add(commandResponses: CommandResponse.Composite*): AggregateResponse  = copy(childResponses ++ commandResponses.toSet)
-  def add(maybeResponse: Set[CommandResponse.Composite]): AggregateResponse = copy(childResponses ++ maybeResponse)
-  def add(aggregateResponse: AggregateResponse): AggregateResponse          = copy(childResponses ++ aggregateResponse.childResponses)
-
-  def group(grandParentId: Id): Set[CommandResponse.Composite] = {
-    childResponses
-      .groupBy(_.parentId)
-      .map { case (id, rs) => CommandResponse.Composite(id, grandParentId, rs.toSet) }
-      .toSet
-  }
-
+case class AggregateResponse(childResponses: Set[CommandResponse]) {
+  def ids: Set[Id]                                                 = childResponses.map(_.id)
+  def add(commandResponses: CommandResponse*): AggregateResponse   = copy(childResponses ++ commandResponses.toSet)
+  def add(maybeResponse: Set[CommandResponse]): AggregateResponse  = copy(childResponses ++ maybeResponse)
+  def add(aggregateResponse: AggregateResponse): AggregateResponse = copy(childResponses ++ aggregateResponse.childResponses)
 }
 
-object AggregateResponse {
-  def empty                                           = AggregateResponse(Set.empty)
-  def single(response: CommandResponse.Composite)     = AggregateResponse(Set(response))
-  def multiple(responses: CommandResponse.Composite*) = AggregateResponse(responses.toSet)
-}
+object AggregateResponse extends AggregateResponse(Set.empty)

@@ -2,7 +2,7 @@ package tmt.sequencer.dsl
 
 import akka.Done
 import tmt.sequencer.gateway.CswServices
-import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse, Id}
+import tmt.sequencer.models.{AggregateResponse, Command}
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -13,18 +13,14 @@ abstract class Script(cs: CswServices) extends ActiveObject {
   private def combinedHandler: PartialFunction[Command, Future[AggregateResponse]] =
     commandHandlers.foldLeft(PartialFunction.empty[Command, Future[AggregateResponse]])(_ orElse _)
 
-  private[sequencer] def execute(command: Command): Future[AggregateResponse] = spawn {
+  def execute(command: Command): Future[AggregateResponse] = spawn {
     combinedHandler
       .lift(command)
       .getOrElse {
         println(s"unknown command=$command")
-        spawn(AggregateResponse(Set.empty))
+        spawn(AggregateResponse)
       }
       .await
-  }
-
-  def executeToBeDeleted(subCommand: Command, command: Command): Future[Set[CommandResponse.Composite]] = spawn {
-    execute(subCommand).await.group(command.parentId)
   }
 
   def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())
