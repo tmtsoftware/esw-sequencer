@@ -55,6 +55,9 @@ case class AggregateResponse(childResponses: Set[CommandResponse]) {
   def add(commandResponses: CommandResponse*): AggregateResponse   = copy(childResponses ++ commandResponses.toSet)
   def add(maybeResponse: Set[CommandResponse]): AggregateResponse  = copy(childResponses ++ maybeResponse)
   def add(aggregateResponse: AggregateResponse): AggregateResponse = copy(childResponses ++ aggregateResponse.childResponses)
+  def markSuccessful(commands: Command*): AggregateResponse = add {
+    commands.map(command => CommandResponse.Success(command.id, "all children are done")).toSet[CommandResponse]
+  }
 }
 
 object AggregateResponse extends AggregateResponse(Set.empty)
