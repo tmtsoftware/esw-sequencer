@@ -1,4 +1,4 @@
-package tmt.sequencer.rpc
+package tmt.sequencer.rpc_spike
 
 import scala.concurrent.Future
 import scala.language.higherKinds

@@ -1,25 +1,25 @@
-package tmt.sequencer.rpc
+package tmt.sequencer.rpc_spike
 
 import org.scalatest._
 import covenant.core.api._
-import covenant.http._
-import ByteBufferImplicits._
+import covenant.ws._
 import sloth._
 import chameleon.ext.boopickle._
 import boopickle.Default._
 import java.nio.ByteBuffer
 
+import mycelium.client._
+import mycelium.server._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.RouteResult._
-import akka.http.scaladsl.model._
-import akka.stream.ActorMaterializer
+import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.actor.ActorSystem
 import cats.implicits._
 
 import scala.concurrent.Future
 import scala.language.higherKinds
 
-class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
+class WsSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
   trait Api[Result[_]] {
     def fun(a: Int): Result[Int]
     @PathName("funWithDefault")
@@ -60,24 +60,34 @@ class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
   }
   //
 
-  implicit val system       = ActorSystem("akkahttp")
+  implicit val system       = ActorSystem("mycelium")
   implicit val materializer = ActorMaterializer()
 
+  override def afterAll(): Unit = {
+    system.terminate()
+    ()
+  }
+
   "simple run" in {
-    val port = 9989
+    val port = 9990
 
     object Backend {
       val router = Router[ByteBuffer, Future]
         .route[Api[Future]](FutureApiImpl)
 
       def run() = {
-        Http().bindAndHandle(AkkaHttpRoute.fromFutureRouter(router), interface = "0.0.0.0", port = port)
+        val config = WebsocketServerConfig(bufferSize = 5, overflowStrategy = OverflowStrategy.fail)
+        val route =
+          AkkaWsRoute.fromFutureRouter(router, config, failedRequestError = err => ApiError(err.toString))
+        Http().bindAndHandle(route, interface = "0.0.0.0", port = port)
       }
     }
 
     object Frontend {
-      val client = HttpClient[ByteBuffer](s"http://localhost:$port")
-      val api    = client.wire[Api[Future]]
+      val config = WebsocketClientConfig()
+      val client =
+        WsClient[ByteBuffer, Unit, ApiError](s"ws://localhost:$port/ws", config)
+      val api = client.sendWithDefault.wire[Api[Future]]
     }
 
     Backend.run()
@@ -92,15 +102,17 @@ class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
   }
 
   "run" in {
-    import covenant.http.api._
+    import covenant.ws.api._
     import monix.execution.Scheduler.Implicits.global
 
-    val port = 9988
+    val port = 9991
 
-    val api = new HttpApiConfiguration[Event, ApiError, State] {
-      override def requestToState(request: HttpRequest): Future[State] =
-        Future.successful(request.toString)
-      override def publishEvents(events: List[Event]): Unit = ()
+    val api = new WsApiConfigurationWithDefaults[Event, ApiError, State] {
+      override def dsl                                 = Dsl
+      override def initialState: State                 = ""
+      override def isStateValid(state: State): Boolean = true
+      override def serverFailure(error: ServerFailure): ApiError =
+        ApiError(error.toString)
     }
 
     object Backend {
@@ -108,14 +120,17 @@ class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
         .route[Api[Dsl.ApiFunction]](DslApiImpl)
 
       def run() = {
-        val route = AkkaHttpRoute.fromApiRouter(router, api)
+        val config = WebsocketServerConfig(bufferSize = 5, overflowStrategy = OverflowStrategy.fail)
+        val route  = AkkaWsRoute.fromApiRouter(router, config, api)
         Http().bindAndHandle(route, interface = "0.0.0.0", port = port)
       }
     }
 
     object Frontend {
-      val client = HttpClient[ByteBuffer](s"http://localhost:$port")
-      val api    = client.wire[Api[Future]]
+      val config = WebsocketClientConfig()
+      val client =
+        WsClient[ByteBuffer, Unit, ApiError](s"ws://localhost:$port/ws", config)
+      val api = client.sendWithDefault.wire[Api[Future]]
     }
 
     Backend.run()
@@ -127,10 +142,5 @@ class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
       fun mustEqual 1
       fun2 mustEqual 3
     }
-  }
-
-  override def afterAll(): Unit = {
-    system.terminate()
-    ()
   }
 }

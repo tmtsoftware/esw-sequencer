@@ -1,11 +1,11 @@
-package tmt.sequencer.rpc.client
+package tmt.sequencer.rpc_spike.client
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import covenant.ws.WsClient
 import monix.reactive.Observable
 import mycelium.client.WebsocketClientConfig
-import tmt.sequencer.rpc.{Advanced, Basic, Streaming}
+import tmt.sequencer.rpc_spike.{Advanced, Basic, Streaming}
 
 import scala.concurrent.Future
 

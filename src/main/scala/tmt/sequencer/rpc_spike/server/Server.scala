@@ -1,4 +1,4 @@
-package tmt.sequencer.rpc.server
+package tmt.sequencer.rpc_spike.server
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
@@ -8,7 +8,7 @@ import akka.stream.{ActorMaterializer, OverflowStrategy}
 import covenant.ws.AkkaWsRoute
 import covenant.ws.api.WsApiConfigurationWithDefaults
 import mycelium.server.WebsocketServerConfig
-import tmt.sequencer.rpc.{Advanced, Basic, Streaming}
+import tmt.sequencer.rpc_spike.{Advanced, Basic, Streaming}
 
 import scala.concurrent.Future
 

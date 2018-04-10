@@ -1,8 +1,8 @@
-package tmt.sequencer.rpc.server
+package tmt.sequencer.rpc_spike.server
 
 import covenant.core.api.ApiDsl
 import monix.reactive.Observable
-import tmt.sequencer.rpc.{Advanced, Basic, Streaming}
+import tmt.sequencer.rpc_spike.{Advanced, Basic, Streaming}
 
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationLong

@@ -11,6 +11,9 @@ import tmt.sequencer.db.{ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.Script
 import tmt.sequencer.gateway.{CswServices, LocationService}
 import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
+import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
+import tmt.sequencer.rpc.client.RpcClient
+import tmt.sequencer.rpc.server.{Routes, RpcServer, SequenceManagerImpl, SequenceProcessorImpl}
 
 import scala.concurrent.duration.DurationDouble
 
@@ -18,6 +21,7 @@ class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
   implicit lazy val timeout: Timeout           = Timeout(5.seconds)
   lazy implicit val system: ActorSystem        = ActorSystem("test")
   lazy implicit val materializer: Materializer = ActorMaterializer()
+  import system.dispatcher
 
   lazy val scriptConfigs = new ScriptConfigs(system)
   lazy val repoDir: Path = if (isProd) Path(scriptConfigs.cloneDir) else ammonite.ops.pwd
@@ -31,7 +35,14 @@ class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
   lazy val engine          = new Engine
   lazy val cswServices     = new CswServices(sequencer, engine, locationService, sequencerId, observingMode)
 
-  lazy val script: Script                         = ScriptImports.load(path).get(cswServices)
+  lazy val script: Script = ScriptImports.load(path).get(cswServices)
+
+  lazy val sequenceManager: SequenceManager     = new SequenceManagerImpl(sequencerRef, script)
+  lazy val sequenceProcessor: SequenceProcessor = new SequenceProcessorImpl(sequencerRef)
+  lazy val routes                               = new Routes(sequenceProcessor)
+  lazy val rpcServer                            = new RpcServer(routes)
+  lazy val rpcClient                            = new RpcClient
+
   lazy val supervisorRef: ActorRef[SupervisorMsg] = system.spawn(SupervisorBehavior.behavior(sequencerRef, script), "supervisor")
   lazy val remoteRepl                             = new RemoteRepl(cswServices, sequencer, supervisorRef)
 }
