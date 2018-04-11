@@ -1,15 +1,18 @@
 package tmt.sequencer
 
-import akka.actor.typed.ActorRef
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
-import tmt.sequencer.gateway.CswServices
-import tmt.sequencer.models.SupervisorMsg.ControlCommand
-import tmt.sequencer.models.{Command, Id, SupervisorMsg}
 import tmt.sequencer.core.Sequencer
 import tmt.sequencer.db.RpcConfigs
+import tmt.sequencer.gateway.CswServices
+import tmt.sequencer.models.{Command, Id}
+import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
 
-class RemoteRepl(commandService: CswServices, sequencer: Sequencer, supervisor: ActorRef[SupervisorMsg], rpcConfigs: RpcConfigs) {
+class RemoteRepl(commandService: CswServices,
+                 sequencer: Sequencer,
+                 sequenceProcessor: SequenceProcessor,
+                 sequenceManager: SequenceManager,
+                 rpcConfigs: RpcConfigs) {
 
   def server() = new SshdRepl(
     SshServerConfig(
@@ -26,12 +29,12 @@ class RemoteRepl(commandService: CswServices, sequencer: Sequencer, supervisor: 
          |}
       """.stripMargin,
     replArgs = Seq(
-      "cs"             -> commandService,
-      "sequencer"      -> sequencer,
-      "Command"        -> Command,
-      "Id"             -> Id,
-      "supervisor"     -> supervisor,
-      "controlCommand" -> ControlCommand
+      "cs"                -> commandService,
+      "sequencer"         -> sequencer,
+      "sequenceProcessor" -> sequenceProcessor,
+      "sequenceManager"   -> sequenceManager,
+      "Command"           -> Command,
+      "Id"                -> Id,
     )
   )
 }

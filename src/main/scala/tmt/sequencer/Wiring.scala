@@ -6,11 +6,11 @@ import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
-import tmt.sequencer.core.{Engine, Sequencer, SequencerBehaviour, SupervisorBehavior}
+import tmt.sequencer.core.{Engine, Sequencer, SequencerBehaviour}
 import tmt.sequencer.db.{RpcConfigs, ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.Script
 import tmt.sequencer.gateway.{CswServices, LocationService}
-import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
+import tmt.sequencer.models.SequencerMsg
 import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
 import tmt.sequencer.rpc.server.{Routes, RpcServer, SequenceManagerImpl, SequenceProcessorImpl}
 
@@ -42,6 +42,5 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int], isPr
   lazy val rpcConfigs                           = new RpcConfigs(port)
   lazy val rpcServer                            = new RpcServer(rpcConfigs, routes)
 
-  lazy val supervisorRef: ActorRef[SupervisorMsg] = system.spawn(SupervisorBehavior.behavior(sequencerRef, script), "supervisor")
-  lazy val remoteRepl                             = new RemoteRepl(cswServices, sequencer, supervisorRef, rpcConfigs)
+  lazy val remoteRepl = new RemoteRepl(cswServices, sequencer, sequenceProcessor, rpcConfigs)
 }
