@@ -1,10 +1,9 @@
 import tmt.sequencer.ScriptImports._
-import $file.^.iris.iris_factory
 import tmt.sequencer.models.AggregateResponse
 
 class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
-  val iris = iris_factory.IrisFactory.get(cs)
+  val iris = cs.sequenceProcessor("iris")
 
   var eventCount = 0
   var commandCount = 0
@@ -25,14 +24,14 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
       val response1 = if (maybeCommand.isDefined) {
         val command2 = maybeCommand.get
         val subCommand2 = command2.copy(id = Id("B1"))
-        iris.execute(subCommand2).await.markSuccessful(command2)
+        iris.submitSequence(List(subCommand2)).await.markSuccessful(command2)
       } else {
         AggregateResponse
       }
 
       println(s"[Ocs] Command received - ${command.name}")
       val subCommand1 = command.copy(id = Id("A1"))
-      val response2 = iris.execute(subCommand1).await.markSuccessful(command)
+      val response2 = iris.submitSequence(List(subCommand1)).await.markSuccessful(command)
       val response = response1.add(response2)
       println(s"[Ocs] Received response")
       response

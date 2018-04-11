@@ -17,7 +17,7 @@ class SequenceProcessorImpl(sequencer: ActorRef[SequencerMsg])(implicit system: 
   private implicit val scheduler: Scheduler = system.scheduler
   import system.dispatcher
 
-  override def submit(commands: List[Command]): Future[AggregateResponse] = {
+  override def submitSequence(commands: List[Command]): Future[AggregateResponse] = {
     val future: Future[Try[AggregateResponse]] = sequencer ? (x => ProcessSequence(commands, x))
     future.map(_.get)
   }

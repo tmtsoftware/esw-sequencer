@@ -1,11 +1,13 @@
 package tmt.sequencer.gateway
 
 import akka.Done
-import akka.actor.Cancellable
+import akka.actor.{ActorSystem, Cancellable}
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
 import tmt.sequencer.core.{Engine, Sequencer}
 import tmt.sequencer.models.{Command, CommandResponse}
+import tmt.sequencer.rpc.api.SequenceProcessor
+import tmt.sequencer.rpc.client.RpcClient
 
 import scala.async.Async.{async, await}
 import scala.concurrent.duration.{DurationDouble, FiniteDuration}
@@ -15,9 +17,12 @@ class CswServices(sequencer: Sequencer,
                   engine: Engine,
                   locationService: LocationService,
                   val sequencerId: String,
-                  val observingMode: String)(
-    implicit mat: Materializer
-) {
+                  val observingMode: String)(implicit mat: Materializer, system: ActorSystem) {
+
+  def sequenceProcessor(sequencerId: String): SequenceProcessor = {
+    val uri = locationService.sequenceProcessorUri(sequencerId, observingMode)
+    new RpcClient(uri).sequenceProcessor
+  }
 
   def nextIf(f: Command => Boolean): Future[Option[Command]] =
     async {
@@ -26,7 +31,7 @@ class CswServices(sequencer: Sequencer,
     }(mat.executionContext)
 
   def setup(componentName: String, command: Command): Future[CommandResponse] = {
-    val assembly = locationService.resolve(componentName)
+    val assembly = locationService.commandService(componentName)
     assembly.submit(command)(mat.executionContext)
   }
 

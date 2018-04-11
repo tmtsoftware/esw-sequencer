@@ -12,7 +12,6 @@ import tmt.sequencer.dsl.Script
 import tmt.sequencer.gateway.{CswServices, LocationService}
 import tmt.sequencer.models.{SequencerMsg, SupervisorMsg}
 import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
-import tmt.sequencer.rpc.client.RpcClient
 import tmt.sequencer.rpc.server.{Routes, RpcServer, SequenceManagerImpl, SequenceProcessorImpl}
 
 import scala.concurrent.duration.DurationDouble
@@ -31,7 +30,7 @@ class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
   lazy val sequencerRef: ActorRef[SequencerMsg] = system.spawn(SequencerBehaviour.behavior, "sequencer")
   lazy val sequencer                            = new Sequencer(sequencerRef, system)
 
-  lazy val locationService = new LocationService(system)
+  lazy val locationService = new LocationService
   lazy val engine          = new Engine
   lazy val cswServices     = new CswServices(sequencer, engine, locationService, sequencerId, observingMode)
 

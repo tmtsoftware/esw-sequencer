@@ -21,7 +21,7 @@ class RpcDemo extends FunSuite with BeforeAndAfterAll {
     val ocsProcessor = rpcClient.sequenceProcessor
     val ocsManager   = rpcClient.sequenceManager
 
-    val response = ocsProcessor.submit(List(Command(Id("command1"), "setup-iris", List(1, 2, 3, 4)))).get
+    val response = ocsProcessor.submitSequence(List(Command(Id("command1"), "setup-iris", List(1, 2, 3, 4)))).get
     println("----------->" + response)
 
     val sequence = ocsManager.sequence.get

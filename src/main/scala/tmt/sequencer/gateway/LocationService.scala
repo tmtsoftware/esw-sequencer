@@ -1,13 +1,22 @@
 package tmt.sequencer.gateway
 
-import akka.actor.ActorSystem
 import tmt.sequencer.models.{Command, CommandResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class LocationService(actorSystem: ActorSystem) {
-  def resolve(name: String): CommandService = {
-    CommandService(AkkaLocation(name))
+class LocationService {
+
+  def commandService(name: String): CommandService = CommandService(AkkaLocation(name))
+
+  def sequenceProcessorUri(sequencerId: String, observingMode: String): String = {
+    val port = (sequencerId, observingMode) match {
+      case ("iris", "darknight")  => 8080
+      case ("iris", "clearskies") => 8081
+      case ("tcs", "darknight")   => 7070
+      case ("tcs", "clearskies")  => 7071
+      case _                      => throw new RuntimeException(s"can not locate sequencer=$sequencerId and observingMode=$observingMode")
+    }
+    s"http://0.0.0.0:$port"
   }
 }
 
