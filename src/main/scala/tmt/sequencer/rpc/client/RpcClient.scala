@@ -15,10 +15,11 @@ import ByteBufferImplicits._
 
 import scala.concurrent.Future
 
-class RpcClient(implicit system: ActorSystem) {
+class RpcClient(baseUri: String)(implicit system: ActorSystem) {
   private implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  def client(port: Int): Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer](s"http://0.0.0.0:$port")
-  def sequenceProcessor(port: Int): SequenceProcessor                = client(port).wire[SequenceProcessor]
-  def sequenceManager(port: Int): SequenceManager                    = client(port).wire[SequenceManager]
+  private val client: Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer](baseUri)
+
+  val sequenceProcessor: SequenceProcessor = client.wire[SequenceProcessor]
+  val sequenceManager: SequenceManager     = client.wire[SequenceManager]
 }
