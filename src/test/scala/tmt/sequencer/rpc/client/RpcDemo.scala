@@ -7,10 +7,10 @@ import tmt.sequencer.models.{Command, Id}
 
 class RpcDemo extends FunSuite with BeforeAndAfterAll {
 
-  private val wiring = new Wiring("ocs", "darknight", false)
+  private val wiring = new Wiring("ocs", "darknight", None, false)
   import wiring._
   engine.start(sequencer, script)
-  rpcServer.start.get
+  rpcServer.start().get
 
   override protected def afterAll(): Unit = {
     system.terminate().get

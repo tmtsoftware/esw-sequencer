@@ -16,7 +16,7 @@ import tmt.sequencer.rpc.server.{Routes, RpcServer, SequenceManagerImpl, Sequenc
 
 import scala.concurrent.duration.DurationDouble
 
-class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
+class Wiring(sequencerId: String, observingMode: String, port: Option[Int], isProd: Boolean) {
   implicit lazy val timeout: Timeout           = Timeout(5.seconds)
   lazy implicit val system: ActorSystem        = ActorSystem("test")
   lazy implicit val materializer: Materializer = ActorMaterializer()
@@ -39,9 +39,9 @@ class Wiring(sequencerId: String, observingMode: String, isProd: Boolean) {
   lazy val sequenceManager: SequenceManager     = new SequenceManagerImpl(sequencerRef, script)
   lazy val sequenceProcessor: SequenceProcessor = new SequenceProcessorImpl(sequencerRef)
   lazy val routes                               = new Routes(sequenceProcessor, sequenceManager)
-  lazy val rpcConfigs                           = new RpcConfigs(system)
+  lazy val rpcConfigs                           = new RpcConfigs(port)
   lazy val rpcServer                            = new RpcServer(rpcConfigs, routes)
 
   lazy val supervisorRef: ActorRef[SupervisorMsg] = system.spawn(SupervisorBehavior.behavior(sequencerRef, script), "supervisor")
-  lazy val remoteRepl                             = new RemoteRepl(cswServices, sequencer, supervisorRef)
+  lazy val remoteRepl                             = new RemoteRepl(cswServices, sequencer, supervisorRef, rpcConfigs)
 }

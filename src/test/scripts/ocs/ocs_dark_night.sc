@@ -40,7 +40,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   handleCommand("setup-iris2") { command =>
     spawn {
-      val aggregateResponse = iris.execute(command).await.markSuccessful(command)
+      val aggregateResponse = iris.submitSequence(List(command)).await.markSuccessful(command)
       println(s"[Ocs2] Result received - ${command.name} with aggregateResponse - $aggregateResponse")
       aggregateResponse
     }

@@ -7,13 +7,14 @@ import tmt.sequencer.gateway.CswServices
 import tmt.sequencer.models.SupervisorMsg.ControlCommand
 import tmt.sequencer.models.{Command, Id, SupervisorMsg}
 import tmt.sequencer.core.Sequencer
+import tmt.sequencer.db.RpcConfigs
 
-class RemoteRepl(commandService: CswServices, sequencer: Sequencer, supervisor: ActorRef[SupervisorMsg]) {
+class RemoteRepl(commandService: CswServices, sequencer: Sequencer, supervisor: ActorRef[SupervisorMsg], rpcConfigs: RpcConfigs) {
 
   def server() = new SshdRepl(
     SshServerConfig(
       address = "localhost", // or "0.0.0.0" for public-facing shells
-      port = 22222, // Any available port
+      port = rpcConfigs.port + 100, // Any available port
       passwordAuthenticator = Some(AcceptAllPasswordAuthenticator.INSTANCE) // or publicKeyAuthenticator
     ),
     predef = """

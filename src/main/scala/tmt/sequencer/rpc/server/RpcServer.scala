@@ -20,5 +20,5 @@ class RpcServer(rpcConfigs: RpcConfigs, routes: Routes)(implicit system: ActorSy
   } ~
   AkkaHttpRoute.fromFutureRouter(routes.value)
 
-  def start: Future[Http.ServerBinding] = Http().bindAndHandle(route, interface = "0.0.0.0", port = rpcConfigs.port)
+  def start(): Future[Http.ServerBinding] = Http().bindAndHandle(route, interface = "0.0.0.0", port = rpcConfigs.port)
 }

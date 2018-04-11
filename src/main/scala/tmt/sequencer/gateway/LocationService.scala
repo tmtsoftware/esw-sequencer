@@ -10,10 +10,10 @@ class LocationService {
 
   def sequenceProcessorUri(sequencerId: String, observingMode: String): String = {
     val port = (sequencerId, observingMode) match {
-      case ("iris", "darknight")  => 8080
-      case ("iris", "clearskies") => 8081
-      case ("tcs", "darknight")   => 7070
-      case ("tcs", "clearskies")  => 7071
+      case ("iris", "darknight")  => 8000
+      case ("iris", "clearskies") => 8001
+      case ("tcs", "darknight")   => 7000
+      case ("tcs", "clearskies")  => 7001
       case _                      => throw new RuntimeException(s"can not locate sequencer=$sequencerId and observingMode=$observingMode")
     }
     s"http://0.0.0.0:$port"

@@ -3,8 +3,8 @@ package tmt.sequencer.db
 import akka.actor.ActorSystem
 import com.typesafe.config.Config
 
-class RpcConfigs(actorSystem: ActorSystem) {
+class RpcConfigs(_port: Option[Int])(implicit actorSystem: ActorSystem) {
   private val config: Config = actorSystem.settings.config.getConfig("rpc.server")
 
-  val port: Int = config.getInt("port")
+  val port: Int = _port.getOrElse(config.getInt("port"))
 }
