@@ -6,7 +6,7 @@ import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
 import tmt.sequencer.{Engine, Sequencer}
 import tmt.sequencer.gateway.LocationService
-import tmt.sequencer.models.{Command, CommandResponse, SequencerEvent}
+import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse, SequencerEvent}
 import tmt.sequencer.rpc.api.SequenceProcessor
 import tmt.sequencer.rpc.client.RpcClient
 
@@ -19,6 +19,12 @@ class CswServices(sequencer: Sequencer,
                   locationService: LocationService,
                   val sequencerId: String,
                   val observingMode: String)(implicit mat: Materializer, system: ActorSystem) {
+
+  val commandHandlerBuilder: FunctionBuilder[Command, Future[AggregateResponse]] = new FunctionBuilder
+
+  def handleCommand(name: String)(handler: Command => Future[AggregateResponse]): Unit = {
+    commandHandlerBuilder.addHandler(_.name == name)(handler)
+  }
 
   def sequenceProcessor(sequencerId: String): SequenceProcessor = {
     val uri = locationService.sequenceProcessorUri(sequencerId, observingMode)

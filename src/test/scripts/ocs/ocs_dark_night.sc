@@ -19,7 +19,7 @@ class OcsDarkNight(cs: dsl.CswServices) extends Script(cs) {
     SequencerEvent("ocs-metadata", (eventCount + commandCount).toString)
   }
 
-  handleCommand("setup-iris") { command =>
+  cs.handleCommand("setup-iris") { command =>
     spawn {
       val maybeCommand = cs.nextIf(c2 => c2.name == "setup-iris").await
       val response1 = if (maybeCommand.isDefined) {
@@ -39,7 +39,7 @@ class OcsDarkNight(cs: dsl.CswServices) extends Script(cs) {
     }
   }
 
-  handleCommand("setup-iris2") { command =>
+  cs.handleCommand("setup-iris2") { command =>
     spawn {
       val aggregateResponse = iris.submitSequence(List(command)).await.markSuccessful(command)
       println(s"[Ocs2] Result received - ${command.name} with aggregateResponse - $aggregateResponse")

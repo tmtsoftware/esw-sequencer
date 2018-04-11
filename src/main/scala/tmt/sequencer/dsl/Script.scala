@@ -3,30 +3,17 @@ package tmt.sequencer.dsl
 import akka.Done
 import tmt.sequencer.models.{AggregateResponse, Command}
 
-import scala.collection.mutable
 import scala.concurrent.Future
 
 abstract class Script(cs: CswServices) extends ActiveObject {
-  private val commandHandlers: mutable.Buffer[PartialFunction[Command, Future[AggregateResponse]]] = mutable.Buffer.empty
-
-  private def combinedHandler: PartialFunction[Command, Future[AggregateResponse]] =
-    commandHandlers.foldLeft(PartialFunction.empty[Command, Future[AggregateResponse]])(_ orElse _)
-
-  def execute(command: Command): Future[AggregateResponse] = spawn {
-    combinedHandler
-      .lift(command)
-      .getOrElse {
-        println(s"unknown command=$command")
-        spawn(AggregateResponse)
-      }
-      .await
+  private val commandHandler: Command => Future[AggregateResponse] = cs.commandHandlerBuilder.build { input =>
+    println(s"unknown command=$input")
+    spawn(AggregateResponse)
   }
+
+  def execute(command: Command): Future[AggregateResponse] = spawn(commandHandler(command).await)
 
   def shutdown(): Future[Done] = onShutdown().map(_ => shutdownEc())
-
-  protected def handleCommand(name: String)(handler: Command => Future[AggregateResponse]): Unit = commandHandlers += {
-    case command if command.name == name => handler(command)
-  }
 
   protected def onShutdown(): Future[Done] = spawn(Done)
 }

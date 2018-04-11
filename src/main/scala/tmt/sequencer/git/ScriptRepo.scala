@@ -7,13 +7,11 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand.ResetType
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.transport.RefSpec
+import tmt.sequencer.gateway.LocationService
 
-class ScriptRepo(scriptConfigs: ScriptConfigs) {
-  //temporary vals will be replaced by location-service
-  def gitHost = "0.0.0.0"
-  def gitPort = 8080
-
-  def gitRemote = s"http://$gitHost:$gitPort/${scriptConfigs.repoOwner}/${scriptConfigs.repoName}.git"
+class ScriptRepo(scriptConfigs: ScriptConfigs, locationService: LocationService) {
+  private val (host, port) = locationService.gitAddress()
+  private val gitRemote    = s"http://$host:$port/${scriptConfigs.repoOwner}/${scriptConfigs.repoName}.git"
 
   private def cleanExistingRepo(file: File): Unit = {
     ammonite.ops.rm ! Path(file)

@@ -14,10 +14,12 @@ class RpcServer(rpcConfigs: RpcConfigs, routes: Routes)(implicit system: ActorSy
   private implicit val materializer: ActorMaterializer = ActorMaterializer()
   import materializer.executionContext
 
-  private val route = pathPrefix("something-later") {
-    complete("test-done")
-  } ~
-  AkkaHttpRoute.fromFutureRouter(routes.value)
+  private val route = {
+    pathPrefix("something-later") {
+      complete("test-done")
+    } ~
+    AkkaHttpRoute.fromFutureRouter(routes.value)
+  }
 
   def start(): Future[Http.ServerBinding] = Http().bindAndHandle(route, interface = "0.0.0.0", port = rpcConfigs.port)
 }

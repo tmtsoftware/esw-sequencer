@@ -7,7 +7,7 @@ class IrisDarkNight(cs: dsl.CswServices) extends Script(cs) {
   var eventCount = 0
   var commandCount = 0
 
-  handleCommand("setup-iris") { command =>
+  cs.handleCommand("setup-iris") { command =>
     spawn {
       println(s"[Iris] Command received - ${command.name}")
       val firstAssemblyResponse = cs.setup("iris-assembly1", command.copy(id = Id(s"${command.id}a"))).await

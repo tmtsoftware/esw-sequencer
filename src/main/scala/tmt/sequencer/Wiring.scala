@@ -23,7 +23,7 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int], isPr
 
   lazy val scriptConfigs = new ScriptConfigs(system)
   lazy val repoDir: Path = if (isProd) Path(scriptConfigs.cloneDir) else ammonite.ops.pwd
-  lazy val scriptRepo    = new ScriptRepo(scriptConfigs)
+  lazy val scriptRepo    = new ScriptRepo(scriptConfigs, locationService)
   lazy val path: Path    = repoDir / RelPath(scriptConfigs.scriptFactoryPath)
 
   lazy val sequencerRef: ActorRef[SequencerMsg] = system.spawn(SequencerBehaviour.behavior, "sequencer")
