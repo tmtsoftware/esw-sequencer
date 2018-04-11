@@ -1,4 +1,4 @@
-package tmt.sequencer.core
+package tmt.sequencer
 
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern._

@@ -1,4 +1,4 @@
-package tmt.sequencer.core
+package tmt.sequencer
 
 import akka.Done
 import akka.stream.Materializer

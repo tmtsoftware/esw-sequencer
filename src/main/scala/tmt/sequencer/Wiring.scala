@@ -6,7 +6,6 @@ import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
-import tmt.sequencer.core.{Engine, Sequencer, SequencerBehaviour}
 import tmt.sequencer.git.{ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.{CswServices, Script}
 import tmt.sequencer.gateway.LocationService

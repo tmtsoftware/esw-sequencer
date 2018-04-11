@@ -2,7 +2,6 @@ package tmt.sequencer
 
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
-import tmt.sequencer.core.Sequencer
 import tmt.sequencer.dsl.CswServices
 import tmt.sequencer.models.{Command, Id}
 import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
