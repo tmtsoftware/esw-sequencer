@@ -3,10 +3,10 @@ package tmt.sequencer
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
 import tmt.sequencer.core.Sequencer
-import tmt.sequencer.db.RpcConfigs
-import tmt.sequencer.gateway.CswServices
+import tmt.sequencer.dsl.CswServices
 import tmt.sequencer.models.{Command, Id}
 import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
+import tmt.sequencer.rpc.server.RpcConfigs
 
 class RemoteRepl(commandService: CswServices,
                  sequencer: Sequencer,
@@ -16,8 +16,8 @@ class RemoteRepl(commandService: CswServices,
 
   def server() = new SshdRepl(
     SshServerConfig(
-      address = "localhost", // or "0.0.0.0" for public-facing shells
-      port = rpcConfigs.port + 100, // Any available port
+      address = "0.0.0.0",
+      port = rpcConfigs.port + 100,
       passwordAuthenticator = Some(AcceptAllPasswordAuthenticator.INSTANCE) // or publicKeyAuthenticator
     ),
     predef = """

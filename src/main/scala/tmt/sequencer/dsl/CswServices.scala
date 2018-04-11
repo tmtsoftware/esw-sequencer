@@ -1,11 +1,12 @@
-package tmt.sequencer.gateway
+package tmt.sequencer.dsl
 
 import akka.Done
 import akka.actor.{ActorSystem, Cancellable}
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
 import tmt.sequencer.core.{Engine, Sequencer}
-import tmt.sequencer.models.{Command, CommandResponse}
+import tmt.sequencer.gateway.LocationService
+import tmt.sequencer.models.{Command, CommandResponse, SequencerEvent}
 import tmt.sequencer.rpc.api.SequenceProcessor
 import tmt.sequencer.rpc.client.RpcClient
 

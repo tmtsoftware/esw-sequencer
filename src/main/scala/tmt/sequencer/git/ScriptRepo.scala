@@ -1,4 +1,4 @@
-package tmt.sequencer.db
+package tmt.sequencer.git
 
 import java.io.File
 

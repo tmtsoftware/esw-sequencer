@@ -7,7 +7,6 @@ import akka.http.scaladsl.server.RouteResult._
 import akka.stream.ActorMaterializer
 import covenant.http.AkkaHttpRoute
 import covenant.http.ByteBufferImplicits._
-import tmt.sequencer.db.RpcConfigs
 
 import scala.concurrent.Future
 

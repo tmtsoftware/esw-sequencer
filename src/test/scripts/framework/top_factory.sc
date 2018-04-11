@@ -1,8 +1,7 @@
 import $file.^.iris.iris_factory
 import $file.^.ocs.ocs_factory
 import tmt.sequencer.ScriptImports
-import tmt.sequencer.dsl.{Script, ScriptFactory}
-import tmt.sequencer.gateway.CswServices
+import tmt.sequencer.dsl.{CswServices, Script, ScriptFactory}
 
 ScriptImports.init[TopScriptFactory]
 

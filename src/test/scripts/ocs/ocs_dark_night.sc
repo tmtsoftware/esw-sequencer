@@ -1,7 +1,8 @@
 import tmt.sequencer.ScriptImports._
+import tmt.sequencer.dsl
 import tmt.sequencer.models.AggregateResponse
 
-class OcsDarkNight(cs: CswServices) extends Script(cs) {
+class OcsDarkNight(cs: dsl.CswServices) extends Script(cs) {
 
   val iris = cs.sequenceProcessor("iris")
 

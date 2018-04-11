@@ -1,7 +1,8 @@
 package tmt.sequencer
 
 import ammonite.ops.Path
-import tmt.sequencer.dsl.ScriptFactory
+import tmt.sequencer.dsl.{CswServices, ScriptFactory}
+import tmt.sequencer.models.SequencerEvent
 
 import scala.concurrent.duration.DurationDouble
 import scala.language.implicitConversions
@@ -18,9 +19,9 @@ object ScriptImports {
   val Done = akka.Done
 
   type Script         = dsl.Script
-  type CswServices    = gateway.CswServices
-  type SequencerEvent = gateway.SequencerEvent
-  val SequencerEvent = gateway.SequencerEvent
+  type CswServices    = dsl.CswServices
+  type SequencerEvent = models.SequencerEvent
+  val SequencerEvent = models.SequencerEvent
 
   type Command = tmt.sequencer.models.Command
   val Command = tmt.sequencer.models.Command
