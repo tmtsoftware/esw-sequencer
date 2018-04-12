@@ -1,6 +1,6 @@
-package tmt.sequencer.rpc.api
+package tmt.sequencer.api
 
-import tmt.sequencer.models._
+import tmt.sequencer.models.{Command, Id, Sequence}
 
 import scala.concurrent.Future
 

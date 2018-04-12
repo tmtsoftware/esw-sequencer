@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import covenant.http.HttpClient
 import sloth.{Client, ClientException}
-import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
 import boopickle.Default._
 import chameleon.ext.boopickle._
 import cats.implicits._
@@ -12,6 +11,7 @@ import java.nio.ByteBuffer
 
 import covenant.http._
 import ByteBufferImplicits._
+import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
 
 import scala.concurrent.Future
 

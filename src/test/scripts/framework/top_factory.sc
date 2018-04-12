@@ -1,9 +1,9 @@
 import $file.^.iris.iris_factory
 import $file.^.ocs.ocs_factory
-import tmt.sequencer.ScriptImports
-import tmt.sequencer.dsl.{CswServices, Script, ScriptFactory}
+import tmt.sequencer.ScriptImports._
+import tmt.sequencer.dsl.ScriptFactory
 
-ScriptImports.init[TopScriptFactory]
+init[TopScriptFactory]
 
 class TopScriptFactory extends ScriptFactory {
   def get(cs: CswServices): Script = cs.sequencerId match {

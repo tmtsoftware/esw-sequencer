@@ -1,4 +1,4 @@
-package tmt.sequencer.rpc.api
+package tmt.sequencer.api
 
 import tmt.sequencer.models.{AggregateResponse, Command}
 

@@ -4,10 +4,10 @@ import akka.Done
 import akka.actor.{ActorSystem, Cancellable}
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
+import tmt.sequencer.api.SequenceProcessor
 import tmt.sequencer.{Engine, Sequencer}
 import tmt.sequencer.gateway.LocationService
 import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse, SequencerEvent}
-import tmt.sequencer.rpc.api.SequenceProcessor
 import tmt.sequencer.rpc.client.RpcClient
 
 import scala.async.Async.{async, await}

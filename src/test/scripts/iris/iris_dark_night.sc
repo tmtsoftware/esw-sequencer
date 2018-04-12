@@ -1,8 +1,6 @@
 import tmt.sequencer.ScriptImports._
-import tmt.sequencer.dsl
-import tmt.sequencer.models.AggregateResponse
 
-class IrisDarkNight(cs: dsl.CswServices) extends Script(cs) {
+class IrisDarkNight(cs: CswServices) extends Script(cs) {
 
   var eventCount = 0
   var commandCount = 0

@@ -23,7 +23,7 @@ object JvmClient {
     import covenant.http._
     import ByteBufferImplicits._
 
-    val client: Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer]("http://0.0.0.0:9090")
+    val client: Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer]("http://0.0.0.0:9090/api")
     val basic: Basic                                        = client.wire[Basic]
     val advanced: Advanced                                  = client.wire[Advanced]
 

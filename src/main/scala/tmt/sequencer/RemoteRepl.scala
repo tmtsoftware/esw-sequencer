@@ -2,9 +2,9 @@ package tmt.sequencer
 
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
+import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
 import tmt.sequencer.dsl.CswServices
 import tmt.sequencer.models.{Command, Id}
-import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
 import tmt.sequencer.rpc.server.RpcConfigs
 
 class RemoteRepl(commandService: CswServices,

@@ -1,8 +1,7 @@
 package tmt.sequencer
 
 import ammonite.ops.Path
-import tmt.sequencer.dsl.{CswServices, ScriptFactory}
-import tmt.sequencer.models.SequencerEvent
+import tmt.sequencer.dsl.ScriptFactory
 
 import scala.concurrent.duration.DurationDouble
 import scala.language.implicitConversions
@@ -28,6 +27,9 @@ object ScriptImports {
 
   type CommandResponse = tmt.sequencer.models.CommandResponse
   val CommandResponse = tmt.sequencer.models.CommandResponse
+
+  type AggregateResponse = tmt.sequencer.models.AggregateResponse
+  val AggregateResponse = tmt.sequencer.models.AggregateResponse
 
   type Future[T] = scala.concurrent.Future[T]
 

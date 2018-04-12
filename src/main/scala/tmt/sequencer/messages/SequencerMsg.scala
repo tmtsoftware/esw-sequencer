@@ -1,6 +1,7 @@
-package tmt.sequencer.models
+package tmt.sequencer.messages
 
 import akka.actor.typed.ActorRef
+import tmt.sequencer.models._
 
 import scala.util.Try
 

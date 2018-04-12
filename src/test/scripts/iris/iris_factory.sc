@@ -1,6 +1,5 @@
 import $file.iris_dark_night
-import tmt.sequencer.ScriptImports.Script
-import tmt.sequencer.dsl.CswServices
+import tmt.sequencer.ScriptImports._
 
 object IrisFactory {
   def get(cs: CswServices): Script = cs.observingMode match {

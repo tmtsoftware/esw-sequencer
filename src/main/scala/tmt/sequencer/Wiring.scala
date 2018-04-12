@@ -6,11 +6,11 @@ import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
+import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
 import tmt.sequencer.git.{ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.{CswServices, Script}
 import tmt.sequencer.gateway.LocationService
-import tmt.sequencer.models.SequencerMsg
-import tmt.sequencer.rpc.api.{SequenceManager, SequenceProcessor}
+import tmt.sequencer.messages.SequencerMsg
 import tmt.sequencer.rpc.server._
 
 import scala.concurrent.duration.DurationDouble
