@@ -9,6 +9,7 @@ import covenant.ws.AkkaWsRoute
 import covenant.ws.api.WsApiConfigurationWithDefaults
 import mycelium.server.WebsocketServerConfig
 import tmt.sequencer.rpc_spike.{Advanced, Basic, Streaming}
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.concurrent.Future
 
@@ -35,16 +36,20 @@ object Server {
     val config   = WebsocketServerConfig(bufferSize = 5, overflowStrategy = OverflowStrategy.fail)
     val wsRouter = Router[ByteBuffer, StreamingDsl.ApiFunction].route[Streaming[StreamingDsl.ApiFunction]](StreamingImpl)
 
-    val route = {
+    val route = cors() {
       pathPrefix("something-later") {
         complete("test-done")
       } ~
-      AkkaHttpRoute.fromFutureRouter {
-        Router[ByteBuffer, Future]
-          .route[Basic](BasicImpl)
-          .route[Advanced](AdvancedImpl)
+      pathPrefix("api") {
+        AkkaHttpRoute.fromFutureRouter {
+          Router[ByteBuffer, Future]
+            .route[Basic](BasicImpl)
+            .route[Advanced](AdvancedImpl)
+        }
       } ~
-      AkkaWsRoute.fromApiRouter(wsRouter, config, api)
+      pathPrefix("ws") {
+        AkkaWsRoute.fromApiRouter(wsRouter, config, api)
+      }
     }
 
     Http().bindAndHandle(route, interface = "0.0.0.0", port = 9090)

@@ -9,6 +9,7 @@ tmp
 dist
 .idea
 .vscode
+node_modules/
 *.iml
 /out
 .idea_modules
