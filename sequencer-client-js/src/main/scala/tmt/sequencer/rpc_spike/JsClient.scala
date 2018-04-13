@@ -14,7 +14,6 @@ object JsClient {
     import sloth._
     import boopickle.Default._
     import chameleon.ext.boopickle._
-    import cats.implicits._
     import java.nio.ByteBuffer
     import covenant.http._
 

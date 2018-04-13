@@ -1,7 +1,6 @@
 package org.tmt.macros
 
 import scala.concurrent.ExecutionContext
-import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
 object AsyncMacros {
