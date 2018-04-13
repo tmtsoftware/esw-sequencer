@@ -18,9 +18,46 @@ inThisBuild(List(
   )
 ))
 
-lazy val root = (project in file("."))
+lazy val root = project
+  .in(file("."))
+  .aggregate(
+    `sequencer-api-JS`,
+    `sequencer-api-JVM`,
+    `sequencer-client-js`,
+    `sequencer-macros`,
+    `sequencer-framework`,
+  )
+
+lazy val `sequencer-api` = crossProject.crossType(CrossType.Pure)
+lazy val `sequencer-api-JS` = `sequencer-api`.js
+lazy val `sequencer-api-JVM` = `sequencer-api`.jvm
+
+lazy val `sequencer-client-js` = project
+  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
+  .dependsOn(`sequencer-api-JS`)
+  .settings(
+    useYarn := true,
+    scalaJSUseMainModuleInitializer := true,
+    scalacOptions += "-P:scalajs:sjsDefinedByDefault",
+    libraryDependencies ++= Seq(
+      SharedLibs.`boopickle`.value,
+      Covenant.`covenant-http`.value,
+      Covenant.`covenant-ws`.value,
+      SharedLibs.scalaTest.value % Test,
+    )
+  )
+
+lazy val `sequencer-macros` = project
+  .settings(
+    libraryDependencies ++= Seq(
+      Libs.`scala-async`,
+      Libs.`scala-reflect`,
+    )
+  )
+
+lazy val `sequencer-framework` = project
   .enablePlugins(JavaAppPackaging)
-  .dependsOn(macros, `sequencer-api-JVM`)
+  .dependsOn(`sequencer-macros`, `sequencer-api-JVM`)
   .settings(
     name := "sequencer-framework",
     libraryDependencies ++= Seq(
@@ -42,28 +79,3 @@ lazy val root = (project in file("."))
     ),
   )
 
-lazy val macros = project.settings(
-  libraryDependencies ++= Seq(
-    Libs.`scala-async`,
-    Libs.`scala-reflect`,
-  )
-)
-
-lazy val `sequencer-api` = crossProject.crossType(CrossType.Pure)
-lazy val `sequencer-api-JS` = `sequencer-api`.js
-lazy val `sequencer-api-JVM` = `sequencer-api`.jvm
-
-lazy val `sequencer-client-js` = project
-  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
-  .dependsOn(`sequencer-api-JS`)
-  .settings(
-    useYarn := true,
-    scalaJSUseMainModuleInitializer := true,
-    scalacOptions += "-P:scalajs:sjsDefinedByDefault",
-    libraryDependencies ++= Seq(
-      SharedLibs.`boopickle`.value,
-      Covenant.`covenant-http`.value,
-      Covenant.`covenant-ws`.value,
-      SharedLibs.scalaTest.value % Test,
-    )
-  )
