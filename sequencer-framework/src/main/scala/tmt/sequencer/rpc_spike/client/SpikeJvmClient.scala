@@ -22,9 +22,9 @@ object SpikeJvmClient {
     import covenant.http._
     import ByteBufferImplicits._
 
-    val client: Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer]("http://0.0.0.0:9090/api")
-    val basic: Basic                                        = client.wire[Basic]
-    val advanced: Advanced                                  = client.wire[Advanced]
+    val client             = HttpClient[ByteBuffer]("http://0.0.0.0:9090/api")
+    val basic: Basic       = client.wire[Basic]
+    val advanced: Advanced = client.wire[Advanced]
 
     basic.increment(10).foreach { num =>
       println(s"Got response: $num")
@@ -35,9 +35,9 @@ object SpikeJvmClient {
     }
 
     /////////////////////////
-    val config                                                               = WebsocketClientConfig()
-    val wsClient: WsClient[ByteBuffer, Future, Int, String, ClientException] = WsClient(s"ws://0.0.0.0:9090/ws", config)
-    val streaming: Streaming[Future]                                         = wsClient.sendWithDefault.wire[Streaming[Future]]
+    val config                       = WebsocketClientConfig()
+    val wsClient                     = WsClient[ByteBuffer, Int, String](s"ws://0.0.0.0:9090/ws", config)
+    val streaming: Streaming[Future] = wsClient.sendWithDefault.wire[Streaming[Future]]
 
     wsClient.observable.event.flatMap(xs => Observable.fromIterable(xs)).foreach(println)
 

@@ -7,8 +7,8 @@ import mycelium.client.WebsocketClientConfig
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-object JsClient {
-  def main(args: Array[String]): Unit = {
+object SpikeJsClient {
+  def main2(args: Array[String]): Unit = {
     import monix.execution.Scheduler.Implicits.global
 
     import sloth._

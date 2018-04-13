@@ -4,7 +4,7 @@ import tmt.sequencer.models.{Command, Id}
 import tmt.sequencer.rpc.client.JsRpcClient
 
 object JsRpcClientApp {
-  def main2(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = {
     import monix.execution.Scheduler.Implicits.global
 
     val client = new JsRpcClient("http://0.0.0.0:9000")
