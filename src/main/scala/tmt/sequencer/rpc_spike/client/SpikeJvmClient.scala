@@ -9,7 +9,7 @@ import tmt.sequencer.rpc_spike.{Advanced, Basic, Streaming}
 
 import scala.concurrent.Future
 
-object JvmClient {
+object SpikeJvmClient {
   def main(args: Array[String]): Unit = {
     implicit val system: ActorSystem             = ActorSystem("client")
     implicit val materializer: ActorMaterializer = ActorMaterializer()

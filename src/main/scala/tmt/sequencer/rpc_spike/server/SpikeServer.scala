@@ -13,7 +13,7 @@ import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.concurrent.Future
 
-object Server {
+object SpikeServer {
   import sloth._
   import boopickle.Default._
   import chameleon.ext.boopickle._

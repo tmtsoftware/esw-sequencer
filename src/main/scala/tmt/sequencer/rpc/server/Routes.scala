@@ -10,6 +10,7 @@ import cats.implicits._
 import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
 
 class Routes(sequenceProcessor: SequenceProcessor, sequenceManager: SequenceManager)(implicit ec: ExecutionContext) {
-  val value: Router[ByteBuffer, Future] =
-    Router[ByteBuffer, Future].route[SequenceProcessor](sequenceProcessor).route[SequenceManager](sequenceManager)
+  val value: Router[ByteBuffer, Future] = Router[ByteBuffer, Future]
+    .route[SequenceProcessor](sequenceProcessor)
+    .route[SequenceManager](sequenceManager)
 }

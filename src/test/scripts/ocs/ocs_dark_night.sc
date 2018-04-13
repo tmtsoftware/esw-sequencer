@@ -9,7 +9,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   val subscription = cs.subscribe("ocs") { event =>
     eventCount = eventCount + 1
-    println(s"[Received OCS]: ------------------> event=${event.value} on key=${event.key}")
+    println(s"------------------> received-event: ${event.value} on key: ${event.key}")
     Done
   }
 
@@ -19,29 +19,32 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   cs.handleCommand("setup-iris") { command =>
     spawn {
-      val maybeCommand = cs.nextIf(c2 => c2.name == "setup-iris").await
-      val response1 = if (maybeCommand.isDefined) {
-        val command2 = maybeCommand.get
-        val subCommand2 = command2.copy(id = Id("B1"))
-        iris.submitSequence(List(subCommand2)).await.markSuccessful(command2)
+      val maybeNextCommand = cs.nextIf(c2 => c2.name == "setup-iris").await
+      val responseB = if (maybeNextCommand.isDefined) {
+        val nextCommand = maybeNextCommand.get
+        val subCommandB1 = nextCommand.copy(id = Id("B1"))
+        iris.submitSequence(List(subCommandB1)).await.markSuccessful(nextCommand)
       } else {
         AggregateResponse
       }
 
-      println(s"[Ocs] Command received - ${command.name}")
-      val subCommand1 = command.copy(id = Id("A1"))
-      val response2 = iris.submitSequence(List(subCommand1)).await.markSuccessful(command)
-      val response = response1.add(response2)
-      println(s"[Ocs] Received response")
+      println(s"[Ocs] Received command: ${command.name}")
+      val subCommandA1 = command.copy(id = Id("A1"))
+      val responseA = iris.submitSequence(List(subCommandA1)).await.markSuccessful(command)
+
+      val response = responseA.add(responseB)
+      println(s"[Ocs] Received response: $response")
       response
     }
   }
 
   cs.handleCommand("setup-iris2") { command =>
     spawn {
-      val aggregateResponse = iris.submitSequence(List(command)).await.markSuccessful(command)
-      println(s"[Ocs2] Result received - ${command.name} with aggregateResponse - $aggregateResponse")
-      aggregateResponse
+      println(s"[Ocs2] Received command: ${command.name}")
+
+      val response = iris.submitSequence(List(command)).await.markSuccessful(command)
+      println(s"[Ocs2] Received response: $response")
+      response
     }
   }
 
