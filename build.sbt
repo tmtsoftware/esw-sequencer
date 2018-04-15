@@ -18,7 +18,7 @@ inThisBuild(List(
   )
 ))
 
-lazy val root = project
+lazy val `esw-sequencer` = project
   .in(file("."))
   .aggregate(
     `sequencer-api-JS`,
