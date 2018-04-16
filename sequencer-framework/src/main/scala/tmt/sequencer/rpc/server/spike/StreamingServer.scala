@@ -1,4 +1,4 @@
-package tmt.sequencer.rpc_spike.server
+package tmt.sequencer.rpc.server.spike
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
@@ -8,19 +8,14 @@ import akka.stream.{ActorMaterializer, OverflowStrategy}
 import covenant.ws.AkkaWsRoute
 import covenant.ws.api.WsApiConfigurationWithDefaults
 import mycelium.server.WebsocketServerConfig
-import tmt.sequencer.rpc_spike.{Advanced, Basic, Streaming}
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
+import tmt.sequencer.api.Streaming
 
-import scala.concurrent.Future
-
-object SpikeServer {
+object StreamingServer {
   import sloth._
   import boopickle.Default._
   import chameleon.ext.boopickle._
   import java.nio.ByteBuffer
-  import cats.implicits._
-  import covenant.http._
-  import ByteBufferImplicits._
 
   def main(args: Array[String]): Unit = {
     implicit val system: ActorSystem             = ActorSystem("server")
@@ -39,13 +34,6 @@ object SpikeServer {
     val route = cors() {
       pathPrefix("something-later") {
         complete("test-done")
-      } ~
-      pathPrefix("api") {
-        AkkaHttpRoute.fromFutureRouter {
-          Router[ByteBuffer, Future]
-            .route[Basic](BasicImpl)
-            .route[Advanced](AdvancedImpl)
-        }
       } ~
       pathPrefix("ws") {
         AkkaWsRoute.fromApiRouter(wsRouter, config, api)

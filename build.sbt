@@ -22,6 +22,7 @@ lazy val `esw-sequencer` = project
   .in(file("."))
   .aggregate(
     `sequencer-api-JS`,
+    `sequencer-client-app`,
     `sequencer-api-JVM`,
     `sequencer-client-js`,
     `sequencer-macros`,
@@ -36,14 +37,26 @@ lazy val `sequencer-client-js` = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
   .dependsOn(`sequencer-api-JS`)
   .settings(
+    webpackBundlingMode := BundlingMode.LibraryOnly(),
     useYarn := true,
-    scalaJSUseMainModuleInitializer := true,
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     libraryDependencies ++= Seq(
       SharedLibs.`boopickle`.value,
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,
       SharedLibs.scalaTest.value % Test,
+    )
+  )
+
+lazy val `sequencer-client-app` = project
+  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
+  .dependsOn(`sequencer-client-js`)
+  .settings(
+    useYarn := true,
+    scalaJSUseMainModuleInitializer := true,
+    scalacOptions += "-P:scalajs:sjsDefinedByDefault",
+    libraryDependencies ++= Seq(
+      SharedLibs.scalaTest.value % Test
     )
   )
 

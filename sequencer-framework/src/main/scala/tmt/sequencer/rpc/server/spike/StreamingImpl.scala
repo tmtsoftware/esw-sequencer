@@ -1,19 +1,11 @@
-package tmt.sequencer.rpc_spike.server
+package tmt.sequencer.rpc.server.spike
 
 import covenant.core.api.ApiDsl
 import monix.reactive.Observable
-import tmt.sequencer.rpc_spike.{Advanced, Basic, Streaming}
+import tmt.sequencer.api.Streaming
 
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationLong
-
-object BasicImpl extends Basic {
-  def increment(a: Int): Future[Int] = Future.successful(a + 1)
-}
-
-object AdvancedImpl extends Advanced {
-  def square(a: Int): Future[Int] = Future.successful(a * a)
-}
 
 object StreamingImpl extends Streaming[StreamingDsl.ApiFunction] {
   import StreamingDsl._

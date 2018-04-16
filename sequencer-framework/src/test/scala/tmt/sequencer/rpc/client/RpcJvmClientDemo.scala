@@ -1,11 +1,12 @@
 package tmt.sequencer.rpc.client
 
+import monix.reactive.Observable
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import tmt.sequencer.FutureExt.RichFuture
 import tmt.sequencer.Wiring
 import tmt.sequencer.models.{Command, Id}
 
-class RpcDemo extends FunSuite with BeforeAndAfterAll {
+class RpcJvmClientDemo extends FunSuite with BeforeAndAfterAll {
 
   private val wiring = new Wiring("ocs", "darknight", None, false)
   import wiring._
@@ -16,8 +17,8 @@ class RpcDemo extends FunSuite with BeforeAndAfterAll {
     system.terminate().get
   }
 
-  test("abc") {
-    val rpcClient    = new RpcClient("http://0.0.0.0:9090")
+  test("sequencer") {
+    val rpcClient    = new JvmSequencerClient("http://0.0.0.0:9090")
     val ocsProcessor = rpcClient.sequenceProcessor
     val ocsManager   = rpcClient.sequenceManager
 
@@ -26,5 +27,16 @@ class RpcDemo extends FunSuite with BeforeAndAfterAll {
 
     val sequence = ocsManager.sequence.get
     println("----------->" + sequence)
+  }
+
+  test("streaming") {
+    val client = new JvmStreamingClient("ws://0.0.0.0:9090/ws")
+    import monix.execution.Scheduler.Implicits.global
+
+    client.events.flatMap(xs => Observable.fromIterable(xs)).foreach(println)
+
+    client.streaming.from(78).onComplete { res =>
+      println(s"Got response: $res")
+    }
   }
 }

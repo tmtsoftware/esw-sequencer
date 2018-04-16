@@ -8,7 +8,7 @@ import tmt.sequencer.api.SequenceProcessor
 import tmt.sequencer.{Engine, Sequencer}
 import tmt.sequencer.gateway.LocationService
 import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse, SequencerEvent}
-import tmt.sequencer.rpc.client.RpcClient
+import tmt.sequencer.rpc.client.JvmSequencerClient
 
 import scala.async.Async.{async, await}
 import scala.concurrent.duration.{DurationDouble, FiniteDuration}
@@ -28,7 +28,7 @@ class CswServices(sequencer: Sequencer,
 
   def sequenceProcessor(sequencerId: String): SequenceProcessor = {
     val uri = locationService.sequenceProcessorUri(sequencerId, observingMode)
-    new RpcClient(uri).sequenceProcessor
+    new JvmSequencerClient(uri).sequenceProcessor
   }
 
   def nextIf(f: Command => Boolean): Future[Option[Command]] =

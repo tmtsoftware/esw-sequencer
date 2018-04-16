@@ -14,7 +14,7 @@ import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
 
 import scala.concurrent.Future
 
-class RpcClient(baseUri: String)(implicit system: ActorSystem) {
+class JvmSequencerClient(baseUri: String)(implicit system: ActorSystem) {
   private implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   private val client: Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer](baseUri)

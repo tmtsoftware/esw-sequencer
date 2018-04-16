@@ -1,18 +1,16 @@
 package tmt.sequencer.rpc.client
 
-import scala.concurrent.ExecutionContext
-import sloth._
 import boopickle.Default._
 import chameleon.ext.boopickle._
 import java.nio.ByteBuffer
 
-import covenant.http._
+import covenant.http.HttpClient
 import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
 
-import scala.concurrent.Future
+class JsSequencerClient(baseUri: String) {
+  import monix.execution.Scheduler.Implicits.global
 
-class JsRpcClient(baseUri: String)(implicit ec: ExecutionContext) {
-  private val client: Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer](baseUri)
+  private val client = HttpClient[ByteBuffer](baseUri)
 
   val sequenceProcessor: SequenceProcessor = client.wire[SequenceProcessor]
   val sequenceManager: SequenceManager     = client.wire[SequenceManager]
