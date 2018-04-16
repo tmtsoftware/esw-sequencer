@@ -22,9 +22,9 @@ lazy val `esw-sequencer` = project
   .in(file("."))
   .aggregate(
     `sequencer-api-JS`,
-    `sequencer-client-app`,
+    `sequencer-js-app`,
     `sequencer-api-JVM`,
-    `sequencer-client-js`,
+    `sequencer-js-client`,
     `sequencer-macros`,
     `sequencer-framework`,
   )
@@ -33,7 +33,7 @@ lazy val `sequencer-api` = crossProject.crossType(CrossType.Pure)
 lazy val `sequencer-api-JS` = `sequencer-api`.js
 lazy val `sequencer-api-JVM` = `sequencer-api`.jvm
 
-lazy val `sequencer-client-js` = project
+lazy val `sequencer-js-client` = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
   .dependsOn(`sequencer-api-JS`)
   .settings(
@@ -48,9 +48,9 @@ lazy val `sequencer-client-js` = project
     )
   )
 
-lazy val `sequencer-client-app` = project
+lazy val `sequencer-js-app` = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
-  .dependsOn(`sequencer-client-js`)
+  .dependsOn(`sequencer-js-client`)
   .settings(
     useYarn := true,
     scalaJSUseMainModuleInitializer := true,
