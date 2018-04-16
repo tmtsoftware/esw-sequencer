@@ -19,10 +19,10 @@ class RpcJvmClientDemo extends FunSuite with BeforeAndAfterAll {
 
   test("sequencer") {
     val rpcClient    = new JvmSequencerClient("http://0.0.0.0:9090")
-    val ocsProcessor = rpcClient.sequenceProcessor
-    val ocsManager   = rpcClient.sequenceManager
+    val ocsProcessor = rpcClient.sequenceFeeder
+    val ocsManager   = rpcClient.sequenceEditor
 
-    val response = ocsProcessor.submitSequence(List(Command(Id("command1"), "setup-iris", List(1, 2, 3, 4)))).get
+    val response = ocsProcessor.feed(List(Command(Id("command1"), "setup-iris", List(1, 2, 3, 4)))).get
     println("----------->" + response)
 
     val sequence = ocsManager.sequence.get

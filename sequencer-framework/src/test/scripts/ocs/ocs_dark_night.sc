@@ -23,14 +23,14 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
       val responseB = if (maybeNextCommand.isDefined) {
         val nextCommand = maybeNextCommand.get
         val subCommandB1 = nextCommand.copy(id = Id("B1"))
-        iris.submitSequence(List(subCommandB1)).await.markSuccessful(nextCommand)
+        iris.feed(List(subCommandB1)).await.markSuccessful(nextCommand)
       } else {
         AggregateResponse
       }
 
       println(s"[Ocs] Received command: ${command.name}")
       val subCommandA1 = command.copy(id = Id("A1"))
-      val responseA = iris.submitSequence(List(subCommandA1)).await.markSuccessful(command)
+      val responseA = iris.feed(List(subCommandA1)).await.markSuccessful(command)
 
       val response = responseA.add(responseB)
       println(s"[Ocs] Received response: $response")
@@ -42,7 +42,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
     spawn {
       println(s"[Ocs2] Received command: ${command.name}")
 
-      val response = iris.submitSequence(List(command)).await.markSuccessful(command)
+      val response = iris.feed(List(command)).await.markSuccessful(command)
       println(s"[Ocs2] Received response: $response")
       response
     }

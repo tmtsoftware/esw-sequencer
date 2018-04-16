@@ -10,7 +10,7 @@ import java.nio.ByteBuffer
 
 import covenant.http._
 import ByteBufferImplicits._
-import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
+import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 
 import scala.concurrent.Future
 
@@ -19,6 +19,6 @@ class JvmSequencerClient(baseUri: String)(implicit system: ActorSystem) {
 
   private val client: Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer](baseUri)
 
-  val sequenceProcessor: SequenceProcessor = client.wire[SequenceProcessor]
-  val sequenceManager: SequenceManager     = client.wire[SequenceManager]
+  val sequenceFeeder: SequenceFeeder = client.wire[SequenceFeeder]
+  val sequenceEditor: SequenceEditor = client.wire[SequenceEditor]
 }

@@ -4,7 +4,7 @@ import akka.Done
 import akka.actor.{ActorSystem, Cancellable}
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{KillSwitch, KillSwitches, Materializer, ThrottleMode}
-import tmt.sequencer.api.SequenceProcessor
+import tmt.sequencer.api.SequenceFeeder
 import tmt.sequencer.{Engine, Sequencer}
 import tmt.sequencer.gateway.LocationService
 import tmt.sequencer.models.{AggregateResponse, Command, CommandResponse, SequencerEvent}
@@ -26,9 +26,9 @@ class CswServices(sequencer: Sequencer,
     commandHandlerBuilder.addHandler(_.name == name)(handler)
   }
 
-  def sequenceProcessor(sequencerId: String): SequenceProcessor = {
+  def sequenceProcessor(sequencerId: String): SequenceFeeder = {
     val uri = locationService.sequenceProcessorUri(sequencerId, observingMode)
-    new JvmSequencerClient(uri).sequenceProcessor
+    new JvmSequencerClient(uri).sequenceFeeder
   }
 
   def nextIf(f: Command => Boolean): Future[Option[Command]] =

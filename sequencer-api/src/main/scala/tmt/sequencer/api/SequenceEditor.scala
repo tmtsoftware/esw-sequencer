@@ -4,7 +4,7 @@ import tmt.sequencer.models.{Command, Id, Sequence}
 
 import scala.concurrent.Future
 
-trait SequenceManager {
+trait SequenceEditor {
   def addAll(commands: List[Command]): Future[Unit]
   def pause(): Future[Unit]
   def resume(): Future[Unit]

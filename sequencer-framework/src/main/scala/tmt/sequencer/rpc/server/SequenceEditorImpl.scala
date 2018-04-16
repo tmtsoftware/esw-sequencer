@@ -4,7 +4,7 @@ import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.{ActorSystem, Scheduler}
 import akka.util.Timeout
-import tmt.sequencer.api.SequenceManager
+import tmt.sequencer.api.SequenceEditor
 import tmt.sequencer.dsl.Script
 import tmt.sequencer.messages.SequencerMsg
 import tmt.sequencer.messages.SequencerMsg._
@@ -13,8 +13,7 @@ import tmt.sequencer.models._
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationLong
 
-class SequenceManagerImpl(sequencer: ActorRef[SequencerMsg], script: Script)(implicit system: ActorSystem)
-    extends SequenceManager {
+class SequenceEditorImpl(sequencer: ActorRef[SequencerMsg], script: Script)(implicit system: ActorSystem) extends SequenceEditor {
   private implicit val timeout: Timeout     = Timeout(10.hour)
   private implicit val scheduler: Scheduler = system.scheduler
   import system.dispatcher

@@ -2,15 +2,15 @@ package tmt.sequencer
 
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
-import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
+import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 import tmt.sequencer.dsl.CswServices
 import tmt.sequencer.models.{Command, Id}
 import tmt.sequencer.rpc.server.RpcConfigs
 
 class RemoteRepl(commandService: CswServices,
                  sequencer: Sequencer,
-                 sequenceProcessor: SequenceProcessor,
-                 sequenceManager: SequenceManager,
+                 sequenceFeeder: SequenceFeeder,
+                 sequenceEditor: SequenceEditor,
                  rpcConfigs: RpcConfigs) {
 
   def server() = new SshdRepl(
@@ -28,12 +28,12 @@ class RemoteRepl(commandService: CswServices,
          |}
       """.stripMargin,
     replArgs = Seq(
-      "cs"                -> commandService,
-      "sequencer"         -> sequencer,
-      "sequenceProcessor" -> sequenceProcessor,
-      "sequenceManager"   -> sequenceManager,
-      "Command"           -> Command,
-      "Id"                -> Id,
+      "cs"             -> commandService,
+      "sequencer"      -> sequencer,
+      "sequenceFeeder" -> sequenceFeeder,
+      "sequenceEditor" -> sequenceEditor,
+      "Command"        -> Command,
+      "Id"             -> Id,
     )
   )
 }

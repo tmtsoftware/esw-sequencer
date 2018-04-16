@@ -6,7 +6,7 @@ import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
-import tmt.sequencer.api.{SequenceManager, SequenceProcessor}
+import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 import tmt.sequencer.git.{ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.{CswServices, Script}
 import tmt.sequencer.gateway.LocationService
@@ -35,11 +35,11 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int], isPr
 
   lazy val script: Script = ScriptImports.load(path).get(cswServices)
 
-  lazy val sequenceManager: SequenceManager     = new SequenceManagerImpl(sequencerRef, script)
-  lazy val sequenceProcessor: SequenceProcessor = new SequenceProcessorImpl(sequencerRef)
-  lazy val routes                               = new Routes(sequenceProcessor, sequenceManager)
-  lazy val rpcConfigs                           = new RpcConfigs(port)
-  lazy val rpcServer                            = new RpcServer(rpcConfigs, routes)
+  lazy val sequenceEditor: SequenceEditor = new SequenceEditorImpl(sequencerRef, script)
+  lazy val sequenceFeeder: SequenceFeeder = new SequenceFeederImpl(sequencerRef)
+  lazy val routes                         = new Routes(sequenceFeeder, sequenceEditor)
+  lazy val rpcConfigs                     = new RpcConfigs(port)
+  lazy val rpcServer                      = new RpcServer(rpcConfigs, routes)
 
-  lazy val remoteRepl = new RemoteRepl(cswServices, sequencer, sequenceProcessor, sequenceManager, rpcConfigs)
+  lazy val remoteRepl = new RemoteRepl(cswServices, sequencer, sequenceFeeder, sequenceEditor, rpcConfigs)
 }
