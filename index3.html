@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>The Scala.js Tutorial</title>
+</head>
+<body>
+<div data-scalafiddle data-template="Sequencer" data-layout="h70">
+
+    Try out some simple things first, to warm up.
+<pre>
+def sum(a: Int, b: Int) = a + b
+
+println(sum(2, 2))
+</pre>
+
+    Then fire the actual query, change the data if you want
+<pre>
+client.sequenceFeeder.feed(
+  List(
+    Command(Id("A"), "setup-iris", List()),
+    Command(Id("B"), "setup-iris", List())
+  )
+)
+</pre>
+</div>
+<script>
+    window.scalaFiddleTemplates = {
+        "Sequencer": {
+            pre: "" +
+            "import tmt.sequencer.models.{Command, Id}\n" +
+            "import tmt.sequencer.rpc.client.JsSequencerClient\n" +
+            "val client = new JsSequencerClient(\"http://0.0.0.0:9000\")\n" +
+            "// $FiddleDependency org.tmt %%% sequencer-js-client % 0.1.0-SNAPSHOT",
+            post: ""
+        }
+    }
+</script>
+<script defer src="http://localhost:8880/integration.js"></script>
+</body>
+</html>

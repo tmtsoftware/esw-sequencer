@@ -13,7 +13,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
     Done
   }
 
-  val cancellable = cs.publish(6.seconds) {
+  val cancellable = cs.publish(16.seconds) {
     SequencerEvent("ocs-metadata", (eventCount + commandCount).toString)
   }
 

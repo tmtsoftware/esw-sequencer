@@ -54,7 +54,7 @@ class CswServices(sequencer: Sequencer,
     Source
       .fromIterator(() => Iterator.from(1))
       .map(x => SequencerEvent(key, x.toString))
-      .throttle(1, 10.second, 1, ThrottleMode.shaping)
+      .throttle(1, 20.second, 1, ThrottleMode.shaping)
       .mapAsync(1)(callback)
       .viaMat(KillSwitches.single)(Keep.right)
       .to(Sink.ignore)

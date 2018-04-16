@@ -5,15 +5,13 @@
     <title>The Scala.js Tutorial</title>
 </head>
 <body>
-<div data-scalafiddle data-dependency="com.github.cornerman.covenant %%% covenant-http % da2ce5a, com.github.cornerman.covenant %%% covenant-ws % da2ce5a, org.tmt %%% sequencer-client-js % 0.1.0-SNAPSHOT">
+<div data-scalafiddle data-dependency="org.tmt %%% sequencer-js-client % 0.1.0-SNAPSHOT">
 <pre>
 def sum(a: Int, b: Int) = a + b
 
 println(sum(2, 2))
 
-import tmt.sequencer.rpc.JsRpcClientApp
 
-JsRpcClientApp.main(Array())
 </pre>
 </div>
 <script defer src="http://localhost:8880/integration.js"></script>
