@@ -1,0 +1,40 @@
+[
+  {
+    "group": "Tmt",
+    "libraries": [
+      {
+        "name": "SequencerClient",
+        "organization": "org.tmt",
+        "artifact": "sequencer-client-js",
+        "doc": "https://diode.suzaku.io",
+        "versions": [
+          {
+            "version": "0.1.0-SNAPSHOT",
+            "scalaVersions": [
+              "2.12"
+            ]
+          }
+        ],
+        "compileTimeOnly": false
+      },
+      {
+        "name": "Covenant",
+        "organization": "com.github.cornerman.covenant",
+        "artifact": "covenant-http",
+        "doc": "https://diode.suzaku.io",
+        "versions": [
+          {
+            "version": "da2ce5a",
+            "scalaVersions": [
+              "2.12"
+            ],
+            "extraDeps": [
+              "com.github.cornerman.covenant %%% covenant-ws % da2ce5a"
+            ]
+          }
+        ],
+        "compileTimeOnly": false
+      }
+    ]
+  }
+]
