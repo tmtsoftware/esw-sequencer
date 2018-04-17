@@ -1,4 +1,4 @@
-package tmt.sequencer.rpc_spike
+package tmt.sequencer.covenant_copy
 
 import org.scalatest._
 import covenant.core.api._
