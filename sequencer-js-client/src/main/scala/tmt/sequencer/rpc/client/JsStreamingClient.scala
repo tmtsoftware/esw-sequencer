@@ -12,7 +12,7 @@ import chameleon.ext.boopickle._
 import java.nio.ByteBuffer
 
 class JsStreamingClient(baseUri: String) {
-  import monix.execution.Scheduler.Implicits.global
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   private val config               = WebsocketClientConfig()
   private val wsClient             = WsClient[ByteBuffer, Int, String](baseUri, config)

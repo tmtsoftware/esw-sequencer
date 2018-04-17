@@ -8,7 +8,7 @@ import covenant.http.HttpClient
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 
 class JsSequencerClient(baseUri: String) {
-  import monix.execution.Scheduler.Implicits.global
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   private val client = HttpClient[ByteBuffer](baseUri)
 
