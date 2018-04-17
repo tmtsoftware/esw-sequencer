@@ -64,10 +64,10 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
         tcs.feed(tcsSequence)
       ).await
 
-      val aggregateResponse1 = aggregateResponse.markSuccessful(commandC).markSuccessful(maybeCommandD)
+      val response = aggregateResponse.markSuccessful(commandC).markSuccessful(maybeCommandD)
 
-      println(s"[Ocs] Received response: $aggregateResponse1")
-      aggregateResponse1
+      println(s"[Ocs] Received response: $response")
+      response
     }
   }
 
