@@ -20,7 +20,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
   cs.handleCommand("setup-iris") { commandA =>
     spawn {
-      val maybeCommandB = cs.nextIf(c2 => c2.name == "setup-iris").await
+      val maybeCommandB = cs.nextIf(c => c.name == "setup-iris").await
       val subCommandsB = if (maybeCommandB.isDefined) {
         val commandB = maybeCommandB.get
         val subCommandB1 = commandB.withId(Id(s"${commandB.id}1"))
