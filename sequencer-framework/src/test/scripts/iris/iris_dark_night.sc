@@ -9,16 +9,13 @@ class IrisDarkNight(cs: CswServices) extends Script(cs) {
     spawn {
       println(s"[Iris] Received command: ${command.name}")
 
-      val firstAssemblyResponse = cs.setup("iris-assembly1", command.copy(id = Id(s"${command.id}a"))).await
+      val firstAssemblyResponse = cs.setup("iris-assembly1", command.withId(Id(s"${command.id}a"))).await
       val commandFailed = firstAssemblyResponse.isInstanceOf[CommandResponse.Failed]
 
       val restAssemblyResponses = if (commandFailed) {
-        Set(cs.setup("iris-assembly2", command.copy(id = Id(s"${command.id}d"))).await)
+        Set(cs.setup("iris-assembly2", command.withId(Id(s"${command.id}c"))).await)
       } else {
-        par(
-          cs.setup("iris-assembly3", command.copy(id = Id(s"${command.id}b"))),
-          cs.setup("iris-assembly4", command.copy(id = Id(s"${command.id}c")))
-        ).await
+        Set(cs.setup("iris-assembly3", command.withId(Id(s"${command.id}b"))).await)
       }
 
       val response = AggregateResponse

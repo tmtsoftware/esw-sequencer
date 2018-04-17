@@ -36,7 +36,10 @@ case class Id(value: String) {
   override def toString: String = value
 }
 
-case class Command(id: Id, name: String, params: List[Int])
+case class Command(id: Id, name: String, params: List[Int]) {
+  def withId(id: Id): Command         = copy(id = id)
+  def withName(name: String): Command = copy(name = name)
+}
 object Command {
   def root(id: Id, name: String, params: List[Int]) = Command(id, name, params)
 }
@@ -57,6 +60,9 @@ case class AggregateResponse(childResponses: Set[CommandResponse]) {
   def add(aggregateResponse: AggregateResponse): AggregateResponse = copy(childResponses ++ aggregateResponse.childResponses)
   def markSuccessful(commands: Command*): AggregateResponse = add {
     commands.map(command => CommandResponse.Success(command.id, "all children are done")).toSet[CommandResponse]
+  }
+  def markSuccessful(maybeCommand: Option[Command]): AggregateResponse = add {
+    maybeCommand.map(command => CommandResponse.Success(command.id, "all children are done")).toSet[CommandResponse]
   }
 }
 

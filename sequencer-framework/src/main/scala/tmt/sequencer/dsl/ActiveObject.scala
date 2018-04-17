@@ -4,7 +4,7 @@ import java.util.concurrent.Executors
 
 import akka.Done
 import org.tmt.macros.AsyncMacros
-import tmt.sequencer.models.CommandResponse
+import tmt.sequencer.models.{AggregateResponse, CommandResponse}
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Future}
 import scala.language.experimental.macros
@@ -14,6 +14,10 @@ trait ActiveObject {
     ExecutionContext.fromExecutorService(Executors.newSingleThreadExecutor())
 
   def par(fs: Future[CommandResponse]*): Future[Set[CommandResponse]] = Future.sequence(fs.toSet)
+  def parAggregate(fs: Future[AggregateResponse]*): Future[AggregateResponse] = spawn {
+    val aggregateResponses = Future.sequence(fs.toSet).await
+    aggregateResponses.foldLeft(AggregateResponse: AggregateResponse)(_ add _)
+  }
 
   implicit class RichF[T](t: Future[T]) {
     final def await: T = macro AsyncMacros.await
