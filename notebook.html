@@ -25,16 +25,11 @@ sequenceFeeder.feed(
     Command(Id("C"), "setup-iris", List()),
     Command(Id("D"), "setup-iris", List()),
     Command(Id("E"), "setup-iris", List()),
-    Command(Id("F"), "setup-iris", List())
+    Command(Id("F"), "setup-iris", List()),
+    Command(Id("G"), "setup-iris", List()),
+    Command(Id("H"), "setup-iris", List())
   )
 )
-</pre>
-</div>
-
-<p class="heading-block"> Try out pausing sequencer.</p>
-<div class="code-block" data-scalafiddle data-template="Sequencer" data-layout="h70" data-minheight="150">
-<pre class="pre-block">
-sequenceEditor.pause()
 </pre>
 </div>
 
@@ -45,6 +40,33 @@ sequenceEditor.sequence.onComplete(println)
 </pre>
 </div>
 
+<p class="heading-block"> Try out pausing sequencer.</p>
+<div class="code-block" data-scalafiddle data-template="Sequencer" data-layout="h70" data-minheight="150">
+<pre class="pre-block">
+sequenceEditor.pause()
+</pre>
+</div>
+
+<p class="heading-block"> Try out resuming sequencer.</p>
+<div class="code-block" data-scalafiddle data-template="Sequencer" data-layout="h70" data-minheight="150">
+<pre class="pre-block">
+sequenceEditor.resume()
+</pre>
+</div>
+
+<p class="heading-block"> Try out this adding breakpoints at commands.</p>
+<div class="code-block" data-scalafiddle data-template="Sequencer" data-layout="h30" data-minheight="150">
+<pre class="pre-block">
+sequenceEditor.addBreakpoints(List(Id("E"),Id("F")))
+</pre>
+</div>
+
+<p class="heading-block"> Try out this removing breakpoints at commands.</p>
+<div class="code-block" data-scalafiddle data-template="Sequencer" data-layout="h30" data-minheight="150">
+<pre class="pre-block">
+sequenceEditor.removeBreakpoints(List(Id("F")))
+</pre>
+</div>
 
 <script>
     window.scalaFiddleTemplates = {
