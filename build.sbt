@@ -27,6 +27,7 @@ lazy val `esw-sequencer` = project
     `sequencer-js-client`,
     `sequencer-macros`,
     `sequencer-framework`,
+    `csw-messages`,
   )
 
 lazy val `sequencer-api` = crossProject.crossType(CrossType.Pure)
@@ -92,3 +93,23 @@ lazy val `sequencer-framework` = project
     ),
   )
 
+lazy val `csw-messages` = project
+  .settings(
+    libraryDependencies ++= Seq(
+      Libs.`scala-java8-compat`,
+      Enumeratum.`enumeratum`,
+      Libs.`play-json`,
+      Libs.`play-json-extensions`,
+      Enumeratum.`enumeratum-play`,
+      Chill.`chill-bijection`,
+      Libs.`scalapb-runtime`,
+      Libs.`scalapb-json4s`,
+      Akka.`akka-typed`,
+    )
+  )
+  .settings(
+    PB.targets in Compile := Seq(
+    PB.gens.java -> (sourceManaged in Compile).value,
+    scalapb.gen(javaConversions = true) -> (sourceManaged in Compile).value
+  )
+)
