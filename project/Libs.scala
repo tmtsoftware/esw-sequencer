@@ -6,17 +6,18 @@ import scalapb.compiler.Version.scalapbVersion
 object Libs {
   val ScalaVersion = "2.12.4"
 
-  val `scala-reflect`        = "org.scala-lang"         % "scala-reflect"         % ScalaVersion
-  val `scala-compiler`       = "org.scala-lang"         % "scala-compiler"        % ScalaVersion
-  val `scala-java8-compat`   = "org.scala-lang.modules" %% "scala-java8-compat"   % "0.8.0" //BSD 3-clause "New" or "Revised" License
-  val `jgit`                 = "org.eclipse.jgit"       % "org.eclipse.jgit"      % "4.11.0.201803080745-r"
-  val `scala-async`          = "org.scala-lang.modules" %% "scala-async"          % "0.9.7"
-  val `enumeratum`           = "com.beachape"           %% "enumeratum"           % "1.5.13"
-  val `akka-http-cors`       = "ch.megard"              %% "akka-http-cors"       % "0.3.0"
-  val `play-json-extensions` = "ai.x"                   %% "play-json-extensions" % "0.10.0" //Simplified BSD License
-  val `play-json`            = "com.typesafe.play"      %% "play-json"            % "2.6.9" //Apache 2.0
-  val `scalapb-runtime`      = "com.thesamet.scalapb"   %% "scalapb-runtime"      % scalapbVersion % "protobuf"
-  val `scalapb-json4s`       = "com.thesamet.scalapb"   %% "scalapb-json4s"       % "0.7.0"
+  val `scala-reflect`        = "org.scala-lang" % "scala-reflect" % ScalaVersion
+  val `scala-compiler`       = "org.scala-lang" % "scala-compiler" % ScalaVersion
+  val `scala-java8-compat`   = "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0" //BSD 3-clause "New" or "Revised" License
+  val `jgit`                 = "org.eclipse.jgit" % "org.eclipse.jgit" % "4.11.0.201803080745-r"
+  val `scala-async`          = "org.scala-lang.modules" %% "scala-async" % "0.9.7"
+  val `enumeratum`           = "com.beachape" %% "enumeratum" % "1.5.13"
+  val `akka-http-cors`       = "ch.megard" %% "akka-http-cors" % "0.3.0"
+  val `play-json-extensions` = dep("ai.x" %% "play-json-extensions" % "0.10.0") //Simplified BSD License
+  val `play-json`            = dep("com.typesafe.play" %%% "play-json" % "2.6.9") //Apache 2.0
+  val `scalapb-runtime`      = dep("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf")
+  val `scalapb-json4s`       = dep("com.thesamet.scalapb" %%% "scalapb-json4s" % "0.7.0")
+  val `scalajs-java-time`    = dep("org.scala-js" %%% "scalajs-java-time" % "0.2.4")
 
 }
 
@@ -35,6 +36,12 @@ object Akka {
   val `akka-typed-testkit` = "com.typesafe.akka" %% "akka-testkit-typed" % Version
 }
 
+object AkkaJs {
+  val Version       = "1.2.5.11"
+  val `akka-typed`  = dep("org.akka-js" %%% "akkajsactortyped" % Version)
+  val `akka-stream` = dep("org.akka-js" %%% "akkajsactorstream" % Version)
+}
+
 object Ammonite {
   val Version = "1.1.0"
 
@@ -48,9 +55,9 @@ object SharedLibs {
 }
 
 object Enumeratum {
-  val version           = "1.5.13"
-  val `enumeratum`      = "com.beachape" %% "enumeratum" % version //MIT License
-  val `enumeratum-play` = "com.beachape" %% "enumeratum-play" % version //MIT License
+  val version                = "1.5.13"
+  val `enumeratum`           = dep("com.beachape" %%% "enumeratum" % version) //MIT License
+  val `enumeratum-play-json` = dep("com.beachape" %%% "enumeratum-play-json" % version) //MIT License
 }
 
 object Chill {

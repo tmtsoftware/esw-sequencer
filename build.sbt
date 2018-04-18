@@ -21,22 +21,23 @@ inThisBuild(List(
 lazy val `esw-sequencer` = project
   .in(file("."))
   .aggregate(
-    `sequencer-api-JS`,
+    `sequencer-api-js`,
+    `sequencer-api-jvm`,
     `sequencer-js-app`,
-    `sequencer-api-JVM`,
     `sequencer-js-client`,
     `sequencer-macros`,
     `sequencer-framework`,
-    `csw-messages`,
+    `csw-messages-js`,
+    `csw-messages-jvm`,
   )
 
 lazy val `sequencer-api` = crossProject.crossType(CrossType.Pure)
-lazy val `sequencer-api-JS` = `sequencer-api`.js
-lazy val `sequencer-api-JVM` = `sequencer-api`.jvm
+lazy val `sequencer-api-js` = `sequencer-api`.js
+lazy val `sequencer-api-jvm` = `sequencer-api`.jvm
 
 lazy val `sequencer-js-client` = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
-  .dependsOn(`sequencer-api-JS`)
+  .dependsOn(`sequencer-api-js`)
   .settings(
     webpackBundlingMode := BundlingMode.LibraryOnly(),
     useYarn := true,
@@ -71,7 +72,7 @@ lazy val `sequencer-macros` = project
 
 lazy val `sequencer-framework` = project
   .enablePlugins(JavaAppPackaging)
-  .dependsOn(`sequencer-macros`, `sequencer-api-JVM`)
+  .dependsOn(`sequencer-macros`, `sequencer-api-jvm`)
   .settings(
     name := "sequencer-framework",
     libraryDependencies ++= Seq(
@@ -93,23 +94,36 @@ lazy val `sequencer-framework` = project
     ),
   )
 
-lazy val `csw-messages` = project
+lazy val `csw-messages` = crossProject.crossType(CrossType.Pure)
   .settings(
     libraryDependencies ++= Seq(
-      Libs.`scala-java8-compat`,
-      Enumeratum.`enumeratum`,
-      Libs.`play-json`,
-      Libs.`play-json-extensions`,
-      Enumeratum.`enumeratum-play`,
-      Chill.`chill-bijection`,
-      Libs.`scalapb-runtime`,
-      Libs.`scalapb-json4s`,
+      Enumeratum.`enumeratum`.value,
+      Libs.`play-json`.value,
+      Libs.`play-json-extensions`.value,
+      Libs.`scalapb-runtime`.value,
+    )
+  )
+  .jsSettings(
+    libraryDependencies ++= Seq(
+      AkkaJs.`akka-typed`.value % Provided,
+      AkkaJs.`akka-stream`.value % Provided,
+      Libs.`scalajs-java-time`.value
+    )
+  )
+  .jvmSettings(
+    libraryDependencies ++= Seq(
       Akka.`akka-typed`,
+      Akka.`akka-stream`,
+      Libs.`scala-java8-compat`,
+      Chill.`chill-bijection`
     )
   )
   .settings(
     PB.targets in Compile := Seq(
-    PB.gens.java -> (sourceManaged in Compile).value,
-    scalapb.gen(javaConversions = true) -> (sourceManaged in Compile).value
+      scalapb.gen() -> (sourceManaged in Compile).value
+    ),
+    PB.protoSources in Compile := Seq(file("csw-messages/src/main/protobuf")),
   )
-)
+
+lazy val `csw-messages-js` = `csw-messages`.js
+lazy val `csw-messages-jvm` = `csw-messages`.jvm
