@@ -1,3 +1,5 @@
+import sbtcrossproject.{crossProject, CrossType}
+
 inThisBuild(List(
   organization := "org.tmt",
   scalaVersion := "2.12.4",
@@ -31,7 +33,7 @@ lazy val `esw-sequencer` = project
     `csw-messages-jvm`,
   )
 
-lazy val `sequencer-api` = crossProject.crossType(CrossType.Pure)
+lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure)
 lazy val `sequencer-api-js` = `sequencer-api`.js
 lazy val `sequencer-api-jvm` = `sequencer-api`.jvm
 
@@ -94,7 +96,7 @@ lazy val `sequencer-framework` = project
     ),
   )
 
-lazy val `csw-messages` = crossProject.crossType(CrossType.Pure)
+lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure)
   .settings(
     libraryDependencies ++= Seq(
       Enumeratum.`enumeratum`.value,
