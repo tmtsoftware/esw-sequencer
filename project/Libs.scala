@@ -18,7 +18,7 @@ object Libs {
   val `scalajs-java-time`    = dep("org.scala-js" %%% "scalajs-java-time" % "0.2.4")
   val `scalapb-runtime`      = dep("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion)
   val `scalapb-json4s`       = "com.thesamet.scalapb" %% "scalapb-json4s" % "0.7.0"
-
+  val `scalajs-library`      = "org.scala-js" %% "scalajs-library" % "0.6.22"
 }
 
 object Covenant {

@@ -117,6 +117,7 @@ lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossT
     libraryDependencies ++= Seq(
       Akka.`akka-typed`,
       Akka.`akka-stream`,
+      Libs.`scalajs-library`,
       Libs.`scala-java8-compat`,
       Chill.`chill-bijection`
     )
