@@ -96,20 +96,22 @@ lazy val `sequencer-framework` = project
     ),
   )
 
-lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure)
+lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Full)
   .settings(
     libraryDependencies ++= Seq(
       Enumeratum.`enumeratum`.value,
       Libs.`play-json`.value,
       Libs.`play-json-extensions`.value,
       Libs.`scalapb-runtime`.value,
-      Libs.`scalapb-runtime`.value % "protobuf"
+      Libs.`scalapb-runtime`.value % "protobuf",
+      SharedLibs.scalaTest.value % Test
     )
   )
   .jsSettings(
     libraryDependencies ++= Seq(
-      AkkaJs.`akka-typed`.value % Provided,
-      AkkaJs.`akka-stream`.value % Provided,
+      AkkaJs.`akkajsactortyped`.value % Provided,
+      AkkaJs.`akkajsactorstream`.value % Provided,
+      AkkaJs.`akkajstypedtestkit`.value % Provided,
       Libs.`scalajs-java-time`.value
     )
   )
@@ -118,15 +120,22 @@ lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossT
       Akka.`akka-typed`,
       Akka.`akka-stream`,
       Libs.`scalajs-library`,
+      Enumeratum.`enumeratum-play-json`,
       Libs.`scala-java8-compat`,
-      Chill.`chill-bijection`
+      Chill.`chill-bijection`,
+      Chill.`chill-akka`,
+      Akka.`akka-typed-testkit` % Test,
+    ),
+    PB.targets in Compile := Seq(
+      PB.gens.java -> (sourceManaged in Compile).value,
+      scalapb.gen(javaConversions = true) -> (sourceManaged in Compile).value
     )
   )
   .settings(
     PB.targets in Compile := Seq(
       scalapb.gen() -> (sourceManaged in Compile).value
     ),
-    PB.protoSources in Compile := Seq(file("csw-messages/src/main/protobuf")),
+    PB.protoSources in Compile := Seq(file("csw-messages/shared/src/main/protobuf")),
   )
 
 lazy val `csw-messages-js` = `csw-messages`.js

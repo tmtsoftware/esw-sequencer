@@ -37,9 +37,10 @@ object Akka {
 }
 
 object AkkaJs {
-  val Version       = "1.2.5.11"
-  val `akka-typed`  = dep("org.akka-js" %%% "akkajsactortyped" % Version)
-  val `akka-stream` = dep("org.akka-js" %%% "akkajsactorstream" % Version)
+  val Version              = "1.2.5.11"
+  val `akkajsactortyped`   = dep("org.akka-js" %%% "akkajsactortyped" % Version)
+  val `akkajsactorstream`  = dep("org.akka-js" %%% "akkajsactorstream" % Version)
+  val `akkajstypedtestkit` = dep("org.akka-js" %%% "akkajstypedtestkit" % Version)
 }
 
 object Ammonite {
@@ -57,10 +58,11 @@ object SharedLibs {
 object Enumeratum {
   val version                = "1.5.13"
   val `enumeratum`           = dep("com.beachape" %%% "enumeratum" % version) //MIT License
-  val `enumeratum-play-json` = dep("com.beachape" %%% "enumeratum-play-json" % version) //MIT License
+  val `enumeratum-play-json` = "com.beachape" %% "enumeratum-play-json" % version //MIT License
 }
 
 object Chill {
   val Version           = "0.9.2"
   val `chill-bijection` = "com.twitter" %% "chill-bijection" % Version //Apache License 2.0
+  val `chill-akka`      = "com.twitter" %% "chill-akka" % Version //Apache License 2.0
 }
