@@ -15,9 +15,9 @@ object Libs {
   val `akka-http-cors`       = "ch.megard" %% "akka-http-cors" % "0.3.0"
   val `play-json-extensions` = dep("ai.x" %% "play-json-extensions" % "0.10.0") //Simplified BSD License
   val `play-json`            = dep("com.typesafe.play" %%% "play-json" % "2.6.9") //Apache 2.0
-  val `scalapb-runtime`      = dep("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf")
-  val `scalapb-json4s`       = dep("com.thesamet.scalapb" %%% "scalapb-json4s" % "0.7.0")
   val `scalajs-java-time`    = dep("org.scala-js" %%% "scalajs-java-time" % "0.2.4")
+  val `scalapb-runtime`      = dep("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion)
+  val `scalapb-json4s`       = "com.thesamet.scalapb" %% "scalapb-json4s" % "0.7.0"
 
 }
 

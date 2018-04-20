@@ -31,7 +31,7 @@ object Implicits {
    * Implicit conversion of Seq[Char](supported by csw) to String(supported by Protobuf)
    */
   implicit val charsMapper: TypeMapper[String, Seq[Char]] =
-    TypeMapper[String, Seq[Char]](s ⇒ s)(xs ⇒ String.copyValueOf(xs.toArray))
+    TypeMapper[String, Seq[Char]](s ⇒ s.toSeq)(_.mkString)
 
   /**
    * Implicit conversion of Short(supported by csw) to Int(Protobuf doesn't support Short, hence promoted to Int)

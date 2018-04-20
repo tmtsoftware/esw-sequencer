@@ -103,6 +103,7 @@ lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossT
       Libs.`play-json`.value,
       Libs.`play-json-extensions`.value,
       Libs.`scalapb-runtime`.value,
+      Libs.`scalapb-runtime`.value % "protobuf"
     )
   )
   .jsSettings(

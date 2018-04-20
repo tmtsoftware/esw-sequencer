@@ -61,9 +61,7 @@ case class AggregateResponse(childResponses: Set[CommandResponse]) {
   def markSuccessful(commands: Command*): AggregateResponse = add {
     commands.map(command => CommandResponse.Success(command.id, "all children are done")).toSet[CommandResponse]
   }
-  def markSuccessful(maybeCommand: Option[Command]): AggregateResponse = add {
-    maybeCommand.map(command => CommandResponse.Success(command.id, "all children are done")).toSet[CommandResponse]
-  }
+  def markSuccessful(maybeCommand: Option[Command]): AggregateResponse = markSuccessful(maybeCommand.toList: _*)
 }
 
 object AggregateResponse extends AggregateResponse(Set.empty)

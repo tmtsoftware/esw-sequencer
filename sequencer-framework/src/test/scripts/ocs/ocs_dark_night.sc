@@ -33,7 +33,8 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
       val subCommandA1 = commandA.withId(Id(s"${commandA.id}1"))
       val subCommandA2 = commandA.withId(Id(s"${commandA.id}2"))
 
-      val sequence = subCommandA1 :: subCommandA2 :: subCommandsB
+      val subCommandsA = List(subCommandA1, subCommandA2)
+      val sequence = subCommandsA ++ subCommandsB
 
       val response = iris.feed(sequence).await.markSuccessful(commandA).markSuccessful(maybeCommandB)
 
