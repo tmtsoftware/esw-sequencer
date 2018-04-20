@@ -105,14 +105,18 @@ lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossT
       Libs.`scalapb-runtime`.value,
       Libs.`scalapb-runtime`.value % "protobuf",
       SharedLibs.scalaTest.value % Test
-    )
+    ),
+    PB.protoSources in Compile := Seq(file("csw-messages/shared/src/main/protobuf"))
   )
   .jsSettings(
     libraryDependencies ++= Seq(
       AkkaJs.`akkajsactortyped`.value % Provided,
       AkkaJs.`akkajsactorstream`.value % Provided,
-      AkkaJs.`akkajstypedtestkit`.value % Provided,
+      AkkaJs.`akkajstypedtestkit`.value % Test,
       Libs.`scalajs-java-time`.value
+    ),
+    PB.targets in Compile := Seq(
+      scalapb.gen() -> (sourceManaged in Compile).value
     )
   )
   .jvmSettings(
@@ -130,12 +134,6 @@ lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossT
       PB.gens.java -> (sourceManaged in Compile).value,
       scalapb.gen(javaConversions = true) -> (sourceManaged in Compile).value
     )
-  )
-  .settings(
-    PB.targets in Compile := Seq(
-      scalapb.gen() -> (sourceManaged in Compile).value
-    ),
-    PB.protoSources in Compile := Seq(file("csw-messages/shared/src/main/protobuf")),
   )
 
 lazy val `csw-messages-js` = `csw-messages`.js

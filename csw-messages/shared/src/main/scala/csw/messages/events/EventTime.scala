@@ -19,6 +19,7 @@ case class EventTime(time: Instant) {
 
 object EventTime {
 
+  //TODO: Have a correct implementation
   implicit val dd: Reads[Instant] = new Reads[Instant] {
     override def reads(json: JsValue): JsResult[Instant] = JsSuccess(Instant.now())
   }
@@ -28,6 +29,7 @@ object EventTime {
    *
    * @return an EventTime representing event creation
    */
+  //TODO: Use a clock
   def apply(): EventTime = new EventTime(Instant.now())
 
   private[messages] implicit val format: Format[EventTime] = new Format[EventTime] {
