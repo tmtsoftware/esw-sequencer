@@ -59,8 +59,11 @@ lazy val `sequencer-js-tests` = project
     scalaJSProjects := Seq(`sequencer-js-client`),
     pipelineStages in Assets := Seq(scalaJSPipeline),
     isDevMode in scalaJSPipeline := true,
-//  devCommands in scalaJSPipeline ++= Seq("test", "testOnly"),
-    resolveFromWebjarsNodeModulesDir := true
+    //  devCommands in scalaJSPipeline ++= Seq("test", "testOnly"),
+    resolveFromWebjarsNodeModulesDir := true,
+    libraryDependencies ++= Seq(
+      Libs.`types__mocha` % Test
+    )
   )
 
 lazy val `sequencer-js-app` = project
