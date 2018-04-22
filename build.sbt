@@ -27,6 +27,7 @@ lazy val `esw-sequencer` = project
     `sequencer-api-jvm`,
     `sequencer-js-app`,
     `sequencer-js-client`,
+    `sequencer-js-tests`,
     `sequencer-macros`,
     `sequencer-framework`,
     `csw-messages-js`,
@@ -38,11 +39,11 @@ lazy val `sequencer-api-js` = `sequencer-api`.js
 lazy val `sequencer-api-jvm` = `sequencer-api`.jvm
 
 lazy val `sequencer-js-client` = project
-  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
+  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, ScalaJSWeb)
   .dependsOn(`sequencer-api-js`)
   .settings(
     webpackBundlingMode := BundlingMode.LibraryOnly(),
-    useYarn := true,
+    version in webpack := "4.6.0",
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     libraryDependencies ++= Seq(
       SharedLibs.`boopickle`.value,
@@ -50,6 +51,16 @@ lazy val `sequencer-js-client` = project
       Covenant.`covenant-ws`.value,
       SharedLibs.scalaTest.value % Test,
     )
+  )
+
+lazy val `sequencer-js-tests` = project
+  .enablePlugins(WebScalaJSBundlerPlugin)
+  .settings(
+    scalaJSProjects := Seq(`sequencer-js-client`),
+    pipelineStages in Assets := Seq(scalaJSPipeline),
+    isDevMode in scalaJSPipeline := true,
+//  devCommands in scalaJSPipeline ++= Seq("test", "testOnly"),
+    resolveFromWebjarsNodeModulesDir := true
   )
 
 lazy val `sequencer-js-app` = project
