@@ -1,9 +1,9 @@
-// import foo from "../../../target/web/public/test/sequencer-js-client-fastopt.js";
+import mysequencer = require("mysequencer");
 
 describe("Foo2", () => {
   it("say hello111111", () => {
       console.log("aaaaaa");
-//       console.log(foo.AA.dd());
+      console.log(mysequencer.default.AA.dd());
 //     // assert.equal(foo.hello("world"), "hello world");
   });
 });

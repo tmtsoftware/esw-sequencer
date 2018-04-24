@@ -20,6 +20,7 @@ object Libs {
   val `scalapb-json4s`       = "com.thesamet.scalapb" %% "scalapb-json4s" % "0.7.0"
   val `scalajs-library`      = "org.scala-js" %% "scalajs-library" % "0.6.22"
   val `types__mocha`         = "org.webjars.npm" % "types__mocha" % "5.2.0"
+  val `mysequencer`          = "org.webjars.npm" % "mysequencer" % "1.0.0"
 }
 
 object Covenant {
