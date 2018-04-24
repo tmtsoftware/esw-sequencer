@@ -5,6 +5,7 @@ inThisBuild(List(
   scalaVersion := "2.12.4",
   version := "0.1.0-SNAPSHOT",
   resolvers += "jitpack" at "https://jitpack.io",
+  resolvers += "custom" at "file:///Users/poorav/.coursier/cache/v1/https/repo1.maven.org/maven2",
   scalacOptions ++= Seq(
     "-encoding",
     "UTF-8",
@@ -63,7 +64,8 @@ lazy val `sequencer-js-tests` = project
     resolveFromWebjarsNodeModulesDir := true,
     libraryDependencies ++= Seq(
       Libs.`types__mocha` % Test,
-      Libs.`mysequencer` % Test
+      Libs.`trysequencer` % Test,
+      Libs.`types__trysequencer` % Test,
     )
   )
 
