@@ -43,6 +43,8 @@ lazy val `sequencer-js-client` = project
   .dependsOn(`sequencer-api-js`)
   .settings(
     webpackBundlingMode := BundlingMode.LibraryOnly(),
+    Compile / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "main",
+    Test / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "test",
     version in webpack := "4.6.0",
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     libraryDependencies ++= Seq(
