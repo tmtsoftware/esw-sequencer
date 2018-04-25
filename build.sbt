@@ -1,4 +1,5 @@
-import sbtcrossproject.{crossProject, CrossType}
+import com.typesafe.sbt.web.Import.WebKeys.webJarsNodeModulesDirectory
+import sbtcrossproject.{CrossType, crossProject}
 
 inThisBuild(List(
   organization := "org.tmt",
@@ -39,7 +40,7 @@ lazy val `sequencer-api-js` = `sequencer-api`.js
 lazy val `sequencer-api-jvm` = `sequencer-api`.jvm
 
 lazy val `sequencer-js-client` = project
-  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, ScalaJSWeb)
+  .enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
   .dependsOn(`sequencer-api-js`)
   .settings(
     webpackBundlingMode := BundlingMode.LibraryOnly(),
@@ -56,17 +57,28 @@ lazy val `sequencer-js-client` = project
   )
 
 lazy val `sequencer-js-tests` = project
-  .enablePlugins(WebScalaJSBundlerPlugin)
+  .enablePlugins(ScalaJSBundlerPlugin, WebScalaJSBundlerPlugin)
   .settings(
+    npmDependencies in Compile += "@types/mocha" -> "5.2.0",
+    npmDependencies in Compile += "mysequencer" -> "1.0.0",
+    Compile / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "main",
+    Test / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "test",
+
     scalaJSProjects := Seq(`sequencer-js-client`),
     pipelineStages in Assets := Seq(scalaJSPipeline),
     isDevMode in scalaJSPipeline := true,
     //  devCommands in scalaJSPipeline ++= Seq("test", "testOnly"),
+    webJarsNodeModulesDirectory in Assets := (Compile / npmUpdate / crossTarget).value / "node_modules",
+    webJarsNodeModulesDirectory in TestAssets := (Test / npmUpdate / crossTarget).value / "node_modules",
+
+    (Test / test) := (Test / MochaKeys.mochaExecuteTests).value,
+
+    (Test / update) := Def.task {
+      (Compile / npmUpdate).value
+      (Test / update).value
+    }.value,
+
     resolveFromWebjarsNodeModulesDir := true,
-    libraryDependencies ++= Seq(
-      Libs.`types__mocha` % Test,
-      Libs.`mysequencer` % Test
-    )
   )
 
 lazy val `sequencer-js-app` = project
