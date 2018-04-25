@@ -62,21 +62,19 @@ lazy val `sequencer-js-tests` = project
     npmDependencies in Compile += "@types/mocha" -> "5.2.0",
     npmDependencies in Compile += "mysequencer" -> "1.0.0",
     Compile / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "main",
-    Test / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "test",
 
     scalaJSProjects := Seq(`sequencer-js-client`),
     pipelineStages in Assets := Seq(scalaJSPipeline),
     isDevMode in scalaJSPipeline := true,
     //  devCommands in scalaJSPipeline ++= Seq("test", "testOnly"),
     webJarsNodeModulesDirectory in Assets := (Compile / npmUpdate / crossTarget).value / "node_modules",
-    webJarsNodeModulesDirectory in TestAssets := (Test / npmUpdate / crossTarget).value / "node_modules",
 
-    (Test / test) := (Test / MochaKeys.mochaExecuteTests).value,
+    Test / test := (Test / MochaKeys.mochaExecuteTests).value,
 
-    (Test / update) := Def.task {
+    Test / update := {
       (Compile / npmUpdate).value
       (Test / update).value
-    }.value,
+    },
 
     resolveFromWebjarsNodeModulesDir := true,
   )
@@ -85,7 +83,6 @@ lazy val `sequencer-js-app` = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
   .dependsOn(`sequencer-js-client`)
   .settings(
-    useYarn := true,
     scalaJSUseMainModuleInitializer := true,
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     libraryDependencies ++= Seq(
