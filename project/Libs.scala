@@ -18,6 +18,7 @@ object Libs {
   val `scalajs-java-time`    = dep("org.scala-js" %%% "scalajs-java-time" % "0.2.4")
   val `scalapb-runtime`      = dep("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion)
   val `scalajs-library`      = "org.scala-js" %% "scalajs-library" % "0.6.22"
+  val `sequencer-scripts`    = "org.tmt" %% "sequencer-sample-scripts" % "0.1"
   val `types__mocha`         = "org.webjars.npm" % "types__mocha" % "5.2.0"
   val `mysequencer`          = "org.webjars.npm" % "mysequencer" % "1.0.0"
   val `chameleon`            = dep("com.github.cornerman.chameleon" %%% "chameleon" % "7dacc9f")
@@ -80,9 +81,9 @@ object Circe {
 }
 
 object Sttp {
-  val `sttp-core` = dep("com.softwaremill.sttp" %%% "core" % "1.2.0-RC1")
-  val `monix-backend` = dep("com.softwaremill.sttp" %%% "monix" % "1.2.0-RC1")
+  val `sttp-core`            = dep("com.softwaremill.sttp" %%% "core" % "1.2.0-RC1")
+  val `monix-backend`        = dep("com.softwaremill.sttp" %%% "monix" % "1.2.0-RC1")
   val `okhttp-backend-monix` = "com.softwaremill.sttp" %% "okhttp-backend-monix" % "1.2.0-RC1"
-  val `akka-http-backend` = "com.softwaremill.sttp" %% "akka-http-backend" % "1.2.0-RC1"
-  val `circe` = dep("com.softwaremill.sttp" %%% "circe" % "1.2.0-RC1")
+  val `akka-http-backend`    = "com.softwaremill.sttp" %% "akka-http-backend" % "1.2.0-RC1"
+  val `circe`                = dep("com.softwaremill.sttp" %%% "circe" % "1.2.0-RC1")
 }
