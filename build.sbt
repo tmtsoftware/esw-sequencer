@@ -134,10 +134,9 @@ lazy val `sequencer-framework` = project
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,
       SharedLibs.scalaTest.value % Test,
-      Libs.`sequencer-scripts` % Provided,
       Sttp.`akka-http-backend`
     )
-    )
+  )
 
 lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure)
   .settings(

@@ -1,6 +1,6 @@
 package tmt.sequencer
 
-import org.tmt.scripts.framework.TopScriptFactory
+import ammonite.ops.Path
 import tmt.sequencer.dsl.ScriptFactory
 
 import scala.concurrent.duration.DurationDouble
@@ -36,7 +36,13 @@ object ScriptImports {
   type Id = tmt.sequencer.models.Id
   val Id = tmt.sequencer.models.Id
 
-  private[tmt] def load(): ScriptFactory = new TopScriptFactory()
+  private[tmt] def load(path: Path): ScriptFactory = synchronized {
+    ammonite.Main().runScript(path, Seq.empty) match {
+      case (x, _) => println(s"script loading status: $x")
+    }
+    val constructor = tag.runtimeClass.getConstructors.toList.head
+    constructor.newInstance().asInstanceOf[ScriptFactory]
+  }
 
   def init[T <: ScriptFactory: ClassTag]: Unit = {
     tag = classTag[T]
