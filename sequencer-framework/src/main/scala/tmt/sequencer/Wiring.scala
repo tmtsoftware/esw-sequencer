@@ -7,6 +7,7 @@ import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import ammonite.ops.{Path, RelPath}
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
+import tmt.sequencer.git.{ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.{CswServices, Script}
 import tmt.sequencer.gateway.LocationService
 import tmt.sequencer.messages.{SequencerMsg, SupervisorMsg}
@@ -22,7 +23,7 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int]) {
   import system.dispatcher
 
   lazy val scriptConfigs = new ScriptConfigs(system)
-  lazy val path: Path    = ammonite.ops.pwd / RelPath(scriptConfigs.scriptFactoryPath)
+  lazy val scriptRepo    = new ScriptRepo(scriptConfigs, locationService)
 
   lazy val sequencerRef: ActorRef[SequencerMsg] = system.spawn(SequencerBehaviour.behavior, "sequencer")
   lazy val sequencer                            = new Sequencer(sequencerRef, system)
@@ -31,7 +32,7 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int]) {
   lazy val engine          = new Engine
   lazy val cswServices     = new CswServices(sequencer, engine, locationService, sequencerId, observingMode)
 
-  lazy val script: Script = ScriptImports.load(path).get(cswServices)
+  lazy val script: Script = ScriptImports.load().get(cswServices)
 
   lazy val sequenceEditor: SequenceEditor = new SequenceEditorImpl(sequencerRef, script)
   lazy val sequenceFeeder: SequenceFeeder = new SequenceFeederImpl(sequencerRef)

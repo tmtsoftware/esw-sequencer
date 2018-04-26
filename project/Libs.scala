@@ -18,7 +18,7 @@ object Libs {
   val `scalajs-java-time`    = dep("org.scala-js" %%% "scalajs-java-time" % "0.2.4")
   val `scalapb-runtime`      = dep("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion)
   val `scalajs-library`      = "org.scala-js" %% "scalajs-library" % "0.6.22"
-  val `sequencer-scripts`    = "org.tmt" %% "sequencer-sample-scripts" % "0.1"
+  val `sequencer-scripts`    = "org.tmt" %% "sequencer-scripts" % "0.1.0-SNAPSHOT"
   val `types__mocha`         = "org.webjars.npm" % "types__mocha" % "5.2.0"
   val `mysequencer`          = "org.webjars.npm" % "mysequencer" % "1.0.0"
   val `chameleon`            = dep("com.github.cornerman.chameleon" %%% "chameleon" % "7dacc9f")
