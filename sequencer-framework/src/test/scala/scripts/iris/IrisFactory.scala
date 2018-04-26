@@ -1,9 +1,9 @@
-import $file.tcs_dark_night
+package scripts.iris
 import tmt.sequencer.ScriptImports._
 
-object TcsFactory {
+object IrisFactory {
   def get(cs: CswServices): Script = cs.observingMode match {
-    case "darknight"  => new tcs_dark_night.TcsDarkNight(cs)
+    case "darknight"  => new IrisDarkNight(cs)
     case "clearskies" => ???
   }
 }

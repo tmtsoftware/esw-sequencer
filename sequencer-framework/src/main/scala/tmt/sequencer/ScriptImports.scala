@@ -1,11 +1,14 @@
 package tmt.sequencer
 
+import java.net.URLClassLoader
+
 import ammonite.ops.Path
 import tmt.sequencer.dsl.ScriptFactory
 
 import scala.concurrent.duration.DurationDouble
+import scala.io.Source
 import scala.language.implicitConversions
-import scala.reflect.{classTag, ClassTag}
+import scala.reflect.ClassTag
 
 object ScriptImports {
 
@@ -36,15 +39,7 @@ object ScriptImports {
   type Id = tmt.sequencer.models.Id
   val Id = tmt.sequencer.models.Id
 
-  private[tmt] def load(path: Path): ScriptFactory = synchronized {
-    ammonite.Main().runScript(path, Seq.empty) match {
-      case (x, _) => println(s"script loading status: $x")
-    }
-    val constructor = tag.runtimeClass.getConstructors.toList.head
-    constructor.newInstance().asInstanceOf[ScriptFactory]
-  }
-
-  def init[T <: ScriptFactory: ClassTag]: Unit = {
-    tag = classTag[T]
+  private[tmt] def load(canonicalPath: String): ScriptFactory = {
+    getClass.getClassLoader.loadClass(canonicalPath).newInstance().asInstanceOf[ScriptFactory]
   }
 }

@@ -6,6 +6,7 @@ import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
+import tmt.sequencer.config.ScriptConfigs
 import tmt.sequencer.dsl.{CswServices, Script}
 import tmt.sequencer.gateway.LocationService
 import tmt.sequencer.messages.{SequencerMsg, SupervisorMsg}
@@ -27,7 +28,11 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int]) {
   lazy val engine          = new Engine
   lazy val cswServices     = new CswServices(sequencer, engine, locationService, sequencerId, observingMode)
 
-  lazy val script: Script = ScriptImports.load().get(cswServices)
+  lazy val scriptConfigs = new ScriptConfigs(system)
+
+  lazy val canonicalPath: String = scriptConfigs.scriptFactoryCanonicalPath
+
+  lazy val script: Script = ScriptImports.load(canonicalPath).get(cswServices)
 
   lazy val sequenceEditor: SequenceEditor = new SequenceEditorImpl(sequencerRef, script)
   lazy val sequenceFeeder: SequenceFeeder = new SequenceFeederImpl(sequencerRef)

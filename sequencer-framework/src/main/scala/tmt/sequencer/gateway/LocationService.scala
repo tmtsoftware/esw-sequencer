@@ -19,7 +19,6 @@ class LocationService {
     s"http://0.0.0.0:$port"
   }
 
-  def gitAddress(): (String, Int) = ("0.0.0.0", 4000)
 }
 
 case class AkkaLocation(name: String)

@@ -1,9 +1,9 @@
-import $file.ocs_dark_night
+package scripts.ocs
 import tmt.sequencer.ScriptImports._
 
 object OcsFactory {
   def get(cs: CswServices): Script = cs.observingMode match {
-    case "darknight"  => new ocs_dark_night.OcsDarkNight(cs)
+    case "darknight"  => new OcsDarkNight(cs)
     case "clearskies" => ???
   }
 }
