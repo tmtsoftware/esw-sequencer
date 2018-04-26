@@ -63,8 +63,7 @@ lazy val `sequencer-js-tests` = project
     npmDependencies in Compile += "mysequencer" -> "1.0.0",
     Compile / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "main",
 
-    scalaJSProjects := Seq(`sequencer-js-client`),
-    pipelineStages in Assets := Seq(scalaJSPipeline),
+    
     isDevMode in scalaJSPipeline := true,
     //  devCommands in scalaJSPipeline ++= Seq("test", "testOnly"),
     webJarsNodeModulesDirectory in Assets := (Compile / npmUpdate / crossTarget).value / "node_modules",
