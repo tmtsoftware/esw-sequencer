@@ -1,6 +1,5 @@
 package tmt.sequencer
 
-import ammonite.ops.Path
 import org.tmt.scripts.framework.TopScriptFactory
 import tmt.sequencer.dsl.ScriptFactory
 
