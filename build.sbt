@@ -117,8 +117,13 @@ lazy val `sequencer-framework` = project
       SharedLibs.`boopickle`.value,
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,
+      Libs.`scalapb-runtime`.value,
+      Libs.`scalapb-runtime`.value % "protobuf",
       SharedLibs.scalaTest.value % Test,
     ),
+    PB.targets in Compile := Seq(
+      scalapb.gen() -> (sourceManaged in Compile).value
+    )
   )
 
 lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure)
