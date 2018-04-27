@@ -121,7 +121,7 @@ lazy val `sequencer-framework` = project
     ),
   )
 
-lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Full)
+lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure)
   .settings(
     libraryDependencies ++= Seq(
       Enumeratum.`enumeratum`.value,
@@ -131,7 +131,7 @@ lazy val `csw-messages` = crossProject(JSPlatform, JVMPlatform).crossType(CrossT
       Libs.`scalapb-runtime`.value % "protobuf",
       SharedLibs.scalaTest.value % Test
     ),
-    PB.protoSources in Compile := Seq(file("csw-messages/shared/src/main/protobuf"))
+    PB.protoSources in Compile := Seq(file("csw-messages/src/main/protobuf"))
   )
   .jsSettings(
     libraryDependencies ++= Seq(
