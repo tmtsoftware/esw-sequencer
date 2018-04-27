@@ -7,5 +7,5 @@ class ScriptConfigs(actorSystem: ActorSystem) {
 
   private val config: Config = actorSystem.settings.config.getConfig("scripts")
 
-  val scriptFactoryCanonicalPath: String = config.getString("canonical-path")
+  val scriptCanonicalPath: String = config.getString("canonical-path")
 }

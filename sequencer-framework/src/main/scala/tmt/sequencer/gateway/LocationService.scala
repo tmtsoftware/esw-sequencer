@@ -8,13 +8,13 @@ class LocationService {
 
   def commandService(name: String): CommandService = CommandService(AkkaLocation(name))
 
-  def sequenceProcessorUri(sequencerId: String, observingMode: String): String = {
-    val port = (sequencerId, observingMode) match {
-      case ("iris", "darknight")  => 8000
-      case ("iris", "clearskies") => 8001
-      case ("tcs", "darknight")   => 7000
-      case ("tcs", "clearskies")  => 7001
-      case _                      => throw new RuntimeException(s"can not locate sequencer=$sequencerId and observingMode=$observingMode")
+  def sequenceProcessorUri(sequencerScriptName: String): String = {
+    val port = (sequencerScriptName) match {
+      case "IrisDarkNight"  => 8000
+      case "IrisClearSkies" => 8001
+      case "TcsDarkNight"   => 7000
+      case "TcsClearSkies"  => 7001
+      case _                => throw new RuntimeException(s"can not locate sequencer for script= $sequencerScriptName")
     }
     s"http://0.0.0.0:$port"
   }
