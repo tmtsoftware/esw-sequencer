@@ -7,7 +7,7 @@ import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.Timeout
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 import tmt.sequencer.config.ScriptConfigs
-import tmt.sequencer.dsl.{CswServices, Script}
+import tmt.sequencer.dsl.{CswServices, Script, ScriptFactory}
 import tmt.sequencer.gateway.LocationService
 import tmt.sequencer.messages.{SequencerMsg, SupervisorMsg}
 import tmt.sequencer.rpc.server._
@@ -32,7 +32,11 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int]) {
 
   lazy val canonicalPath: String = scriptConfigs.scriptFactoryCanonicalPath
 
-  lazy val script: Script = ScriptImports.load(canonicalPath).get(cswServices)
+  private[tmt] def load(canonicalPath: String): ScriptFactory = {
+    getClass.getClassLoader.loadClass(canonicalPath).newInstance().asInstanceOf[ScriptFactory]
+  }
+
+  lazy val script: Script = load(canonicalPath).get(cswServices)
 
   lazy val sequenceEditor: SequenceEditor = new SequenceEditorImpl(sequencerRef, script)
   lazy val sequenceFeeder: SequenceFeeder = new SequenceFeederImpl(sequencerRef)

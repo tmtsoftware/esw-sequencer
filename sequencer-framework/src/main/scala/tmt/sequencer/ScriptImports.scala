@@ -1,21 +1,11 @@
 package tmt.sequencer
 
-import java.net.URLClassLoader
-
-import ammonite.ops.Path
-import tmt.sequencer.dsl.ScriptFactory
-
 import scala.concurrent.duration.DurationDouble
-import scala.io.Source
 import scala.language.implicitConversions
-import scala.reflect.ClassTag
 
 object ScriptImports {
 
   implicit def toDuration(d: Double): DurationDouble = new DurationDouble(d)
-
-  @volatile
-  private var tag: ClassTag[_] = _
 
   type Done = akka.Done
   val Done = akka.Done
@@ -39,7 +29,4 @@ object ScriptImports {
   type Id = tmt.sequencer.models.Id
   val Id = tmt.sequencer.models.Id
 
-  private[tmt] def load(canonicalPath: String): ScriptFactory = {
-    getClass.getClassLoader.loadClass(canonicalPath).newInstance().asInstanceOf[ScriptFactory]
-  }
 }
