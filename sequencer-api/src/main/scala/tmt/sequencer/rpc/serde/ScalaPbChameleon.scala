@@ -6,7 +6,7 @@ import chameleon._
 
 import scala.util.{Failure, Success, Try}
 
-object ScalaPbChamelion {
+object ScalaPbChameleon {
   implicit def pbChameleon[T](implicit tm: PbFormat[T]): SerializerDeserializer[T, ByteBuffer] =
     new Serializer[T, ByteBuffer] with Deserializer[T, ByteBuffer] {
       override def serialize(arg: T): ByteBuffer = tm.write(arg)

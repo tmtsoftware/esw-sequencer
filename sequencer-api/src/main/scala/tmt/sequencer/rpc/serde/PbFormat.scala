@@ -1,8 +1,8 @@
 package tmt.sequencer.rpc.serde
 
-import com.google.protobuf.ByteString
-import scalapb.{GeneratedMessage, GeneratedMessageCompanion, Message, TypeMapper}
 import java.nio.ByteBuffer
+
+import scalapb.{GeneratedMessage, GeneratedMessageCompanion, Message, TypeMapper}
 
 trait PbFormat[T] {
   def write(x: T): ByteBuffer
@@ -13,7 +13,7 @@ object PbFormat {
   def of[T, PbType <: GeneratedMessage with Message[PbType]](implicit typeMapper: TypeMapper[PbType, T],
                                                              PbType: GeneratedMessageCompanion[PbType]): PbFormat[T] =
     new PbFormat[T] {
-      override def write(x: T): ByteBuffer = typeMapper.toBase(x).toByteString.asReadOnlyByteBuffer()
-      override def read(x: ByteBuffer): T  = typeMapper.toCustom(PbType.parseFrom(ByteString.copyFrom(x).toByteArray))
+      override def write(x: T): ByteBuffer = ByteBuffer.wrap(typeMapper.toBase(x).toByteArray)
+      override def read(x: ByteBuffer): T  = typeMapper.toCustom(PbType.parseFrom(x.array()))
     }
 }

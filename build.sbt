@@ -35,7 +35,21 @@ lazy val `esw-sequencer` = project
     `csw-messages-jvm`,
   )
 
-lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure)
+lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .settings(
+    libraryDependencies ++= Seq(
+      Libs.`chameleon`.value,
+      Libs.`scalapb-runtime`.value,
+      Libs.`scalapb-runtime`.value % "protobuf",
+      SharedLibs.scalaTest.value % Test,
+    ),
+    PB.targets in Compile := Seq(
+      scalapb.gen() -> (sourceManaged in Compile).value
+    ),
+    PB.protoSources in Compile := Seq(file("sequencer-api/src/main/protobuf"))
+  )
+
 lazy val `sequencer-api-js` = `sequencer-api`.js
 lazy val `sequencer-api-jvm` = `sequencer-api`.jvm
 
@@ -117,12 +131,7 @@ lazy val `sequencer-framework` = project
       SharedLibs.`boopickle`.value,
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,
-      Libs.`scalapb-runtime`.value,
-      Libs.`scalapb-runtime`.value % "protobuf",
       SharedLibs.scalaTest.value % Test,
-    ),
-    PB.targets in Compile := Seq(
-      scalapb.gen() -> (sourceManaged in Compile).value
     )
   )
 
