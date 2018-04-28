@@ -22,6 +22,7 @@ object Libs {
   val `types__mocha`         = "org.webjars.npm" % "types__mocha" % "5.2.0"
   val `mysequencer`          = "org.webjars.npm" % "mysequencer" % "1.0.0"
   val `chameleon`            = dep("com.github.cornerman.chameleon" %%% "chameleon" % "7dacc9f")
+  val `chimney`              = dep("io.scalaland" %% "chimney" % "0.1.10")
 }
 
 object Covenant {

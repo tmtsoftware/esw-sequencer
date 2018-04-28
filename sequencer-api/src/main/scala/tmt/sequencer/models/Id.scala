@@ -32,11 +32,11 @@ object StepStatus {
   case object Finished extends StepStatus
 }
 
-case class Id(value: String) {
+case class Id(value: String) extends AnyVal {
   override def toString: String = value
 }
 
-case class Command(id: Id, name: String, params: List[Int]) {
+case class Command(id: Id, name: String, params: Seq[Int]) {
   def withId(id: Id): Command         = copy(id = id)
   def withName(name: String): Command = copy(name = name)
 }

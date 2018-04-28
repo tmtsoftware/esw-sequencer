@@ -1,27 +1,24 @@
 syntax = "proto3";
 
-package csw_protobuf;
+package sequencer_protobuf;
 
 message PbCommandList {
     repeated PbCommand commands = 1;
 }
 
 message PbCommand {
-    PbId id = 1;
+    string id = 1;
     string name = 2;
-}
-
-message PbId {
-    string value = 1;
+    repeated int32 params = 3;
 }
 
 message PbSuccess {
-    PbId id = 1;
+    string id = 1;
     string value = 2;
 }
 
 message PbFailed {
-    PbId id = 1;
+    string id = 1;
     string value = 2;
 }
 
@@ -33,7 +30,7 @@ message PbCommandResponse {
 }
 
 message PbAggregateResponse {
-    repeated PbCommandResponse commandResponses = 1;
+    repeated PbCommandResponse childResponses = 1;
 }
 
 enum PbStepStatus {

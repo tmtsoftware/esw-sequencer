@@ -40,6 +40,7 @@ lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= Seq(
       Libs.`chameleon`.value,
+      Libs.`chimney`.value,
       Libs.`scalapb-runtime`.value,
       Libs.`scalapb-runtime`.value % "protobuf",
       SharedLibs.scalaTest.value % Test,
