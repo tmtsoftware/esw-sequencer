@@ -20,7 +20,7 @@ case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
 }
 
 object Step {
-  def from(command: Command)                     = Step(command, StepStatus.Pending, hasBreakpoint = false)
+  def from(command: Command)                    = Step(command, StepStatus.Pending, hasBreakpoint = false)
   def from(commands: List[Command]): List[Step] = commands.map(command => from(command))
 }
 
@@ -44,13 +44,13 @@ object Command {
   def root(id: Id, name: String, params: List[Int]) = Command(id, name, params)
 }
 
-case class CommandList(commands: List[Command]) {
+case class CommandList(commands: Seq[Command]) {
   def add(others: Command*): CommandList   = CommandList(commands ++ others)
   def add(other: CommandList): CommandList = CommandList(commands ++ other.commands)
 }
 object CommandList {
-  def apply(commands: Command*): CommandList = CommandList(commands.toList)
-  def empty: CommandList                     = CommandList(Nil)
+  def from(commands: Command*): CommandList = CommandList(commands.toList)
+  def empty: CommandList                    = CommandList(Nil)
 }
 
 sealed trait CommandResponse {

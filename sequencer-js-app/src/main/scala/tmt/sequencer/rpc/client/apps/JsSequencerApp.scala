@@ -7,7 +7,7 @@ object JsSequencerApp {
   def run(): Unit = {
     val client = new JsSequencerClient("http://0.0.0.0:9000")
     client.sequenceFeeder.feed(
-      CommandList(
+      CommandList.from(
         Command(Id("A"), "setup-iris", List()),
         Command(Id("B"), "setup-iris", List())
       )
