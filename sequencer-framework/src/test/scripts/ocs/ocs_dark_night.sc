@@ -1,4 +1,5 @@
 import tmt.sequencer.ScriptImports._
+import tmt.sequencer.models.CommandList
 
 class OcsDarkNight(cs: CswServices) extends Script(cs) {
 
@@ -25,18 +26,17 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
         val commandB = maybeCommandB.get
         val subCommandB1 = commandB.withId(Id(s"${commandB.id}1"))
         val subCommandB2 = commandB.withId(Id(s"${commandB.id}2"))
-
-        List(subCommandB1, subCommandB2)
-      } else List.empty
+        CommandList(subCommandB1, subCommandB2)
+      } else CommandList.empty
 
       println(s"[Ocs] Received commandA: ${commandA.name}")
       val subCommandA1 = commandA.withId(Id(s"${commandA.id}1"))
       val subCommandA2 = commandA.withId(Id(s"${commandA.id}2"))
 
-      val subCommandsA = List(subCommandA1, subCommandA2)
-      val sequence = subCommandsA ++ subCommandsB
+      val subCommandsA = CommandList(subCommandA1, subCommandA2)
+      val commandList = subCommandsA.add(subCommandsB)
 
-      val response = iris.feed(sequence).await.markSuccessful(commandA).markSuccessful(maybeCommandB)
+      val response = iris.feed(commandList).await.markSuccessful(commandA).markSuccessful(maybeCommandB)
 
       println(s"[Ocs] Received response: $response")
       response
@@ -50,15 +50,15 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
         val nextCommand = maybeCommandD.get
         val subCommandD1 = nextCommand.withName("setup-tcs").withId(Id(s"${nextCommand.id}1"))
         val subCommandD2 = nextCommand.withName("setup-tcs").withId(Id(s"${nextCommand.id}2"))
-        List(subCommandD1, subCommandD2)
+        CommandList(subCommandD1, subCommandD2)
       } else {
-        List.empty
+        CommandList.empty
       }
 
       println(s"[Ocs] Received commandC: ${commandC.name}")
       val subCommandC1 = commandC.withName("setup-iris").withId(Id(s"${commandC.id}1"))
       val subCommandC2 = commandC.withName("setup-iris").withId(Id(s"${commandC.id}2"))
-      val irisSequence = List(subCommandC1, subCommandC2)
+      val irisSequence = CommandList(subCommandC1, subCommandC2)
 
       val aggregateResponse = parAggregate(
         iris.feed(irisSequence),
@@ -76,7 +76,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
     spawn {
       println(s"[Ocs] Received command: ${command.name}")
 
-      val responseE = tcs.feed(List(command)).await.markSuccessful(command)
+      val responseE = tcs.feed(CommandList(command)).await.markSuccessful(command)
 
       println(s"[Ocs] Received response: $responseE")
       responseE

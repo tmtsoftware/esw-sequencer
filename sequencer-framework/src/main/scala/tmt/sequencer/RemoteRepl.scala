@@ -4,7 +4,7 @@ import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 import tmt.sequencer.dsl.CswServices
-import tmt.sequencer.models.{Command, Id}
+import tmt.sequencer.models.{Command, CommandList, Id}
 import tmt.sequencer.rpc.server.RpcConfigs
 
 class RemoteRepl(commandService: CswServices,
@@ -33,6 +33,7 @@ class RemoteRepl(commandService: CswServices,
       "sequenceFeeder" -> sequenceFeeder,
       "sequenceEditor" -> sequenceEditor,
       "Command"        -> Command,
+      "CommandList"    -> CommandList,
       "Id"             -> Id,
     )
   )
