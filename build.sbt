@@ -28,7 +28,7 @@ lazy val `esw-sequencer` = project
     `sequencer-api-jvm`,
     `sequencer-js-app`,
     `sequencer-js-client`,
-    `sequencer-js-tests`,
+//    `sequencer-js-tests`,
     `sequencer-macros`,
     `sequencer-framework`,
     `csw-messages-js`,
@@ -56,27 +56,27 @@ lazy val `sequencer-js-client` = project
     )
   )
 
-lazy val `sequencer-js-tests` = project
-  .enablePlugins(ScalaJSBundlerPlugin, WebScalaJSBundlerPlugin)
-  .settings(
-    npmDependencies in Compile += "@types/mocha" -> "5.2.0",
-    npmDependencies in Compile += "mysequencer" -> "1.0.0",
-    Compile / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "main",
-
-    
-    isDevMode in scalaJSPipeline := true,
-    //  devCommands in scalaJSPipeline ++= Seq("test", "testOnly"),
-    webJarsNodeModulesDirectory in Assets := (Compile / npmUpdate / crossTarget).value / "node_modules",
-
-    Test / test := (Test / MochaKeys.mochaExecuteTests).value,
-
-    Test / update := {
-      (Compile / npmUpdate).value
-      (Test / update).value
-    },
-
-    resolveFromWebjarsNodeModulesDir := true,
-  )
+//lazy val `sequencer-js-tests` = project
+//  .enablePlugins(ScalaJSBundlerPlugin, WebScalaJSBundlerPlugin)
+//  .settings(
+//    npmDependencies in Compile += "@types/mocha" -> "5.2.0",
+//    npmDependencies in Compile += "mysequencer" -> "1.0.0",
+//    Compile / npmUpdate / crossTarget := baseDirectory.value / "bundler" / "main",
+//
+//
+//    isDevMode in scalaJSPipeline := true,
+//    //  devCommands in scalaJSPipeline ++= Seq("test", "testOnly"),
+//    webJarsNodeModulesDirectory in Assets := (Compile / npmUpdate / crossTarget).value / "node_modules",
+//
+//    Test / test := (Test / MochaKeys.mochaExecuteTests).value,
+//
+//    Test / update := {
+//      (Compile / npmUpdate).value
+//      (Test / update).value
+//    },
+//
+//    resolveFromWebjarsNodeModulesDir := true,
+//  )
 
 lazy val `sequencer-js-app` = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
