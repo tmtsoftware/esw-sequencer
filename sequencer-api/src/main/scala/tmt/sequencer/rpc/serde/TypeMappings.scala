@@ -46,14 +46,8 @@ object TypeMappings {
   ///////////////////
   implicit val commandsFormat: PbFormat[CommandList]      = PbFormat.of[CommandList, PbCommandList]
   implicit val resposeFormat: PbFormat[AggregateResponse] = PbFormat.of[AggregateResponse, PbAggregateResponse]
-  implicit val ee1: PbFormat[String]                      = PbFormat.of[String, com.google.protobuf.wrappers.StringValue]
-  implicit val ee3: PbFormat[Int]                         = PbFormat.of[Int, com.google.protobuf.wrappers.Int32Value]
-  implicit val ee4: PbFormat[Double]                      = PbFormat.of[Double, com.google.protobuf.wrappers.DoubleValue]
-  implicit val ee5: PbFormat[Float]                       = PbFormat.of[Float, com.google.protobuf.wrappers.FloatValue]
-  implicit val ee6: PbFormat[Boolean]                     = PbFormat.of[Boolean, com.google.protobuf.wrappers.BoolValue]
-  implicit val ee7: PbFormat[ByteBuffer]                  = PbFormat.of[ByteBuffer, com.google.protobuf.wrappers.BytesValue]
 
-  implicit def pbChameleon[T](implicit tm: PbFormat[T]): SerializerDeserializer[T, ByteBuffer] =
+  def pbChameleon[T](implicit tm: PbFormat[T]): SerializerDeserializer[T, ByteBuffer] =
     new Serializer[T, ByteBuffer] with Deserializer[T, ByteBuffer] {
       override def serialize(arg: T): ByteBuffer = tm.write(arg)
       override def deserialize(arg: ByteBuffer): Either[Throwable, T] = Try(tm.read(arg)) match {
@@ -62,8 +56,8 @@ object TypeMappings {
       }
     }
 
-//  implicit val commandListSerde: SerializerDeserializer[CommandList, ByteBuffer]    = pbChameleon[CommandList]
-//  implicit val responseSerde: SerializerDeserializer[AggregateResponse, ByteBuffer] = pbChameleon[AggregateResponse]
+  implicit val commandListSerde: SerializerDeserializer[CommandList, ByteBuffer]    = pbChameleon[CommandList]
+  implicit val responseSerde: SerializerDeserializer[AggregateResponse, ByteBuffer] = pbChameleon[AggregateResponse]
 }
 
 object DD {
@@ -82,6 +76,10 @@ object DD {
       response.transformInto[PbAggregateResponse].transformInto[AggregateResponse]
     )
 
-    val value = implicitly[SerializerDeserializer[ByteBuffer, ByteBuffer]]
+    val serde1 = implicitly[SerializerDeserializer[AggregateResponse, ByteBuffer]]
+    println(serde1.deserialize(serde1.serialize(response)))
+
+    val serde2 = implicitly[SerializerDeserializer[CommandList, ByteBuffer]]
+    println(serde2.deserialize(serde2.serialize(commandList)))
   }
 }
