@@ -14,10 +14,12 @@ import scala.async.Async.{async, await}
 import scala.concurrent.duration.{DurationDouble, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
 
-class CswServices(sequencer: Sequencer, engine: Engine, locationService: LocationService, val sequencerScriptName: String)(
-    implicit mat: Materializer,
-    system: ActorSystem
-) {
+class CswServices(
+    sequencer: Sequencer,
+    engine: Engine,
+    locationService: LocationService,
+    observingMode: String
+)(implicit mat: Materializer, system: ActorSystem) {
 
   val commandHandlerBuilder: FunctionBuilder[Command, Future[AggregateResponse]] = new FunctionBuilder
 
@@ -25,8 +27,8 @@ class CswServices(sequencer: Sequencer, engine: Engine, locationService: Locatio
     commandHandlerBuilder.addHandler(_.name == name)(handler)
   }
 
-  def sequenceProcessor(sequencerScriptName: String): SequenceFeeder = {
-    val uri = locationService.sequenceProcessorUri(sequencerScriptName)
+  def sequenceProcessor(sequencerId: String): SequenceFeeder = {
+    val uri = locationService.sequenceProcessorUri(sequencerId, observingMode)
     new JvmSequencerClient(uri).sequenceFeeder
   }
 
