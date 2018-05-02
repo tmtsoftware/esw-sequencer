@@ -15,7 +15,8 @@ object SequencerApp {
       scriptRepo.cloneRepo()
     }
     engine.start(sequencer, script)
-    rpcServer.start()
+//    rpcServer.start()
+    rpcServer2.start()
     remoteRepl.server().start()
   }
 }

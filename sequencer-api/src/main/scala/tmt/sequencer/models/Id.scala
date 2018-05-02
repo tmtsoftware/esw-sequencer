@@ -1,6 +1,7 @@
 package tmt.sequencer.models
 
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
+import play.api.libs.json.{Json, OFormat}
 
 case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
   def id: Id              = command.id
@@ -74,3 +75,11 @@ case class AggregateResponse(childResponses: Set[CommandResponse]) {
 }
 
 object AggregateResponse extends AggregateResponse(Set.empty)
+
+case class Msg(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
+object Msg {
+  implicit val format: OFormat[Msg] = Json.format[Msg]
+}

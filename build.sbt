@@ -43,6 +43,7 @@ lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
       Libs.`chimney`.value,
       Libs.`scalapb-runtime`.value,
       Libs.`scalapb-runtime`.value % "protobuf",
+      Libs.`play-json`.value,
       SharedLibs.scalaTest.value % Test,
     ),
     PB.targets in Compile := Seq(
@@ -129,6 +130,9 @@ lazy val `sequencer-framework` = project
       Libs.`jgit`,
       Libs.`enumeratum`,
       Libs.`scala-async`,
+      Libs.`akka-http-cors`,
+      Akka.`akka-http`,
+      Akka.`akka-http-play-json`,
       SharedLibs.`boopickle`.value,
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,

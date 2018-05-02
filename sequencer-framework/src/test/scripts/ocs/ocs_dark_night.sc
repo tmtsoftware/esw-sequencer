@@ -26,14 +26,14 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
         val commandB = maybeCommandB.get
         val subCommandB1 = commandB.withId(Id(s"${commandB.id}1"))
         val subCommandB2 = commandB.withId(Id(s"${commandB.id}2"))
-        CommandList(subCommandB1, subCommandB2)
+        CommandList(Seq(subCommandB1, subCommandB2))
       } else CommandList.empty
 
       println(s"[Ocs] Received commandA: ${commandA.name}")
       val subCommandA1 = commandA.withId(Id(s"${commandA.id}1"))
       val subCommandA2 = commandA.withId(Id(s"${commandA.id}2"))
 
-      val subCommandsA = CommandList(subCommandA1, subCommandA2)
+      val subCommandsA = CommandList(Seq(subCommandA1, subCommandA2))
       val commandList = subCommandsA.add(subCommandsB)
 
       val response = iris.feed(commandList).await.markSuccessful(commandA).markSuccessful(maybeCommandB)
@@ -50,7 +50,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
         val nextCommand = maybeCommandD.get
         val subCommandD1 = nextCommand.withName("setup-tcs").withId(Id(s"${nextCommand.id}1"))
         val subCommandD2 = nextCommand.withName("setup-tcs").withId(Id(s"${nextCommand.id}2"))
-        CommandList(subCommandD1, subCommandD2)
+        CommandList(Seq(subCommandD1, subCommandD2))
       } else {
         CommandList.empty
       }
@@ -58,7 +58,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
       println(s"[Ocs] Received commandC: ${commandC.name}")
       val subCommandC1 = commandC.withName("setup-iris").withId(Id(s"${commandC.id}1"))
       val subCommandC2 = commandC.withName("setup-iris").withId(Id(s"${commandC.id}2"))
-      val irisSequence = CommandList(subCommandC1, subCommandC2)
+      val irisSequence = CommandList(Seq(subCommandC1, subCommandC2))
 
       val aggregateResponse = parAggregate(
         iris.feed(irisSequence),
@@ -76,7 +76,7 @@ class OcsDarkNight(cs: CswServices) extends Script(cs) {
     spawn {
       println(s"[Ocs] Received command: ${command.name}")
 
-      val responseE = tcs.feed(CommandList(command)).await.markSuccessful(command)
+      val responseE = tcs.feed(CommandList(Seq(command))).await.markSuccessful(command)
 
       println(s"[Ocs] Received response: $responseE")
       responseE
