@@ -13,7 +13,7 @@ message PbCommand {
 }
 
 message PbSuccess {
-    string id = 1;
+    string id = 1 ;
     string value = 2;
 }
 
@@ -47,4 +47,9 @@ message PbStep {
 
 message PbSequence {
     repeated PbStep steps = 1;
+}
+
+//try-out proto-json support
+message PbMyJson {
+    string jsonValue = 1;
 }

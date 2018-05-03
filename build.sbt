@@ -43,6 +43,7 @@ lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
       Libs.`chimney`.value,
       Libs.`scalapb-runtime`.value,
       Libs.`scalapb-runtime`.value % "protobuf",
+      Libs.`scalapb-json4s`,
       Libs.`play-json`.value,
       SharedLibs.scalaTest.value % Test,
     ),

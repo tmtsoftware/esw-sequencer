@@ -4,6 +4,7 @@ import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.{ActorSystem, Scheduler}
 import akka.util.Timeout
+import sequencer_protobuf.command.PbMyJson
 import tmt.sequencer.api.SequenceFeeder
 import tmt.sequencer.messages.SequencerMsg
 import tmt.sequencer.messages.SequencerMsg.ProcessSequence
@@ -24,8 +25,15 @@ class SequenceFeederImpl(sequencer: ActorRef[SequencerMsg])(implicit system: Act
   }
 
   override def sayHello(msg: Msg): Future[Msg] = {
-    Future{
+    Future {
       msg
+    }
+  }
+
+  override def sayHello2(myJson: PbMyJson): Future[PbMyJson] = {
+    println("inside sayHello2" + myJson)
+    Future {
+      myJson
     }
   }
 }
