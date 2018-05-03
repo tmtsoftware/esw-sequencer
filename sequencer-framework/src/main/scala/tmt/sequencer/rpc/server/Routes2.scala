@@ -19,7 +19,7 @@ class Routes2(sequenceFeeder: SequenceFeeder)(implicit ec: ExecutionContext) {
             complete(response)
           }
         }
-      }
+      } ~
       path("sayhello2") {
         //hardcoded json string
         val proto: PbMyJson = JsonFormat.fromJsonString[PbMyJson]("""{"jsonValue": "poorva"}""")
