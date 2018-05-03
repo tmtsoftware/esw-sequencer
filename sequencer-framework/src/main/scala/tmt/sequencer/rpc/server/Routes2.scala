@@ -14,7 +14,7 @@ class Routes2(sequenceFeeder: SequenceFeeder)(implicit ec: ExecutionContext) {
         entity(as[Msg]) { msg =>
           val response: Future[Msg] = sequenceFeeder.sayHello(msg)
           onComplete(response) { done =>
-            complete("called sayhello")
+            complete(response)
           }
         }
       }
