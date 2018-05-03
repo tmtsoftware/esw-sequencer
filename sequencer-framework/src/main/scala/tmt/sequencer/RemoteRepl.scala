@@ -1,14 +1,19 @@
 package tmt.sequencer
 
+import akka.actor.typed.ActorRef
 import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 import tmt.sequencer.dsl.CswServices
+import tmt.sequencer.messages.SequencerMsg.Pause
+import tmt.sequencer.messages.SupervisorMsg
+import tmt.sequencer.messages.SupervisorMsg.ControlCommand
 import tmt.sequencer.models.{Command, CommandList, Id}
 import tmt.sequencer.rpc.server.RpcConfigs
 
 class RemoteRepl(commandService: CswServices,
                  sequencer: Sequencer,
+                 supervisor: ActorRef[SupervisorMsg],
                  sequenceFeeder: SequenceFeeder,
                  sequenceEditor: SequenceEditor,
                  rpcConfigs: RpcConfigs) {
@@ -34,7 +39,10 @@ class RemoteRepl(commandService: CswServices,
       "sequenceEditor" -> sequenceEditor,
       "Command"        -> Command,
       "CommandList"    -> CommandList,
+      "supervisor"     -> supervisor,
       "Id"             -> Id,
+      "ControlCommand" -> ControlCommand,
+      "Pause"          -> Pause
     )
   )
 }

@@ -1,9 +1,16 @@
 package tmt.sequencer.messages
 
+import akka.Done
 import akka.actor.typed.ActorRef
 import tmt.sequencer.models._
 
 import scala.util.Try
+
+sealed trait SupervisorMsg
+
+object SupervisorMsg {
+  case class ControlCommand(name: String, replyTo: ActorRef[Try[Done]]) extends SupervisorMsg
+}
 
 sealed trait SequencerMsg
 
@@ -12,7 +19,7 @@ object SequencerMsg {
   case class MaybeNext(replyTo: ActorRef[Option[Step]])   extends SequencerMsg
   case class Update(aggregateResponse: AggregateResponse) extends SequencerMsg
 
-  sealed trait ExternalSequencerMsg extends SequencerMsg
+  sealed trait ExternalSequencerMsg extends SequencerMsg with SupervisorMsg
 
   case class ProcessSequence(commands: List[Command], replyTo: ActorRef[Try[AggregateResponse]]) extends ExternalSequencerMsg
   case class Add(commands: List[Command])                                                        extends ExternalSequencerMsg

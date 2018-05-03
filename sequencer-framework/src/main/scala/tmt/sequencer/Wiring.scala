@@ -10,7 +10,7 @@ import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 import tmt.sequencer.git.{ScriptConfigs, ScriptRepo}
 import tmt.sequencer.dsl.{CswServices, Script}
 import tmt.sequencer.gateway.LocationService
-import tmt.sequencer.messages.SequencerMsg
+import tmt.sequencer.messages.{SequencerMsg, SupervisorMsg}
 import tmt.sequencer.rpc.server._
 
 import scala.concurrent.duration.DurationDouble
@@ -44,5 +44,6 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int], isPr
   lazy val routes2    = new Routes2(sequenceFeeder)
   lazy val rpcServer2 = new RpcServer2(rpcConfigs, routes2)
 
-  lazy val remoteRepl = new RemoteRepl(cswServices, sequencer, sequenceFeeder, sequenceEditor, rpcConfigs)
+  lazy val supervisorRef: ActorRef[SupervisorMsg] = system.spawn(SupervisorBehavior.behavior(sequencerRef, script), "supervisor")
+  lazy val remoteRepl                             = new RemoteRepl(cswServices, sequencer, supervisorRef, sequenceFeeder, sequenceEditor, rpcConfigs)
 }
