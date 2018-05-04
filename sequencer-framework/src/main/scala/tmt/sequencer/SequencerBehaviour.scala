@@ -40,6 +40,7 @@ object SequencerBehaviour {
       sequence = sequence.updateStatus(_aggregateResponse.ids, StepStatus.Finished)
       aggregateResponse = aggregateResponse.add(_aggregateResponse)
       if (sequence.isFinished) {
+        println("Sequence is finished")
         responseRefOpt.foreach(x => x ! Success(aggregateResponse))
         sequence = Sequence.empty
         aggregateResponse = AggregateResponse

@@ -21,6 +21,7 @@ class SequenceFeederImpl(sequencer: ActorRef[SequencerMsg])(implicit system: Act
   import system.dispatcher
 
   override def feed(commandList: CommandList): Future[AggregateResponse] = {
+    println("inside feed with" + commandList)
     val future: Future[Try[AggregateResponse]] = sequencer ? (x => ProcessSequence(commandList.commands.toList, x))
     future.map(_.get)
   }
