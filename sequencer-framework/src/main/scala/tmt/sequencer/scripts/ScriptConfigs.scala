@@ -16,6 +16,6 @@ class ScriptConfigs(sequencerId: String, oMode: String)(implicit actorSystem: Ac
       config.getString(s"scripts.$sequencerId.$oMode.scriptClass")
     ).toOption
       .getOrElse(
-        throw new RuntimeException(s"Please provide script class for ${sequencerId} in configuration settings")
+        throw new RuntimeException(s"Please provide script class for $sequencerId in configuration settings")
       )
 }
