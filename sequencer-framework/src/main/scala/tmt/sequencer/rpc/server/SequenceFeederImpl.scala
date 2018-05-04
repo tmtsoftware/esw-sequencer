@@ -17,6 +17,7 @@ import scala.util.Try
 class SequenceFeederImpl(sequencer: ActorRef[SequencerMsg])(implicit system: ActorSystem) extends SequenceFeeder {
   private implicit val timeout: Timeout     = Timeout(10.hour)
   private implicit val scheduler: Scheduler = system.scheduler
+
   import system.dispatcher
 
   override def feed(commandList: CommandList): Future[AggregateResponse] = {
@@ -24,14 +25,15 @@ class SequenceFeederImpl(sequencer: ActorRef[SequencerMsg])(implicit system: Act
     future.map(_.get)
   }
 
-  override def sayHello(msg: Msg): Future[Msg] = {
+  override def testJsonApi(msg: Msg): Future[Msg] = {
+    println("inside testJsonApi" + msg)
     Future {
       msg
     }
   }
 
-  override def sayHello2(myJson: PbMyJson): Future[PbMyJson] = {
-    println("inside sayHello2" + myJson)
+  override def testPbWithJsonApi(myJson: PbMyJson): Future[PbMyJson] = {
+    println("inside testPbWithJsonApi" + myJson)
     Future {
       myJson
     }

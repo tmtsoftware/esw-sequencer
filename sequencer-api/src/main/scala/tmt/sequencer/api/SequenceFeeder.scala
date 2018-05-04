@@ -7,6 +7,6 @@ import scala.concurrent.Future
 
 trait SequenceFeeder {
   def feed(commandList: CommandList): Future[AggregateResponse]
-  def sayHello(msg: Msg): Future[Msg]
-  def sayHello2(myJson: PbMyJson): Future[PbMyJson]
+  def testJsonApi(msg: Msg): Future[Msg]
+  def testPbWithJsonApi(myJson: PbMyJson): Future[PbMyJson]
 }
