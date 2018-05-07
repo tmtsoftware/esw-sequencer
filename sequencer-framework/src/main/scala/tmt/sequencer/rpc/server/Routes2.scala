@@ -15,10 +15,7 @@ class Routes2(sequenceFeeder: SequenceFeeder)(implicit ec: ExecutionContext) {
     post {
       path("json-route") {
         entity(as[Msg]) { msg =>
-          val response: Future[Msg] = sequenceFeeder.testJsonApi(msg)
-          onComplete(response) { done =>
-            complete(response)
-          }
+          complete(sequenceFeeder.testJsonApi(msg))
         }
       } ~
       path("pbjson-route") {
@@ -37,29 +34,13 @@ class Routes2(sequenceFeeder: SequenceFeeder)(implicit ec: ExecutionContext) {
         val msg             = proto.transformInto[Msg]
         println("**********" + msg.toString)
         val response: Future[Msg] = sequenceFeeder.testJsonApi(msg)
-        onComplete(response) { done =>
-          complete(response)
-        }
+        complete(sequenceFeeder.testJsonApi(msg))
 
       } ~
       path("feed") {
-        //hardcoded json string
-        val proto: PbCommandList = JsonFormat.fromJsonString[PbCommandList]("""{
-                                                                        "commands": [
-                                                                          {
-                                                                            "id": "1",
-                                                                            "name": "setup-iris",
-                                                                            "params": [1,2]
-                                                                          }
-                                                                          ]
-                                                                      }""".stripMargin)
-        val commandList          = proto.transformInto[CommandList]
-        println("**********" + commandList.toString)
-        val response: Future[AggregateResponse] = sequenceFeeder.feed(commandList)
-        onComplete(response) { done =>
-          complete("complete")
+        entity(as[CommandList]) { commandList =>
+          complete(sequenceFeeder.feed(commandList))
         }
-
       }
     }
 }
