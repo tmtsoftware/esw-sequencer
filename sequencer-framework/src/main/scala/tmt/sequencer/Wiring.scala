@@ -15,7 +15,7 @@ import tmt.sequencer.rpc.server.spike.Streaming2Impl
 
 import scala.concurrent.duration.DurationDouble
 
-class Wiring(sequencerId: String, oMode: String, port: Option[Int]) {
+class Wiring(sequencerId: String, observingMode: String, port: Option[Int] = None) {
   implicit lazy val timeout: Timeout           = Timeout(5.seconds)
   lazy implicit val system: ActorSystem        = ActorSystem("test")
   lazy implicit val materializer: Materializer = ActorMaterializer()
@@ -27,9 +27,9 @@ class Wiring(sequencerId: String, oMode: String, port: Option[Int]) {
   lazy val locationService = new LocationService
   lazy val engine          = new Engine
 
-  lazy val scriptConfigs: ScriptConfigs = new ScriptConfigs(sequencerId, oMode)
+  lazy val scriptConfigs: ScriptConfigs = new ScriptConfigs(sequencerId, observingMode)
 
-  lazy val cswServices: CswServices = new CswServices(sequencer, engine, locationService, oMode)
+  lazy val cswServices: CswServices = new CswServices(sequencer, engine, locationService, observingMode)
 
   lazy val scriptLoader: ScriptLoader = new ScriptLoader(scriptConfigs, cswServices)
 
