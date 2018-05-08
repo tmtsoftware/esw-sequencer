@@ -23,6 +23,7 @@ object Libs {
   val `mysequencer`          = "org.webjars.npm" % "mysequencer" % "1.0.0"
   val `chameleon`            = dep("com.github.cornerman.chameleon" %%% "chameleon" % "7dacc9f")
   val `chimney`              = dep("io.scalaland" %% "chimney" % "0.1.10")
+  val `upickle`              = dep("com.lihaoyi" %% "upickle" % "0.6.0")
 }
 
 object Covenant {
@@ -35,11 +36,11 @@ object Covenant {
 object Akka {
   val Version = "2.5.11"
 
-  val `akka-stream`         = "com.typesafe.akka" %% "akka-stream"         % Version
-  val `akka-typed`          = "com.typesafe.akka" %% "akka-actor-typed"    % Version
-  val `akka-http`           = "com.typesafe.akka" %% "akka-http"           % "10.1.1"
-  val `akka-typed-testkit`  = "com.typesafe.akka" %% "akka-testkit-typed"  % Version
-  val `akka-http-play-json` = "de.heikoseeberger" %% "akka-http-play-json" % "1.20.0" //Apache 2.0
+  val `akka-stream`        = "com.typesafe.akka" %% "akka-stream"        % Version
+  val `akka-typed`         = "com.typesafe.akka" %% "akka-actor-typed"   % Version
+  val `akka-http`          = "com.typesafe.akka" %% "akka-http"          % "10.1.1"
+  val `akka-typed-testkit` = "com.typesafe.akka" %% "akka-testkit-typed" % Version
+  val `akka-http-upickle`  = "de.heikoseeberger" %% "akka-http-upickle"  % "1.20.1" //Apache 2.0
 }
 
 object AkkaJs {

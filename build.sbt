@@ -39,18 +39,9 @@ lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .settings(
     libraryDependencies ++= Seq(
-      Libs.`chameleon`.value,
-      Libs.`chimney`.value,
-      Libs.`scalapb-runtime`.value,
-      Libs.`scalapb-runtime`.value % "protobuf",
-      Libs.`scalapb-json4s`,
-      Libs.`play-json`.value,
+      Libs.`upickle`.value,
       SharedLibs.scalaTest.value % Test,
-    ),
-    PB.targets in Compile := Seq(
-      scalapb.gen() -> (sourceManaged in Compile).value
-    ),
-    PB.protoSources in Compile := Seq(file("sequencer-api/src/main/protobuf"))
+    )
   )
 
 lazy val `sequencer-api-js` = `sequencer-api`.js
@@ -119,6 +110,7 @@ lazy val `sequencer-framework` = project
   .dependsOn(`sequencer-macros`, `sequencer-api-jvm`)
   .settings(
     name := "sequencer-framework",
+    dependencyOverrides += Libs.`upickle`.value,
     libraryDependencies ++= Seq(
       Libs.`scala-reflect`,
       Libs.`akka-http-cors`,
@@ -133,7 +125,7 @@ lazy val `sequencer-framework` = project
       Libs.`scala-async`,
       Libs.`akka-http-cors`,
       Akka.`akka-http`,
-      Akka.`akka-http-play-json`,
+      Akka.`akka-http-upickle`,
       SharedLibs.`boopickle`.value,
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,

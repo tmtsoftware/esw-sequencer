@@ -1,6 +1,6 @@
 package tmt.sequencer.models
 
-import play.api.libs.json._
+import upickle.default.{ReadWriter => RW, macroRW}
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
 
 case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
@@ -38,7 +38,7 @@ case class Id(value: String) extends AnyVal {
 }
 
 object Id {
-  implicit val format: OFormat[Id] = Json.format[Id]
+  implicit def rw: RW[Id] = macroRW
 }
 
 case class Command(id: Id, name: String, params: Seq[Int]) {
@@ -48,17 +48,18 @@ case class Command(id: Id, name: String, params: Seq[Int]) {
 
 object Command {
   def root(id: Id, name: String, params: List[Int]) = Command(id, name, params)
-  implicit val format: OFormat[Command]             = Json.format[Command]
+  implicit def rw: RW[Command]                      = macroRW
 }
 
 case class CommandList(commands: Seq[Command]) {
   def add(others: Command*): CommandList   = CommandList(commands ++ others)
   def add(other: CommandList): CommandList = CommandList(commands ++ other.commands)
 }
+
 object CommandList {
   def from(commands: Command*): CommandList = CommandList(commands.toList)
   def empty: CommandList                    = CommandList(Nil)
-  implicit val format: OFormat[CommandList] = Json.format[CommandList]
+  implicit def rw: RW[CommandList]          = macroRW
 }
 
 sealed trait CommandResponse {
@@ -74,33 +75,15 @@ object CommandResponse {
   case class Success(id: Id, value: String, typeName: String = Success.getClass.getSimpleName) extends CommandResponse
   case class Failed(id: Id, value: String, typeName: String = Failed.getClass.getSimpleName)   extends CommandResponse
 
-  implicit val format: Format[CommandResponse] = new Format[CommandResponse] {
-    override def writes(response: CommandResponse): JsValue = {
-      JsObject(
-        Seq(
-          "type"  → JsString(response.typeName),
-          "id"    → Id.format.writes(response.id),
-          "value" → JsString(response.value)
-        )
-      )
-    }
-
-    override def reads(json: JsValue): JsResult[CommandResponse] = {
-      json match {
-        case JsObject(fields) =>
-          (fields("type"), fields("id"), fields("value")) match {
-            case (JsString(typeName), id, JsString(value)) =>
-              typeName match {
-                case `successType` =>
-                  Success(id.as[Id], value, typeName).asInstanceOf[JsResult[CommandResponse]]
-                case `failedType` =>
-                  Success(id.as[Id], value, typeName).asInstanceOf[JsResult[CommandResponse]]
-              }
-          }
-      }
-    }
+  object Success {
+    implicit def rw: RW[Success] = macroRW
   }
 
+  object Failed {
+    implicit def rw: RW[Failed] = macroRW
+  }
+
+  implicit def rw: RW[CommandResponse] = RW.merge(Success.rw, Failed.rw)
 }
 case class AggregateResponse(childResponses: Set[CommandResponse]) {
   def ids: Set[Id]                                                 = childResponses.map(_.id)
@@ -114,7 +97,7 @@ case class AggregateResponse(childResponses: Set[CommandResponse]) {
 }
 
 object AggregateResponse extends AggregateResponse(Set.empty) {
-  implicit val format: OFormat[AggregateResponse] = Json.format[AggregateResponse]
+  implicit def rw: RW[AggregateResponse] = macroRW
 }
 
 case class Msg(value: String) extends AnyVal {
@@ -122,5 +105,5 @@ case class Msg(value: String) extends AnyVal {
 }
 
 object Msg {
-  implicit val format: OFormat[Msg] = Json.format[Msg]
+  implicit def rw: RW[Msg] = macroRW
 }
