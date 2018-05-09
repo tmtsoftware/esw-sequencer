@@ -28,6 +28,8 @@ lazy val `esw-sequencer` = project
     `sequencer-api-jvm`,
     `sequencer-js-app`,
     `sequencer-js-client`,
+    `sequencer-client-js`,
+    `sequencer-client-jvm`,
 //    `sequencer-js-tests`,
     `sequencer-macros`,
     `sequencer-framework`,
@@ -46,6 +48,18 @@ lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
 
 lazy val `sequencer-api-js` = `sequencer-api`.js
 lazy val `sequencer-api-jvm` = `sequencer-api`.jvm
+
+lazy val `sequencer-client` = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .dependsOn(`sequencer-api`)
+  .settings(
+    libraryDependencies ++= Seq(
+      Libs.`roshttp`.value
+    )
+  )
+
+lazy val `sequencer-client-js` = `sequencer-client`.js
+lazy val `sequencer-client-jvm` = `sequencer-client`.jvm
 
 lazy val `sequencer-js-client` = project
   .enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
@@ -88,7 +102,7 @@ lazy val `sequencer-js-client` = project
 
 lazy val `sequencer-js-app` = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
-  .dependsOn(`sequencer-js-client`)
+  .dependsOn(`sequencer-client-js`)
   .settings(
     scalaJSUseMainModuleInitializer := true,
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",

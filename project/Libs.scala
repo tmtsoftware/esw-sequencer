@@ -17,13 +17,12 @@ object Libs {
   val `play-json`            = dep("com.typesafe.play" %%% "play-json" % "2.6.9") //Apache 2.0
   val `scalajs-java-time`    = dep("org.scala-js" %%% "scalajs-java-time" % "0.2.4")
   val `scalapb-runtime`      = dep("com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion)
-  val `scalapb-json4s`       = "com.thesamet.scalapb" %% "scalapb-json4s" % "0.7.0"
   val `scalajs-library`      = "org.scala-js" %% "scalajs-library" % "0.6.22"
   val `types__mocha`         = "org.webjars.npm" % "types__mocha" % "5.2.0"
   val `mysequencer`          = "org.webjars.npm" % "mysequencer" % "1.0.0"
   val `chameleon`            = dep("com.github.cornerman.chameleon" %%% "chameleon" % "7dacc9f")
-  val `chimney`              = dep("io.scalaland" %% "chimney" % "0.1.10")
-  val `upickle`              = dep("com.lihaoyi" %% "upickle" % "0.6.0")
+  val `upickle`              = dep("com.lihaoyi" %%% "upickle" % "0.6.0")
+  val `roshttp`              = dep("fr.hmil" %%% "roshttp" % "2.1.0")
 }
 
 object Covenant {
