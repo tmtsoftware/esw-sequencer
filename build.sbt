@@ -41,7 +41,9 @@ lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .settings(
     libraryDependencies ++= Seq(
-      Libs.`upickle`.value,
+      Circe.`circe-core`.value,
+      Circe.`circe-generic`.value,
+      Circe.`circe-parser`.value,
       SharedLibs.scalaTest.value % Test,
     )
   )

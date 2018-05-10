@@ -1,6 +1,8 @@
 package tmt.sequencer.models
 
-import upickle.default.{ReadWriter => RW, macroRW}
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
 
 case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
@@ -37,10 +39,6 @@ case class Id(value: String) extends AnyVal {
   override def toString: String = value
 }
 
-object Id {
-  implicit def rw: RW[Id] = macroRW
-}
-
 case class Command(id: Id, name: String, params: Seq[Int]) {
   def withId(id: Id): Command         = copy(id = id)
   def withName(name: String): Command = copy(name = name)
@@ -48,7 +46,6 @@ case class Command(id: Id, name: String, params: Seq[Int]) {
 
 object Command {
   def root(id: Id, name: String, params: List[Int]) = Command(id, name, params)
-  implicit def rw: RW[Command]                      = macroRW
 }
 
 case class CommandList(commands: Seq[Command]) {
@@ -59,7 +56,6 @@ case class CommandList(commands: Seq[Command]) {
 object CommandList {
   def from(commands: Command*): CommandList = CommandList(commands.toList)
   def empty: CommandList                    = CommandList(Nil)
-  implicit def rw: RW[CommandList]          = macroRW
 }
 
 sealed trait CommandResponse {
@@ -74,17 +70,8 @@ object CommandResponse {
 
   case class Success(id: Id, value: String, typeName: String = Success.getClass.getSimpleName) extends CommandResponse
   case class Failed(id: Id, value: String, typeName: String = Failed.getClass.getSimpleName)   extends CommandResponse
-
-  object Success {
-    implicit def rw: RW[Success] = macroRW
-  }
-
-  object Failed {
-    implicit def rw: RW[Failed] = macroRW
-  }
-
-  implicit def rw: RW[CommandResponse] = RW.merge(Success.rw, Failed.rw)
 }
+
 case class AggregateResponse(childResponses: Set[CommandResponse]) {
   def ids: Set[Id]                                                 = childResponses.map(_.id)
   def add(commandResponses: CommandResponse*): AggregateResponse   = copy(childResponses ++ commandResponses.toSet)
@@ -94,16 +81,4 @@ case class AggregateResponse(childResponses: Set[CommandResponse]) {
     commands.map(command => CommandResponse.Success(id = command.id, value = "all children are done")).toSet[CommandResponse]
   }
   def markSuccessful(maybeCommand: Option[Command]): AggregateResponse = markSuccessful(maybeCommand.toList: _*)
-}
-
-object AggregateResponse extends AggregateResponse(Set.empty) {
-  implicit def rw: RW[AggregateResponse] = macroRW
-}
-
-case class Msg(value: String) extends AnyVal {
-  override def toString: String = value
-}
-
-object Msg {
-  implicit def rw: RW[Msg] = macroRW
 }

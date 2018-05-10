@@ -72,3 +72,11 @@ object Chill {
   val `chill-bijection` = "com.twitter" %% "chill-bijection" % Version //Apache License 2.0
   val `chill-akka`      = "com.twitter" %% "chill-akka" % Version //Apache License 2.0
 }
+
+object Circe {
+  val Version = "0.9.3"
+
+  val `circe-core`    = dep("io.circe" %%% "circe-core"    % Version)
+  val `circe-generic` = dep("io.circe" %%% "circe-generic" % Version)
+  val `circe-parser`  = dep("io.circe" %%% "circe-parser"  % Version)
+}
