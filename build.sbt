@@ -140,6 +140,7 @@ lazy val `sequencer-framework` = project
       Libs.`akka-http-cors`,
       Akka.`akka-http`,
       Akka.`akka-http-upickle`,
+      Libs.`upickle`.value,
       SharedLibs.`boopickle`.value,
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,
