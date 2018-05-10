@@ -1,7 +1,7 @@
 package tmt.sequencer.rpc.client
 
-import upickle.default._
-import chameleon.ext.upickle._
+import boopickle.Default._
+import chameleon.ext.boopickle._
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
@@ -12,8 +12,8 @@ import tmt.sequencer.api.Streaming
 
 import scala.concurrent.Future
 
-import upickle.default._
-import chameleon.ext.upickle._
+import boopickle.Default._
+import chameleon.ext.boopickle._
 import java.nio.ByteBuffer
 
 class JvmStreamingClient(baseUri: String)(implicit system: ActorSystem) {

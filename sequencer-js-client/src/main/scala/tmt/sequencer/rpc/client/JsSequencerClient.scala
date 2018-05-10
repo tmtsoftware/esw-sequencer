@@ -1,7 +1,8 @@
 package tmt.sequencer.rpc.client
 
-import upickle.default._
-import chameleon.ext.upickle._
+import boopickle.Default._
+import chameleon.ext.boopickle._
+import java.nio.ByteBuffer
 
 import covenant.http.HttpClient
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
@@ -12,7 +13,7 @@ import scala.scalajs.js.annotation._
 class JsSequencerClient(baseUri: String) {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  private val client = HttpClient[String](baseUri)
+  private val client = HttpClient[ByteBuffer](baseUri)
 
   val sequenceFeeder: SequenceFeeder = client.wire[SequenceFeeder]
   val sequenceEditor: SequenceEditor = client.wire[SequenceEditor]
