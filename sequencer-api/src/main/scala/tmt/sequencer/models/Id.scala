@@ -82,3 +82,5 @@ case class AggregateResponse(childResponses: Set[CommandResponse]) {
   }
   def markSuccessful(maybeCommand: Option[Command]): AggregateResponse = markSuccessful(maybeCommand.toList: _*)
 }
+
+object AggregateResponse extends AggregateResponse(Set.empty)

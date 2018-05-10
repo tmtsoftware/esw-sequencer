@@ -1,23 +1,26 @@
 package tmt.sequencer.rpc.client
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.http.scaladsl.unmarshalling.FromByteStringUnmarshaller
+import akka.stream.{ActorMaterializer, Materializer}
+import akka.util.ByteString
 import covenant.http.HttpClient
 import sloth.{Client, ClientException}
-import boopickle.Default._
-import chameleon.ext.boopickle._
-import java.nio.ByteBuffer
-
-import covenant.http._
-import ByteBufferImplicits._
+import io.circe.generic.auto._
+import chameleon.ext.circe._
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class JvmSequencerClient(baseUri: String)(implicit system: ActorSystem) {
   private implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  private val client: Client[ByteBuffer, Future, ClientException] = HttpClient[ByteBuffer](baseUri)
+  implicit val StringUnmarshaller: FromByteStringUnmarshaller[String] = new FromByteStringUnmarshaller[String] {
+    def apply(value: ByteString)(implicit ec: ExecutionContext, materializer: Materializer): Future[String] =
+      Future.successful(value.utf8String)
+  }
+
+  private val client: Client[String, Future, ClientException] = HttpClient[String](baseUri)
 
   val sequenceFeeder: SequenceFeeder = client.wire[SequenceFeeder]
   val sequenceEditor: SequenceEditor = client.wire[SequenceEditor]

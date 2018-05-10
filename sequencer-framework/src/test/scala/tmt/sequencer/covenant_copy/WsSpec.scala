@@ -4,9 +4,8 @@ import org.scalatest._
 import covenant.core.api._
 import covenant.ws._
 import sloth._
-import chameleon.ext.boopickle._
-import boopickle.Default._
-import java.nio.ByteBuffer
+import chameleon.ext.circe._
+import io.circe.generic.auto._
 
 import mycelium.client._
 import mycelium.server._
@@ -72,7 +71,7 @@ class WsSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     val port = 9990
 
     object Backend {
-      val router = Router[ByteBuffer, Future]
+      val router = Router[String, Future]
         .route[Api[Future]](FutureApiImpl)
 
       def run() = {
@@ -86,7 +85,7 @@ class WsSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     object Frontend {
       val config = WebsocketClientConfig()
       val client =
-        WsClient[ByteBuffer, Unit, ApiError](s"ws://localhost:$port/ws", config)
+        WsClient[String, Unit, ApiError](s"ws://localhost:$port/ws", config)
       val api = client.sendWithDefault.wire[Api[Future]]
     }
 
@@ -116,7 +115,7 @@ class WsSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     }
 
     object Backend {
-      val router = Router[ByteBuffer, Dsl.ApiFunction]
+      val router = Router[String, Dsl.ApiFunction]
         .route[Api[Dsl.ApiFunction]](DslApiImpl)
 
       def run() = {
@@ -129,7 +128,7 @@ class WsSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     object Frontend {
       val config = WebsocketClientConfig()
       val client =
-        WsClient[ByteBuffer, Unit, ApiError](s"ws://localhost:$port/ws", config)
+        WsClient[String, Unit, ApiError](s"ws://localhost:$port/ws", config)
       val api = client.sendWithDefault.wire[Api[Future]]
     }
 

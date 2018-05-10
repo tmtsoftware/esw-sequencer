@@ -4,10 +4,8 @@ import org.scalatest._
 import covenant.core.api._
 import covenant.ws._
 import sloth._
-import chameleon.ext.boopickle._
-import boopickle.Default._
-import java.nio.ByteBuffer
-
+import chameleon.ext.circe._
+import io.circe.generic.auto._
 import mycelium.client._
 import mycelium.server._
 import akka.http.scaladsl.Http
@@ -69,8 +67,8 @@ class WsSpec2 extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     }
 
     object Backend {
-      val router: Router[ByteBuffer, Dsl.ApiFunction] =
-        Router[ByteBuffer, Dsl.ApiFunction].route[Api[Dsl.ApiFunction]](DslApiImpl)
+      val router: Router[String, Dsl.ApiFunction] =
+        Router[String, Dsl.ApiFunction].route[Api[Dsl.ApiFunction]](DslApiImpl)
 
       def run(): Future[Http.ServerBinding] = {
         val config = WebsocketServerConfig(bufferSize = 5, overflowStrategy = OverflowStrategy.fail)
@@ -80,9 +78,9 @@ class WsSpec2 extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     }
 
     object Frontend {
-      val config                                                                 = WebsocketClientConfig()
-      val client: WsClient[ByteBuffer, Future, Event, ApiError, ClientException] = WsClient(s"ws://localhost:$port/ws", config)
-      val api: Api[Future]                                                       = client.sendWithDefault.wire[Api[Future]]
+      val config                                                             = WebsocketClientConfig()
+      val client: WsClient[String, Future, Event, ApiError, ClientException] = WsClient(s"ws://localhost:$port/ws", config)
+      val api: Api[Future]                                                   = client.sendWithDefault.wire[Api[Future]]
     }
 
     Backend.run()

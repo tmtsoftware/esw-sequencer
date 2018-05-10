@@ -39,7 +39,7 @@ object Akka {
   val `akka-typed`         = "com.typesafe.akka" %% "akka-actor-typed"   % Version
   val `akka-http`          = "com.typesafe.akka" %% "akka-http"          % "10.1.1"
   val `akka-typed-testkit` = "com.typesafe.akka" %% "akka-testkit-typed" % Version
-  val `akka-http-upickle`  = "de.heikoseeberger" %% "akka-http-upickle"  % "1.20.1" //Apache 2.0
+  val `akka-http-circe`    = "de.heikoseeberger" %% "akka-http-circe"    % "1.20.1" //Apache 2.0
 }
 
 object AkkaJs {

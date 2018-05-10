@@ -6,7 +6,6 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.RouteResult._
 import akka.stream.ActorMaterializer
 import covenant.http.AkkaHttpRoute
-import covenant.http.ByteBufferImplicits._
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.concurrent.Future

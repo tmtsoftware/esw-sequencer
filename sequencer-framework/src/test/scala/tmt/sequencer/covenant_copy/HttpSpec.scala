@@ -3,23 +3,28 @@ package tmt.sequencer.covenant_copy
 import org.scalatest._
 import covenant.core.api._
 import covenant.http._
-import ByteBufferImplicits._
 import sloth._
-import chameleon.ext.boopickle._
-import boopickle.Default._
-import java.nio.ByteBuffer
-
+import chameleon.ext.circe._
+import io.circe.generic.auto._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.RouteResult._
 import akka.http.scaladsl.model._
-import akka.stream.ActorMaterializer
+import akka.stream.{ActorMaterializer, Materializer}
 import akka.actor.ActorSystem
+import akka.http.scaladsl.unmarshalling.FromByteStringUnmarshaller
+import akka.util.ByteString
 import cats.implicits._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.higherKinds
 
 class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
+
+  implicit val StringUnmarshaller: FromByteStringUnmarshaller[String] = new FromByteStringUnmarshaller[String] {
+    def apply(value: ByteString)(implicit ec: ExecutionContext, materializer: Materializer): Future[String] =
+      Future.successful(value.utf8String)
+  }
+
   trait Api[Result[_]] {
     def fun(a: Int): Result[Int]
     @PathName("funWithDefault")
@@ -67,7 +72,7 @@ class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     val port = 9989
 
     object Backend {
-      val router = Router[ByteBuffer, Future]
+      val router = Router[String, Future]
         .route[Api[Future]](FutureApiImpl)
 
       def run() = {
@@ -76,7 +81,7 @@ class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     }
 
     object Frontend {
-      val client = HttpClient[ByteBuffer](s"http://localhost:$port")
+      val client = HttpClient[String](s"http://localhost:$port")
       val api    = client.wire[Api[Future]]
     }
 
@@ -104,7 +109,7 @@ class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     }
 
     object Backend {
-      val router = Router[ByteBuffer, Dsl.ApiFunction]
+      val router = Router[String, Dsl.ApiFunction]
         .route[Api[Dsl.ApiFunction]](DslApiImpl)
 
       def run() = {
@@ -114,7 +119,7 @@ class HttpSpec extends AsyncFreeSpec with MustMatchers with BeforeAndAfterAll {
     }
 
     object Frontend {
-      val client = HttpClient[ByteBuffer](s"http://localhost:$port")
+      val client = HttpClient[String](s"http://localhost:$port")
       val api    = client.wire[Api[Future]]
     }
 

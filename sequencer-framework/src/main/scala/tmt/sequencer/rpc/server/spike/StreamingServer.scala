@@ -13,9 +13,10 @@ import tmt.sequencer.api.Streaming
 
 object StreamingServer {
   import sloth._
-  import boopickle.Default._
-  import chameleon.ext.boopickle._
-  import java.nio.ByteBuffer
+  import io.circe.generic.auto._
+  import io.circe.parser._
+  import io.circe.syntax._
+  import chameleon.ext.circe._
 
   def main(args: Array[String]): Unit = {
     implicit val system: ActorSystem             = ActorSystem("server")
@@ -29,7 +30,7 @@ object StreamingServer {
       override def serverFailure(error: ServerFailure): String = error.toString
     }
     val config   = WebsocketServerConfig(bufferSize = 5, overflowStrategy = OverflowStrategy.fail)
-    val wsRouter = Router[ByteBuffer, StreamingDsl.ApiFunction].route[Streaming[StreamingDsl.ApiFunction]](StreamingImpl)
+    val wsRouter = Router[String, StreamingDsl.ApiFunction].route[Streaming[StreamingDsl.ApiFunction]](StreamingImpl)
 
     val route = cors() {
       pathPrefix("something-later") {

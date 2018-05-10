@@ -28,8 +28,6 @@ lazy val `esw-sequencer` = project
     `sequencer-api-jvm`,
     `sequencer-js-app`,
     `sequencer-js-client`,
-    `sequencer-client-js`,
-    `sequencer-client-jvm`,
 //    `sequencer-js-tests`,
     `sequencer-macros`,
     `sequencer-framework`,
@@ -51,18 +49,6 @@ lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
 lazy val `sequencer-api-js` = `sequencer-api`.js
 lazy val `sequencer-api-jvm` = `sequencer-api`.jvm
 
-lazy val `sequencer-client` = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
-  .dependsOn(`sequencer-api`)
-  .settings(
-    libraryDependencies ++= Seq(
-      Libs.`roshttp`.value
-    )
-  )
-
-lazy val `sequencer-client-js` = `sequencer-client`.js
-lazy val `sequencer-client-jvm` = `sequencer-client`.jvm
-
 lazy val `sequencer-js-client` = project
   .enablePlugins(ScalaJSBundlerPlugin, ScalaJSWeb)
   .dependsOn(`sequencer-api-js`)
@@ -73,7 +59,9 @@ lazy val `sequencer-js-client` = project
     version in webpack := "4.6.0",
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     libraryDependencies ++= Seq(
-      SharedLibs.`boopickle`.value,
+      Circe.`circe-core`.value,
+      Circe.`circe-generic`.value,
+      Circe.`circe-parser`.value,
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,
       SharedLibs.scalaTest.value % Test,
@@ -104,7 +92,7 @@ lazy val `sequencer-js-client` = project
 
 lazy val `sequencer-js-app` = project
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
-  .dependsOn(`sequencer-client-js`)
+  .dependsOn(`sequencer-js-client`)
   .settings(
     scalaJSUseMainModuleInitializer := true,
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
@@ -141,8 +129,10 @@ lazy val `sequencer-framework` = project
       Libs.`scala-async`,
       Libs.`akka-http-cors`,
       Akka.`akka-http`,
-      Akka.`akka-http-upickle`,
-      SharedLibs.`boopickle`.value,
+      Akka.`akka-http-circe`,
+      Circe.`circe-core`.value,
+      Circe.`circe-generic`.value,
+      Circe.`circe-parser`.value,
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,
       SharedLibs.scalaTest.value % Test,
