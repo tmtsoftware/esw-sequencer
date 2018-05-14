@@ -14,8 +14,6 @@ import tmt.sequencer.api.Streaming
 object StreamingServer {
   import sloth._
   import io.circe.generic.auto._
-  import io.circe.parser._
-  import io.circe.syntax._
   import chameleon.ext.circe._
 
   def main(args: Array[String]): Unit = {

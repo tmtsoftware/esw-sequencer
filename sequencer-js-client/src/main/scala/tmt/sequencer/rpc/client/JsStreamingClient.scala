@@ -8,10 +8,7 @@ import tmt.sequencer.api.Streaming
 import scala.concurrent.Future
 
 import io.circe.generic.auto._
-import io.circe.parser._
-import io.circe.syntax._
 import chameleon.ext.circe._
-import java.nio.ByteBuffer
 
 class JsStreamingClient(baseUri: String) {
   import scala.concurrent.ExecutionContext.Implicits.global

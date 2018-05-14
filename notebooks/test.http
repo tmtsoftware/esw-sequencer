@@ -1,0 +1,26 @@
+
+POST http://0.0.0.0:9000/SequenceFeeder/feed
+Content-Type: application/json
+
+{
+  "commandList": {
+    "commands": [
+      {
+        "id": {
+          "value": "A"
+        },
+        "name": "setup-iris",
+        "params": []
+      },
+      {
+        "id": {
+          "value": "B"
+        },
+        "name": "setup-iris",
+        "params": []
+      }
+    ]
+  }
+}
+
+###

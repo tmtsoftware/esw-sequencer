@@ -1,8 +1,5 @@
 package tmt.sequencer.models
 
-import io.circe.generic.auto._
-import io.circe.parser._
-import io.circe.syntax._
 import tmt.sequencer.models.StepStatus.{Finished, InFlight, Pending}
 
 case class Step(command: Command, status: StepStatus, hasBreakpoint: Boolean) {
@@ -65,9 +62,6 @@ sealed trait CommandResponse {
 }
 
 object CommandResponse {
-  private val successType = classOf[Success].getSimpleName
-  private val failedType  = classOf[Failed].getSimpleName
-
   case class Success(id: Id, value: String, typeName: String = Success.getClass.getSimpleName) extends CommandResponse
   case class Failed(id: Id, value: String, typeName: String = Failed.getClass.getSimpleName)   extends CommandResponse
 }
