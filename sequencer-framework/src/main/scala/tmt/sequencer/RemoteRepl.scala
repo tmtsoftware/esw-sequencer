@@ -5,7 +5,7 @@ import ammonite.sshd._
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator
 import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
 import tmt.sequencer.dsl.CswServices
-import tmt.sequencer.messages.SequencerMsg.Pause
+import tmt.sequencer.messages.SequencerMsg.{Pause, Resume}
 import tmt.sequencer.messages.SupervisorMsg
 import tmt.sequencer.messages.SupervisorMsg.ControlCommand
 import tmt.sequencer.models.{Command, CommandList, Id}
@@ -42,7 +42,8 @@ class RemoteRepl(commandService: CswServices,
       "supervisor"     -> supervisor,
       "Id"             -> Id,
       "ControlCommand" -> ControlCommand,
-      "Pause"          -> Pause
+      "Pause"          -> Pause,
+      "Resume"         -> Resume
     )
   )
 }

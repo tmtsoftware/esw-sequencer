@@ -114,7 +114,6 @@ lazy val `sequencer-framework` = project
   .dependsOn(`sequencer-macros`, `sequencer-api-jvm`)
   .settings(
     name := "sequencer-framework",
-    dependencyOverrides += Libs.`upickle`.value,
     libraryDependencies ++= Seq(
       Libs.`scala-reflect`,
       Libs.`akka-http-cors`,

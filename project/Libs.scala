@@ -21,8 +21,6 @@ object Libs {
   val `types__mocha`         = "org.webjars.npm" % "types__mocha" % "5.2.0"
   val `mysequencer`          = "org.webjars.npm" % "mysequencer" % "1.0.0"
   val `chameleon`            = dep("com.github.cornerman.chameleon" %%% "chameleon" % "7dacc9f")
-  val `upickle`              = dep("com.lihaoyi" %%% "upickle" % "0.6.0")
-  val `roshttp`              = dep("fr.hmil" %%% "roshttp" % "2.1.0")
 }
 
 object Covenant {
@@ -57,7 +55,6 @@ object Ammonite {
 }
 
 object SharedLibs {
-  val `boopickle` = dep("io.suzaku"     %%% "boopickle" % "1.3.0")
   val `scalaTest` = dep("org.scalatest" %%% "scalatest" % "3.0.4")
 }
 
