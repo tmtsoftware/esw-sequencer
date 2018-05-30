@@ -16,6 +16,7 @@ object SequencerApp {
     }
     engine.start(sequencer, script)
     rpcServer.start()
+//    rpcServer2.start()
     supervisorRef
     remoteRepl.server().start()
   }

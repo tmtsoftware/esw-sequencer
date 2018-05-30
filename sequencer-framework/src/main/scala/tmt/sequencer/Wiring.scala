@@ -38,8 +38,10 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int], isPr
   lazy val sequenceEditor: SequenceEditor = new SequenceEditorImpl(sequencerRef, script)
   lazy val sequenceFeeder: SequenceFeeder = new SequenceFeederImpl(sequencerRef)
   lazy val routes                         = new Routes(sequenceFeeder, sequenceEditor)
+  lazy val routes2                        = new Routes2(sequenceFeeder)
   lazy val rpcConfigs                     = new RpcConfigs(port)
   lazy val rpcServer                      = new RpcServer(rpcConfigs, routes)
+  lazy val rpcServer2                     = new RpcServer2(rpcConfigs, routes2)
 
   lazy val supervisorRef: ActorRef[SupervisorMsg] = system.spawn(SupervisorBehavior.behavior(sequencerRef, script), "supervisor")
   lazy val remoteRepl                             = new RemoteRepl(cswServices, sequencer, supervisorRef, sequenceFeeder, sequenceEditor, rpcConfigs)

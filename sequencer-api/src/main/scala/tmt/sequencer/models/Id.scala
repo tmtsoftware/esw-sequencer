@@ -78,3 +78,7 @@ case class AggregateResponse(childResponses: Set[CommandResponse]) {
 }
 
 object AggregateResponse extends AggregateResponse(Set.empty)
+
+case class Msg(msg: String) {
+  override def toString: String = msg
+}
