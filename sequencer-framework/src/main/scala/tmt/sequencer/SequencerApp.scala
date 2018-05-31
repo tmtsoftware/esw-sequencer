@@ -5,8 +5,8 @@ object SequencerApp {
     val wiring = new Wiring(sequencerId, observingMode, port)
     import wiring._
     engine.start(sequencer, script)
-    rpcServer.start()
-//    rpcServer2.start()
+//    rpcServer.start()
+    rpcServer2.start()
     supervisorRef
     remoteRepl.server().start()
   }

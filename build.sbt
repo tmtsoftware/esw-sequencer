@@ -32,6 +32,8 @@ lazy val `esw-sequencer` = project
     `sequencer-framework`,
     `csw-messages-js`,
     `csw-messages-jvm`,
+	  `sequencer-client-js`,
+    `sequencer-client-jvm`
   )
 
 lazy val `sequencer-api` = crossProject(JSPlatform, JVMPlatform)
@@ -68,14 +70,33 @@ lazy val `sequencer-js-client` = project
   )
 
 
+lazy val `sequencer-client` = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .dependsOn(`sequencer-api`)
+  .settings(
+    libraryDependencies ++= Seq(
+      Circe.`circe-core`.value,
+      Circe.`circe-generic`.value,
+      Circe.`circe-parser`.value,
+      Sttp.`sttp-core`.value,
+      Libs.`monix`.value,
+      Sttp.`circe`.value,
+      SharedLibs.scalaTest.value % Test,
+    )
+  )
+
+lazy val `sequencer-client-js` = `sequencer-client`.js
+lazy val `sequencer-client-jvm` = `sequencer-client`.jvm
+
 lazy val `sequencer-js-app` = project
-  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
-  .dependsOn(`sequencer-js-client`)
+  .enablePlugins(ScalaJSPlugin)
+  .dependsOn(`sequencer-js-client`, `sequencer-client-js`)
   .settings(
     scalaJSUseMainModuleInitializer := true,
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     libraryDependencies ++= Seq(
-      SharedLibs.scalaTest.value % Test
+      SharedLibs.scalaTest.value % Test,
+      Sttp.`monix-backend`.value
     )
   )
 
@@ -89,7 +110,7 @@ lazy val `sequencer-macros` = project
 
 lazy val `sequencer-framework` = project
   .enablePlugins(JavaAppPackaging)
-  .dependsOn(`sequencer-macros`, `sequencer-api-jvm`)
+  .dependsOn(`sequencer-macros`, `sequencer-api-jvm`, `sequencer-client-jvm`)
   .settings(
     name := "sequencer-framework",
     libraryDependencies ++= Seq(
@@ -113,6 +134,7 @@ lazy val `sequencer-framework` = project
       Covenant.`covenant-http`.value,
       Covenant.`covenant-ws`.value,
       SharedLibs.scalaTest.value % Test,
+      Sttp.`akka-http-backend`,
     )
   )
 

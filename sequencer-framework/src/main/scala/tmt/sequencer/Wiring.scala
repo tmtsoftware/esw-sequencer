@@ -35,7 +35,7 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int]) {
   lazy val sequenceEditor: SequenceEditor = new SequenceEditorImpl(sequencerRef, script)
   lazy val sequenceFeeder: SequenceFeeder = new SequenceFeederImpl(sequencerRef)
   lazy val routes                         = new Routes(sequenceFeeder, sequenceEditor)
-  lazy val routes2                        = new Routes2(sequenceFeeder)
+  lazy val routes2                        = new Routes2(sequenceFeeder, sequenceEditor)
   lazy val rpcConfigs                     = new RpcConfigs(port)
   lazy val rpcServer                      = new RpcServer(rpcConfigs, routes)
   lazy val rpcServer2                     = new RpcServer2(rpcConfigs, routes2)

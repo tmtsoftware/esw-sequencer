@@ -11,5 +11,5 @@ class RpcServer2(rpcConfigs: RpcConfigs, routes: Routes2)(implicit system: Actor
   private implicit val materializer: ActorMaterializer = ActorMaterializer()
   import materializer.executionContext
 
-  def start(): Future[Http.ServerBinding] = Http().bindAndHandle(routes.route, interface = "0.0.0.0", port = rpcConfigs.port)
+  def start(): Future[Http.ServerBinding] = Http().bindAndHandle(routes.route, interface = "0.0.0.0", port = 9000)
 }
