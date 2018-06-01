@@ -15,7 +15,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def addAll(commands: List[Command]): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/addAll")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.AddAll}")
       .body(commands)
       .response(asJson[Unit])
       .send()
@@ -25,7 +25,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def pause(): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/pause")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.Pause}")
       .response(asJson[Unit])
       .send()
       .asFuture
@@ -34,7 +34,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def resume(): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/resume")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.Resume}")
       .response(asJson[Unit])
       .send()
       .asFuture
@@ -43,7 +43,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def reset(): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/reset")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.Reset}")
       .response(asJson[Unit])
       .send()
       .asFuture
@@ -52,7 +52,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def sequence: Future[Sequence] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/sequence")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.Sequence}")
       .response(asJson[Sequence])
       .send()
       .asFuture
@@ -61,7 +61,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def delete(ids: List[models.Id]): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/delete")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.Delete}")
       .body(ids)
       .response(asJson[Unit])
       .send()
@@ -71,7 +71,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def addBreakpoints(ids: List[models.Id]): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/addBreakpoints")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.AddBreakpoints}")
       .body(ids)
       .response(asJson[Unit])
       .send()
@@ -81,7 +81,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def removeBreakpoints(ids: List[models.Id]): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/removeBreakpoints")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.RemoveBreakpoints}")
       .body(ids)
       .response(asJson[Unit])
       .send()
@@ -92,7 +92,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
   override def insertAfter(id: models.Id, commands: List[Command]): Future[Unit] = {
     val payLoad = (id, commands)
     sttp
-      .post(uri"$baseUri/SequenceEditor/insertAfter")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.InsertAfter}")
       .body(payLoad)
       .response(asJson[Unit])
       .send()
@@ -102,7 +102,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def prepend(commands: List[Command]): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/prepend")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.Prepend}")
       .body(commands)
       .response(asJson[Unit])
       .send()
@@ -113,7 +113,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
   override def replace(id: models.Id, commands: List[Command]): Future[Unit] = {
     val payLoad = (id, commands)
     sttp
-      .post(uri"$baseUri/SequenceEditor/replace")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.Replace}")
       .body(payLoad)
       .response(asJson[Unit])
       .send()
@@ -123,7 +123,7 @@ class SequenceEditorClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def shutdown(): Future[Unit] = {
     sttp
-      .post(uri"$baseUri/SequenceEditor/shutdown")
+      .post(uri"$baseUri/${SequenceEditor.ApiName}/${SequenceEditor.Shutdown}")
       .response(asJson[Unit])
       .send()
       .asFuture

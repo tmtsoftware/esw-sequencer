@@ -11,60 +11,64 @@ import tmt.sequencer.models.{Command, CommandList}
 class Routes2(sequenceFeeder: SequenceFeeder, sequenceEditor: SequenceEditor) extends FailFastCirceSupport {
   val route: Route =
     post {
-      path("SequenceFeeder" / "feed") {
-        entity(as[CommandList]) { commandList =>
-          complete(sequenceFeeder.feed(commandList))
+      pathPrefix(SequenceFeeder.ApiName) {
+        path(SequenceFeeder.Feed) {
+          entity(as[CommandList]) { commandList =>
+            complete(sequenceFeeder.feed(commandList))
+          }
         }
       } ~
-      path("SequenceEditor" / "addAll") {
-        entity(as[List[Command]]) { commands =>
-          complete(sequenceEditor.addAll(commands))
-        }
-      } ~
-      path("SequenceEditor" / "pause") {
-        entity(as[Unit]) { commands =>
-          complete(sequenceEditor.pause())
-        }
-      } ~
-      path("SequenceEditor" / "resume") {
-        entity(as[Unit]) { commands =>
-          complete(sequenceEditor.resume())
-        }
-      } ~
-      path("SequenceEditor" / "reset") {
-        entity(as[Unit]) { commands =>
-          complete(sequenceEditor.reset())
-        }
-      } ~
-      path("SequenceEditor" / "delete") {
-        entity(as[List[models.Id]]) { ids =>
-          complete(sequenceEditor.delete(ids))
-        }
-      } ~
-      path("SequenceEditor" / "addBreakpoints") {
-        entity(as[List[models.Id]]) { ids =>
-          complete(sequenceEditor.addBreakpoints(ids))
-        }
-      } ~
-      path("SequenceEditor" / "removeBreakpoints") {
-        entity(as[List[models.Id]]) { ids =>
-          complete(sequenceEditor.removeBreakpoints(ids))
-        }
-      } ~
-      path("SequenceEditor" / "prepend") {
-        entity(as[List[Command]]) { commands =>
-          complete(sequenceEditor.prepend(commands))
-        }
-      } ~
-      path("SequenceEditor" / "replace") {
-        entity(as[(models.Id, List[Command])]) {
-          case (id, commands) =>
-            complete(sequenceEditor.replace(id, commands))
-        }
-      } ~
-      path("SequenceEditor" / "shutdown") {
-        entity(as[Unit]) { commands =>
-          complete(sequenceEditor.shutdown())
+      pathPrefix(SequenceEditor.ApiName) {
+        path(SequenceEditor.AddAll) {
+          entity(as[List[Command]]) { commands =>
+            complete(sequenceEditor.addAll(commands))
+          }
+        } ~
+        path(SequenceEditor.Pause) {
+          entity(as[Unit]) { commands =>
+            complete(sequenceEditor.pause())
+          }
+        } ~
+        path(SequenceEditor.Resume) {
+          entity(as[Unit]) { commands =>
+            complete(sequenceEditor.resume())
+          }
+        } ~
+        path(SequenceEditor.Reset) {
+          entity(as[Unit]) { commands =>
+            complete(sequenceEditor.reset())
+          }
+        } ~
+        path(SequenceEditor.Delete) {
+          entity(as[List[models.Id]]) { ids =>
+            complete(sequenceEditor.delete(ids))
+          }
+        } ~
+        path(SequenceEditor.AddBreakpoints) {
+          entity(as[List[models.Id]]) { ids =>
+            complete(sequenceEditor.addBreakpoints(ids))
+          }
+        } ~
+        path(SequenceEditor.RemoveBreakpoints) {
+          entity(as[List[models.Id]]) { ids =>
+            complete(sequenceEditor.removeBreakpoints(ids))
+          }
+        } ~
+        path(SequenceEditor.Prepend) {
+          entity(as[List[Command]]) { commands =>
+            complete(sequenceEditor.prepend(commands))
+          }
+        } ~
+        path(SequenceEditor.Replace) {
+          entity(as[(models.Id, List[Command])]) {
+            case (id, commands) =>
+              complete(sequenceEditor.replace(id, commands))
+          }
+        } ~
+        path(SequenceEditor.Shutdown) {
+          entity(as[Unit]) { commands =>
+            complete(sequenceEditor.shutdown())
+          }
         }
       }
     }

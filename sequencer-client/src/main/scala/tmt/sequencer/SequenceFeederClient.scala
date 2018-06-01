@@ -15,7 +15,7 @@ class SequenceFeederClient[R[_]: ToFuture, -S](baseUri: String)(implicit backend
 
   override def feed(commandList: CommandList): Future[AggregateResponse] = {
     sttp
-      .post(uri"$baseUri/SequenceFeeder/feed")
+      .post(uri"$baseUri/${SequenceFeeder.ApiName}/${SequenceFeeder.Feed}")
       .body(commandList)
       .response(asJson[AggregateResponse])
       .send()
