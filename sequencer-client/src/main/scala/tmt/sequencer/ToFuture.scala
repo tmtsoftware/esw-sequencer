@@ -1,5 +1,8 @@
 package tmt.sequencer
 
+import monix.eval.Task
+import monix.execution.Scheduler
+
 import scala.concurrent.Future
 import scala.language.higherKinds
 
@@ -16,5 +19,9 @@ object ToFuture {
 
   implicit val idToFuture: ToFuture[Future] = new ToFuture[Future] {
     override def convert[A](x: Future[A]): Future[A] = x
+  }
+
+  implicit def taskToFuture(implicit s: Scheduler): ToFuture[Task] = new ToFuture[Task] {
+    override def convert[A](x: Task[A]): Future[A] = x.runAsync
   }
 }

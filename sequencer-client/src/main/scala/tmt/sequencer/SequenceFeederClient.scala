@@ -2,6 +2,7 @@ package tmt.sequencer
 
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.circe._
+import io.circe
 import io.circe.generic.auto._
 import tmt.sequencer.ToFuture.RichR
 import tmt.sequencer.api.SequenceFeeder

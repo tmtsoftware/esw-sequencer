@@ -1,15 +1,23 @@
 package tmt.sequencer.rpc.server
 
+import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.stream.Materializer
+import akka.stream.scaladsl.{Flow, Sink}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.generic.auto._
-import tmt.sequencer.api.{SequenceEditor, SequenceFeeder}
+import tmt.sequencer.api.{SequenceEditor, SequenceFeeder, Streaming2}
 import tmt.sequencer.models
 import tmt.sequencer.models.{Command, CommandList}
+import tmt.sequencer.rpc.server.spike.A
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
-class Routes2(sequenceFeeder: SequenceFeeder, sequenceEditor: SequenceEditor) extends FailFastCirceSupport {
-  val route: Route =
+class Routes2(sequenceFeeder: SequenceFeeder, sequenceEditor: SequenceEditor, streaming2: Streaming2[A.S])(
+    implicit mat: Materializer
+) extends FailFastCirceSupport {
+
+  val route: Route = cors() {
     post {
       pathPrefix(SequenceFeeder.ApiName) {
         path(SequenceFeeder.Feed) {
@@ -71,5 +79,19 @@ class Routes2(sequenceFeeder: SequenceFeeder, sequenceEditor: SequenceEditor) ex
           }
         }
       }
+    } ~
+    get {
+      pathPrefix(Streaming2.ApiName) {
+        path(Streaming2.From) {
+          handleWebSocketMessages(
+            Flow[Message].mapConcat {
+              case _ => TextMessage(streaming2.from(23)) :: Nil
+//              case TextMessage.Streamed(textStream) => textStream.runWith(Sink.ignore); Nil
+//              case bm: BinaryMessage                => bm.dataStream.runWith(Sink.ignore); Nil
+            }
+          )
+        }
+      }
     }
+  }
 }

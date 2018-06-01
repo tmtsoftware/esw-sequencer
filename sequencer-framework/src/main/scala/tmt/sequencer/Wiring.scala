@@ -11,6 +11,7 @@ import tmt.sequencer.dsl.{CswServices, Script}
 import tmt.sequencer.gateway.LocationService
 import tmt.sequencer.messages.{SequencerMsg, SupervisorMsg}
 import tmt.sequencer.rpc.server._
+import tmt.sequencer.rpc.server.spike.Streaming2Impl
 
 import scala.concurrent.duration.DurationDouble
 
@@ -35,7 +36,7 @@ class Wiring(sequencerId: String, observingMode: String, port: Option[Int]) {
   lazy val sequenceEditor: SequenceEditor = new SequenceEditorImpl(sequencerRef, script)
   lazy val sequenceFeeder: SequenceFeeder = new SequenceFeederImpl(sequencerRef)
   lazy val routes                         = new Routes(sequenceFeeder, sequenceEditor)
-  lazy val routes2                        = new Routes2(sequenceFeeder, sequenceEditor)
+  lazy val routes2                        = new Routes2(sequenceFeeder, sequenceEditor, Streaming2Impl)
   lazy val rpcConfigs                     = new RpcConfigs(port)
   lazy val rpcServer                      = new RpcServer(rpcConfigs, routes)
   lazy val rpcServer2                     = new RpcServer2(rpcConfigs, routes2)

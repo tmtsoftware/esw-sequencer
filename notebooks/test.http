@@ -1,9 +1,8 @@
 
-POST http://0.0.0.0:9000/SequenceFeeder/feed
+POST http://0.0.0.0:9000/feeder/feed
 Content-Type: application/json
 
 {
-  "commandList": {
     "commands": [
       {
         "id": {
@@ -20,7 +19,11 @@ Content-Type: application/json
         "params": []
       }
     ]
-  }
 }
 
 ###
+
+GET ws://0.0.0.0:9000/Streaming2/from
+
+###`
+#Content-Type: application/json
